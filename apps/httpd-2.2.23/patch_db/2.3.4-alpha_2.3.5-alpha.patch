@@ -1,0 +1,952 @@
+diff -p --text -r /tmp/patch.inc.get1.502xyh/include/ap_mmn.h /tmp/patch.inc.get2.6SQ2nf/include/ap_mmn.h
+*** /tmp/patch.inc.get1.502xyh/include/ap_mmn.h	2013-04-28 19:22:16.447326404 +0200
+--- /tmp/patch.inc.get2.6SQ2nf/include/ap_mmn.h	2013-04-28 19:22:17.587332051 +0200
+***************
+*** 206,220 ****
+   * 20091031.0 (2.3.3-dev)  remove public LDAP referral-related macros
+   * 20091119.0 (2.3.4-dev)  dav_error interface uses apr_status_t parm, not errno
+   * 20091119.1 (2.3.4-dev)  ap_mutex_register(), ap_{proc,global}_mutex_create()
+   *
+   */
+  
+  #define MODULE_MAGIC_COOKIE 0x41503234UL /* "AP24" */
+  
+  #ifndef MODULE_MAGIC_NUMBER_MAJOR
+! #define MODULE_MAGIC_NUMBER_MAJOR 20091119
+  #endif
+! #define MODULE_MAGIC_NUMBER_MINOR 1                     /* 0...n */
+  
+  /**
+   * Determine if the server's current MODULE_MAGIC_NUMBER is at least a
+--- 206,226 ----
+   * 20091031.0 (2.3.3-dev)  remove public LDAP referral-related macros
+   * 20091119.0 (2.3.4-dev)  dav_error interface uses apr_status_t parm, not errno
+   * 20091119.1 (2.3.4-dev)  ap_mutex_register(), ap_{proc,global}_mutex_create()
++  * 20091229.0 (2.3.5-dev)  Move allowed_connect_ports from proxy_server_conf
++  *                         to mod_proxy_connect
++  * 20091230.0 (2.3.5-dev)  Move ftp_directory_charset from proxy_dir_conf
++  *                         to proxy_ftp_dir_conf(mod_proxy_ftp)
++  * 20091230.1 (2.3.5-dev)  add util_ldap_state_t.opTimeout
++  * 20091230.2 (2.3.5-dev)  add ap_get_server_name_for_url()
+   *
+   */
+  
+  #define MODULE_MAGIC_COOKIE 0x41503234UL /* "AP24" */
+  
+  #ifndef MODULE_MAGIC_NUMBER_MAJOR
+! #define MODULE_MAGIC_NUMBER_MAJOR 20091230
+  #endif
+! #define MODULE_MAGIC_NUMBER_MINOR 2                     /* 0...n */
+  
+  /**
+   * Determine if the server's current MODULE_MAGIC_NUMBER is at least a
+diff -p --text -r /tmp/patch.inc.get1.502xyh/include/ap_release.h /tmp/patch.inc.get2.6SQ2nf/include/ap_release.h
+*** /tmp/patch.inc.get1.502xyh/include/ap_release.h	2013-04-28 19:22:16.447326404 +0200
+--- /tmp/patch.inc.get2.6SQ2nf/include/ap_release.h	2013-04-28 19:22:17.587332051 +0200
+***************
+*** 45,51 ****
+  
+  #define AP_SERVER_MAJORVERSION_NUMBER 2
+  #define AP_SERVER_MINORVERSION_NUMBER 3
+! #define AP_SERVER_PATCHLEVEL_NUMBER   4
+  #define AP_SERVER_DEVBUILD_BOOLEAN    0
+  
+  #if AP_SERVER_DEVBUILD_BOOLEAN
+--- 45,51 ----
+  
+  #define AP_SERVER_MAJORVERSION_NUMBER 2
+  #define AP_SERVER_MINORVERSION_NUMBER 3
+! #define AP_SERVER_PATCHLEVEL_NUMBER   5
+  #define AP_SERVER_DEVBUILD_BOOLEAN    0
+  
+  #if AP_SERVER_DEVBUILD_BOOLEAN
+diff -p --text -r /tmp/patch.inc.get1.502xyh/include/http_core.h /tmp/patch.inc.get2.6SQ2nf/include/http_core.h
+*** /tmp/patch.inc.get1.502xyh/include/http_core.h	2013-04-28 19:22:16.447326404 +0200
+--- /tmp/patch.inc.get2.6SQ2nf/include/http_core.h	2013-04-28 19:22:17.587332051 +0200
+*************** AP_DECLARE(char *) ap_construct_url(apr_
+*** 211,216 ****
+--- 211,225 ----
+  AP_DECLARE(const char *) ap_get_server_name(request_rec *r);
+  
+  /**
++  * Get the current server name from the request for the purposes
++  * of using in a URL.  If the server name is an IPv6 literal
++  * address, it will be returned in URL format (e.g., "[fe80::1]").
++  * @param r The current request
++  * @return the server name
++  */
++ AP_DECLARE(const char *) ap_get_server_name_for_url(request_rec *r);
++ 
++ /**
+   * Get the current server port
+   * @param r The current request
+   * @return The server's port
+diff -p --text -r /tmp/patch.inc.get1.502xyh/include/http_main.h /tmp/patch.inc.get2.6SQ2nf/include/http_main.h
+*** /tmp/patch.inc.get1.502xyh/include/http_main.h	2013-04-28 19:22:16.447326404 +0200
+--- /tmp/patch.inc.get2.6SQ2nf/include/http_main.h	2013-04-28 19:22:17.587332051 +0200
+***************
+*** 33,39 ****
+   * in apr_getopt() format.  Use this for default'ing args that the MPM
+   * can safely ignore and pass on from its rewrite_args() handler.
+   */
+! #define AP_SERVER_BASEARGS "C:c:D:d:E:e:f:vVlLtSMh?X"
+  
+  #ifdef __cplusplus
+  extern "C" {
+--- 33,39 ----
+   * in apr_getopt() format.  Use this for default'ing args that the MPM
+   * can safely ignore and pass on from its rewrite_args() handler.
+   */
+! #define AP_SERVER_BASEARGS "C:c:D:d:E:e:f:vVlLtTSMh?X"
+  
+  #ifdef __cplusplus
+  extern "C" {
+*************** AP_DECLARE_DATA extern apr_array_header_
+*** 58,63 ****
+--- 58,65 ----
+  /** An array of all -D defines on the command line.  This allows people to
+   *  effect the server based on command line options */
+  AP_DECLARE_DATA extern apr_array_header_t *ap_server_config_defines;
++ /** Available integer for using the -T switch */
++ AP_DECLARE_DATA extern int ap_document_root_check;
+  
+  /**
+   * An optional function to send signal to server on presence of '-k'
+diff -p --text -r /tmp/patch.inc.get1.502xyh/include/util_ldap.h /tmp/patch.inc.get2.6SQ2nf/include/util_ldap.h
+*** /tmp/patch.inc.get1.502xyh/include/util_ldap.h	2013-04-28 19:22:16.447326404 +0200
+--- /tmp/patch.inc.get2.6SQ2nf/include/util_ldap.h	2013-04-28 19:22:17.587332051 +0200
+*************** typedef struct util_ldap_state_t {
+*** 159,164 ****
+--- 159,165 ----
+      long  connectionTimeout;
+      int   verify_svr_cert;
+      int debug_level;                    /* SDK debug level */
++     struct timeval *opTimeout;
+  
+  } util_ldap_state_t;
+  
+diff -p --text -r /tmp/patch.inc.get1.502xyh/include/util_mutex.h /tmp/patch.inc.get2.6SQ2nf/include/util_mutex.h
+*** /tmp/patch.inc.get1.502xyh/include/util_mutex.h	2013-04-28 19:22:16.447326404 +0200
+--- /tmp/patch.inc.get2.6SQ2nf/include/util_mutex.h	2013-04-28 19:22:17.587332051 +0200
+***************
+*** 27,32 ****
+--- 27,33 ----
+  #define UTIL_MUTEX_H
+  
+  #include "httpd.h"
++ #include "http_config.h"
+  #include "apr_global_mutex.h"
+  
+  #if APR_HAS_FLOCK_SERIALIZE
+*************** AP_DECLARE(apr_status_t) ap_parse_mutex(
+*** 100,107 ****
+  
+  /* private function to process the Mutex directive */
+  AP_DECLARE_NONSTD(const char *) ap_set_mutex(cmd_parms *cmd, void *dummy,
+!                                              const char *typelist,
+!                                              const char *mechfile);
+  
+  /**
+   * option flags for ap_mutex_register(), ap_global_mutex_create(), and
+--- 101,107 ----
+  
+  /* private function to process the Mutex directive */
+  AP_DECLARE_NONSTD(const char *) ap_set_mutex(cmd_parms *cmd, void *dummy,
+!                                              const char *arg);
+  
+  /**
+   * option flags for ap_mutex_register(), ap_global_mutex_create(), and
+diff -p --text -r /tmp/patch.inc.get1.502xyh/server/core.c /tmp/patch.inc.get2.6SQ2nf/server/core.c
+*** /tmp/patch.inc.get1.502xyh/server/core.c	2013-04-28 19:22:16.551326906 +0200
+--- /tmp/patch.inc.get2.6SQ2nf/server/core.c	2013-04-28 19:22:17.699332614 +0200
+*************** AP_DECLARE_DATA ap_filter_rec_t *ap_core
+*** 94,99 ****
+--- 94,102 ----
+  AP_DECLARE_DATA ap_filter_rec_t *ap_content_length_filter_handle;
+  AP_DECLARE_DATA ap_filter_rec_t *ap_core_input_filter_handle;
+  
++ /* Provide ap_document_root_check storage and default value = true */
++ AP_DECLARE_DATA int ap_document_root_check = 1;
++ 
+  /* magic pointer for ErrorDocument xxx "default" */
+  static char errordocument_default;
+  
+*************** AP_DECLARE(const char *) ap_get_server_n
+*** 924,930 ****
+   * of using in a URL.  If the server name is an IPv6 literal
+   * address, it will be returned in URL format (e.g., "[fe80::1]").
+   */
+! static const char *get_server_name_for_url(request_rec *r)
+  {
+      const char *plain_server_name = ap_get_server_name(r);
+  
+--- 927,933 ----
+   * of using in a URL.  If the server name is an IPv6 literal
+   * address, it will be returned in URL format (e.g., "[fe80::1]").
+   */
+! AP_DECLARE(const char *) ap_get_server_name_for_url(request_rec *r)
+  {
+      const char *plain_server_name = ap_get_server_name(r);
+  
+*************** AP_DECLARE(char *) ap_construct_url(apr_
+*** 987,993 ****
+                                      request_rec *r)
+  {
+      unsigned port = ap_get_server_port(r);
+!     const char *host = get_server_name_for_url(r);
+  
+      if (ap_is_default_port(port, r)) {
+          return apr_pstrcat(p, ap_http_scheme(r), "://", host, uri, NULL);
+--- 990,996 ----
+                                      request_rec *r)
+  {
+      unsigned port = ap_get_server_port(r);
+!     const char *host = ap_get_server_name_for_url(r);
+  
+      if (ap_is_default_port(port, r)) {
+          return apr_pstrcat(p, ap_http_scheme(r), "://", host, uri, NULL);
+*************** static const char *set_document_root(cmd
+*** 1162,1174 ****
+          return err;
+      }
+  
+      /* Make it absolute, relative to ServerRoot */
+      arg = ap_server_root_relative(cmd->pool, arg);
+      if (arg == NULL) {
+          return "DocumentRoot must be a directory";
+      }
+  
+!     /* TODO: ap_configtestonly && ap_docrootcheck && */
+      if (apr_filepath_merge((char**)&conf->ap_document_root, NULL, arg,
+                             APR_FILEPATH_TRUENAME, cmd->pool) != APR_SUCCESS
+          || !ap_is_directory(cmd->pool, arg)) {
+--- 1165,1183 ----
+          return err;
+      }
+  
++     /* When ap_document_root_check is false; skip all the stuff below */
++     if (!ap_document_root_check) {
++        conf->ap_document_root = arg;
++        return NULL;
++     }
++ 
+      /* Make it absolute, relative to ServerRoot */
+      arg = ap_server_root_relative(cmd->pool, arg);
+      if (arg == NULL) {
+          return "DocumentRoot must be a directory";
+      }
+  
+!     /* TODO: ap_configtestonly */
+      if (apr_filepath_merge((char**)&conf->ap_document_root, NULL, arg,
+                             APR_FILEPATH_TRUENAME, cmd->pool) != APR_SUCCESS
+          || !ap_is_directory(cmd->pool, arg)) {
+*************** AP_DECLARE(const char *) ap_psignature(c
+*** 2676,2682 ****
+  
+  static char *server_banner = NULL;
+  static int banner_locked = 0;
+! static char *server_description = NULL;
+  
+  enum server_token_type {
+      SrvTk_MAJOR,         /* eg: Apache/2 */
+--- 2685,2691 ----
+  
+  static char *server_banner = NULL;
+  static int banner_locked = 0;
+! static const char *server_description = NULL;
+  
+  enum server_token_type {
+      SrvTk_MAJOR,         /* eg: Apache/2 */
+*************** AP_INIT_TAKE1("LimitRequestBody", set_li
+*** 3319,3326 ****
+  AP_INIT_TAKE1("LimitXMLRequestBody", set_limit_xml_req_body, NULL, OR_ALL,
+                "Limit (in bytes) on maximum size of an XML-based request "
+                "body"),
+! AP_INIT_TAKE2("Mutex", ap_set_mutex, NULL, RSRC_CONF,
+!               "mutex (or \"default\") and mechanism"),
+  
+  /* System Resource Controls */
+  #ifdef RLIMIT_CPU
+--- 3328,3335 ----
+  AP_INIT_TAKE1("LimitXMLRequestBody", set_limit_xml_req_body, NULL, OR_ALL,
+                "Limit (in bytes) on maximum size of an XML-based request "
+                "body"),
+! AP_INIT_RAW_ARGS("Mutex", ap_set_mutex, NULL, RSRC_CONF,
+!                  "mutex (or \"default\") and mechanism"),
+  
+  /* System Resource Controls */
+  #ifdef RLIMIT_CPU
+diff -p --text -r /tmp/patch.inc.get1.502xyh/server/log.c /tmp/patch.inc.get2.6SQ2nf/server/log.c
+*** /tmp/patch.inc.get1.502xyh/server/log.c	2013-04-28 19:22:16.559326952 +0200
+--- /tmp/patch.inc.get2.6SQ2nf/server/log.c	2013-04-28 19:22:17.699332614 +0200
+***************
+*** 50,57 ****
+  #include "ap_mpm.h"
+  
+  typedef struct {
+!     char    *t_name;
+!     int      t_val;
+  } TRANS;
+  
+  APR_HOOK_STRUCT(
+--- 50,57 ----
+  #include "ap_mpm.h"
+  
+  typedef struct {
+!     const char *t_name;
+!     int t_val;
+  } TRANS;
+  
+  APR_HOOK_STRUCT(
+diff -p --text -r /tmp/patch.inc.get1.502xyh/server/main.c /tmp/patch.inc.get2.6SQ2nf/server/main.c
+*** /tmp/patch.inc.get1.502xyh/server/main.c	2013-04-28 19:22:16.559326952 +0200
+--- /tmp/patch.inc.get2.6SQ2nf/server/main.c	2013-04-28 19:22:17.699332614 +0200
+*************** static void show_compile_settings(void)
+*** 97,106 ****
+--- 97,111 ----
+      printf("Server built:   %s\n", ap_get_server_built());
+      printf("Server's Module Magic Number: %u:%u\n",
+             MODULE_MAGIC_NUMBER_MAJOR, MODULE_MAGIC_NUMBER_MINOR);
++ #if APR_MAJOR_VERSION >= 2
++     printf("Server loaded:  APR %s\n", apr_version_string());
++     printf("Compiled using: APR %s\n", APR_VERSION_STRING);
++ #else
+      printf("Server loaded:  APR %s, APR-UTIL %s\n",
+             apr_version_string(), apu_version_string());
+      printf("Compiled using: APR %s, APR-UTIL %s\n",
+             APR_VERSION_STRING, APU_VERSION_STRING);
++ #endif
+      /* sizeof(foo) is long on some platforms so we might as well
+       * make it long everywhere to keep the printf format
+       * consistent
+*************** static void show_compile_settings(void)
+*** 212,221 ****
+      printf(" -D NEED_HASHBANG_EMUL\n");
+  #endif
+  
+- #ifdef SHARED_CORE
+-     printf(" -D SHARED_CORE\n");
+- #endif
+- 
+  /* This list displays the compiled in default paths: */
+  #ifdef HTTPD_ROOT
+      printf(" -D HTTPD_ROOT=\"" HTTPD_ROOT "\"\n");
+--- 217,222 ----
+*************** static void show_compile_settings(void)
+*** 225,234 ****
+      printf(" -D SUEXEC_BIN=\"" SUEXEC_BIN "\"\n");
+  #endif
+  
+- #if defined(SHARED_CORE) && defined(SHARED_CORE_DIR)
+-     printf(" -D SHARED_CORE_DIR=\"" SHARED_CORE_DIR "\"\n");
+- #endif
+- 
+  #ifdef DEFAULT_PIDLOG
+      printf(" -D DEFAULT_PIDLOG=\"" DEFAULT_PIDLOG "\"\n");
+  #endif
+--- 226,231 ----
+*************** static void usage(process_rec *process)
+*** 343,356 ****
+  
+      pad[i] = '\0';
+  
+- #ifdef SHARED_CORE
+-     ap_log_error(APLOG_MARK, APLOG_STARTUP, 0, NULL ,
+-                  "Usage: %s [-R directory] [-D name] [-d directory] [-f file]",
+-                  bin);
+- #else
+      ap_log_error(APLOG_MARK, APLOG_STARTUP, 0, NULL,
+                   "Usage: %s [-D name] [-d directory] [-f file]", bin);
+- #endif
+  
+      ap_log_error(APLOG_MARK, APLOG_STARTUP, 0, NULL,
+                   "       %s [-C \"directive\"] [-c \"directive\"]", pad);
+--- 340,347 ----
+*************** static void usage(process_rec *process)
+*** 370,385 ****
+                   pad);
+  #endif
+      ap_log_error(APLOG_MARK, APLOG_STARTUP, 0, NULL,
+!                  "       %s [-v] [-V] [-h] [-l] [-L] [-t] [-S]", pad);
+      ap_log_error(APLOG_MARK, APLOG_STARTUP, 0, NULL,
+                   "Options:");
+  
+- #ifdef SHARED_CORE
+-     ap_log_error(APLOG_MARK, APLOG_STARTUP, 0, NULL,
+-                  "  -R directory       : specify an alternate location for "
+-                  "shared object files");
+- #endif
+- 
+      ap_log_error(APLOG_MARK, APLOG_STARTUP, 0, NULL,
+                   "  -D name            : define a name for use in "
+                   "<IfDefine name> directives");
+--- 361,370 ----
+                   pad);
+  #endif
+      ap_log_error(APLOG_MARK, APLOG_STARTUP, 0, NULL,
+!                  "       %s [-v] [-V] [-h] [-l] [-L] [-t] [-T] [-S]", pad);
+      ap_log_error(APLOG_MARK, APLOG_STARTUP, 0, NULL,
+                   "Options:");
+  
+      ap_log_error(APLOG_MARK, APLOG_STARTUP, 0, NULL,
+                   "  -D name            : define a name for use in "
+                   "<IfDefine name> directives");
+*************** static void usage(process_rec *process)
+*** 449,454 ****
+--- 434,441 ----
+                   "  -M                 : a synonym for -t -D DUMP_MODULES");
+      ap_log_error(APLOG_MARK, APLOG_STARTUP, 0, NULL,
+                   "  -t                 : run syntax check for config files");
++     ap_log_error(APLOG_MARK, APLOG_STARTUP, 0, NULL,
++                 "  -T                 : start without DocumentRoot(s) check");
+  
+      destroy_and_exit_process(process, 1);
+  }
+*************** int main(int argc, const char * const ar
+*** 612,617 ****
+--- 599,608 ----
+              configtestonly = 1;
+              break;
+  
++        case 'T':
++            ap_document_root_check = 0;
++            break;
++ 
+          case 'S':
+              configtestonly = 1;
+              new = (char **)apr_array_push(ap_server_config_defines);
+diff -p --text -r /tmp/patch.inc.get1.502xyh/server/mpm/worker/worker.c /tmp/patch.inc.get2.6SQ2nf/server/mpm/worker/worker.c
+*** /tmp/patch.inc.get1.502xyh/server/mpm/worker/worker.c	2013-04-28 19:22:16.551326906 +0200
+--- /tmp/patch.inc.get2.6SQ2nf/server/mpm/worker/worker.c	2013-04-28 19:22:17.699332614 +0200
+*************** static void dummy_signal_handler(int sig
+*** 596,602 ****
+       */
+  }
+  
+! static void accept_mutex_error(char *func, apr_status_t rv, int process_slot)
+  {
+      int level = APLOG_EMERG;
+  
+--- 596,602 ----
+       */
+  }
+  
+! static void accept_mutex_error(const char *func, apr_status_t rv, int process_slot)
+  {
+      int level = APLOG_EMERG;
+  
+diff -p --text -r /tmp/patch.inc.get1.502xyh/server/protocol.c /tmp/patch.inc.get2.6SQ2nf/server/protocol.c
+*** /tmp/patch.inc.get1.502xyh/server/protocol.c	2013-04-28 19:22:16.535326828 +0200
+--- /tmp/patch.inc.get2.6SQ2nf/server/protocol.c	2013-04-28 19:22:17.683332525 +0200
+*************** AP_DECLARE(apr_status_t) ap_rgetline_cor
+*** 431,438 ****
+              }
+          }
+      }
+- 
+      *read = bytes_handled;
+      return APR_SUCCESS;
+  }
+  
+--- 431,443 ----
+              }
+          }
+      }
+      *read = bytes_handled;
++ 
++     /* PR#43039: We shouldn't accept NULL bytes within the line */
++     if (strlen(*s) < bytes_handled) {
++         return APR_EINVAL;
++     }
++ 
+      return APR_SUCCESS;
+  }
+  
+*************** static int read_request_line(request_rec
+*** 609,614 ****
+--- 614,622 ----
+              else if (rv == APR_TIMEUP) {
+                  r->status = HTTP_REQUEST_TIME_OUT;
+              }
++             else if (rv == APR_EINVAL) {
++                 r->status = HTTP_BAD_REQUEST;
++             }
+              return 0;
+          }
+      } while ((len <= 0) && (++num_blank_lines < max_blank_lines));
+*************** request_rec *ap_read_request(conn_rec *c
+*** 897,905 ****
+  
+      /* Get the request... */
+      if (!read_request_line(r, tmp_bb)) {
+!         if (r->status == HTTP_REQUEST_URI_TOO_LARGE) {
+!             ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r,
+!                           "request failed: URI too long (longer than %d)", r->server->limit_req_line);
+              ap_send_error_response(r, 0);
+              ap_update_child_status(conn->sbh, SERVER_BUSY_LOG, r);
+              ap_run_log_transaction(r);
+--- 905,920 ----
+  
+      /* Get the request... */
+      if (!read_request_line(r, tmp_bb)) {
+!         if (r->status == HTTP_REQUEST_URI_TOO_LARGE
+!             || r->status == HTTP_BAD_REQUEST) {
+!             if (r->status == HTTP_BAD_REQUEST) {
+!                 ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r,
+!                               "request failed: invalid characters in URI");
+!             }
+!             else {
+!                 ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r,
+!                               "request failed: URI too long (longer than %d)", r->server->limit_req_line);
+!             }
+              ap_send_error_response(r, 0);
+              ap_update_child_status(conn->sbh, SERVER_BUSY_LOG, r);
+              ap_run_log_transaction(r);
+*************** request_rec *ap_read_request(conn_rec *c
+*** 1059,1073 ****
+      return r;
+  }
+  
+! /* if a request with a body creates a subrequest, clone the original request's
+!  * input headers minus any headers pertaining to the body which has already
+!  * been read.  out-of-line helper function for ap_set_sub_req_protocol.
+   */
+  
+! static void clone_headers_no_body(request_rec *rnew,
+!                                   const request_rec *r)
+  {
+-     rnew->headers_in = apr_table_copy(rnew->pool, r->headers_in);
+      apr_table_unset(rnew->headers_in, "Content-Encoding");
+      apr_table_unset(rnew->headers_in, "Content-Language");
+      apr_table_unset(rnew->headers_in, "Content-Length");
+--- 1074,1086 ----
+      return r;
+  }
+  
+! /* if a request with a body creates a subrequest, remove original request's
+!  * input headers which pertain to the body which has already been read.
+!  * out-of-line helper function for ap_set_sub_req_protocol.
+   */
+  
+! static void strip_headers_request_body(request_rec *rnew)
+  {
+      apr_table_unset(rnew->headers_in, "Content-Encoding");
+      apr_table_unset(rnew->headers_in, "Content-Language");
+      apr_table_unset(rnew->headers_in, "Content-Length");
+*************** AP_DECLARE(void) ap_set_sub_req_protocol
+*** 1101,1115 ****
+  
+      rnew->status          = HTTP_OK;
+  
+      /* did the original request have a body?  (e.g. POST w/SSI tags)
+       * if so, make sure the subrequest doesn't inherit body headers
+       */
+      if (!r->kept_body && (apr_table_get(r->headers_in, "Content-Length")
+          || apr_table_get(r->headers_in, "Transfer-Encoding"))) {
+!         clone_headers_no_body(rnew, r);
+!     } else {
+!         /* no body (common case).  clone headers the cheap way */
+!         rnew->headers_in      = r->headers_in;
+      }
+      rnew->subprocess_env  = apr_table_copy(rnew->pool, r->subprocess_env);
+      rnew->headers_out     = apr_table_make(rnew->pool, 5);
+--- 1114,1127 ----
+  
+      rnew->status          = HTTP_OK;
+  
++     rnew->headers_in = apr_table_copy(rnew->pool, r->headers_in);
++ 
+      /* did the original request have a body?  (e.g. POST w/SSI tags)
+       * if so, make sure the subrequest doesn't inherit body headers
+       */
+      if (!r->kept_body && (apr_table_get(r->headers_in, "Content-Length")
+          || apr_table_get(r->headers_in, "Transfer-Encoding"))) {
+!         strip_headers_request_body(rnew);
+      }
+      rnew->subprocess_env  = apr_table_copy(rnew->pool, r->subprocess_env);
+      rnew->headers_out     = apr_table_make(rnew->pool, 5);
+*************** AP_DECLARE(void) ap_send_interim_respons
+*** 1682,1694 ****
+  {
+      hdr_ptr x;
+      char *status_line = NULL;
+  
+      if (r->proto_num < 1001) {
+          /* don't send interim response to HTTP/1.0 Client */
+          return;
+      }
+      if (!ap_is_HTTP_INFO(r->status)) {
+!         ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, NULL,
+                        "Status is %d - not sending interim response", r->status);
+          return;
+      }
+--- 1694,1707 ----
+  {
+      hdr_ptr x;
+      char *status_line = NULL;
++     request_rec *rr;
+  
+      if (r->proto_num < 1001) {
+          /* don't send interim response to HTTP/1.0 Client */
+          return;
+      }
+      if (!ap_is_HTTP_INFO(r->status)) {
+!         ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r,
+                        "Status is %d - not sending interim response", r->status);
+          return;
+      }
+*************** AP_DECLARE(void) ap_send_interim_respons
+*** 1701,1706 ****
+--- 1714,1727 ----
+          return;
+      }
+  
++     /* if we send an interim response, we're no longer in a state of
++      * expecting one.  Also, this could feasibly be in a subrequest,
++      * so we need to propagate the fact that we responded.
++      */
++     for (rr = r; rr != NULL; rr = rr->main) {
++         rr->expecting_100 = 0;
++     }
++ 
+      status_line = apr_pstrcat(r->pool, AP_SERVER_PROTOCOL, " ", r->status_line, CRLF, NULL);
+      ap_xlate_proto_to_ascii(status_line, strlen(status_line));
+  
+diff -p --text -r /tmp/patch.inc.get1.502xyh/server/request.c /tmp/patch.inc.get2.6SQ2nf/server/request.c
+*** /tmp/patch.inc.get1.502xyh/server/request.c	2013-04-28 19:22:16.543326879 +0200
+--- /tmp/patch.inc.get2.6SQ2nf/server/request.c	2013-04-28 19:22:17.691332565 +0200
+*************** static int auth_internal_per_conf_hooks
+*** 89,95 ****
+  static int auth_internal_per_conf_providers = 0;
+  
+  
+! static int decl_die(int status, char *phase, request_rec *r)
+  {
+      if (status == DECLINED) {
+          ap_log_rerror(APLOG_MARK, APLOG_CRIT, 0, r,
+--- 89,95 ----
+  static int auth_internal_per_conf_providers = 0;
+  
+  
+! static int decl_die(int status, const char *phase, request_rec *r)
+  {
+      if (status == DECLINED) {
+          ap_log_rerror(APLOG_MARK, APLOG_CRIT, 0, r,
+diff -p --text -r /tmp/patch.inc.get1.502xyh/server/scoreboard.c /tmp/patch.inc.get2.6SQ2nf/server/scoreboard.c
+*** /tmp/patch.inc.get1.502xyh/server/scoreboard.c	2013-04-28 19:22:16.551326906 +0200
+--- /tmp/patch.inc.get2.6SQ2nf/server/scoreboard.c	2013-04-28 19:22:17.699332614 +0200
+*************** int ap_create_scoreboard(apr_pool_t *p,
+*** 284,289 ****
+--- 284,291 ----
+      apr_status_t rv;
+  #endif
+  
++     pfn_ap_logio_get_last_bytes = APR_RETRIEVE_OPTIONAL_FN(ap_logio_get_last_bytes);
++ 
+      if (ap_scoreboard_image) {
+          running_gen = ap_scoreboard_image->global->running_generation;
+          ap_scoreboard_image->global->restart_time = apr_time_now();
+diff -p --text -r /tmp/patch.inc.get1.502xyh/server/util_cookies.c /tmp/patch.inc.get2.6SQ2nf/server/util_cookies.c
+*** /tmp/patch.inc.get1.502xyh/server/util_cookies.c	2013-04-28 19:22:16.543326879 +0200
+--- /tmp/patch.inc.get2.6SQ2nf/server/util_cookies.c	2013-04-28 19:22:17.683332525 +0200
+*************** AP_DECLARE(apr_status_t) ap_cookie_write
+*** 35,42 ****
+                                           const char *attrs, long maxage, ...)
+  {
+  
+!     char *buffer;
+!     char *rfc2109;
+      apr_table_t *t;
+      va_list vp;
+  
+--- 35,42 ----
+                                           const char *attrs, long maxage, ...)
+  {
+  
+!     const char *buffer;
+!     const char *rfc2109;
+      apr_table_t *t;
+      va_list vp;
+  
+*************** AP_DECLARE(apr_status_t) ap_cookie_write
+*** 79,86 ****
+                                            const char *attrs2, long maxage, ...)
+  {
+  
+!     char *buffer;
+!     char *rfc2965;
+      apr_table_t *t;
+      va_list vp;
+  
+--- 79,86 ----
+                                            const char *attrs2, long maxage, ...)
+  {
+  
+!     const char *buffer;
+!     const char *rfc2965;
+      apr_table_t *t;
+      va_list vp;
+  
+*************** AP_DECLARE(apr_status_t) ap_cookie_remov
+*** 121,127 ****
+      va_list vp;
+  
+      /* create RFC2109 compliant cookie */
+!     char *rfc2109 = apr_pstrcat(r->pool, name, "=;Max-Age=0;",
+                                  attrs ? attrs : CLEAR_ATTRS, NULL);
+      ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, LOG_PREFIX
+                    "user '%s' removed cookie: '%s'", r->user, rfc2109);
+--- 121,127 ----
+      va_list vp;
+  
+      /* create RFC2109 compliant cookie */
+!     const char *rfc2109 = apr_pstrcat(r->pool, name, "=;Max-Age=0;",
+                                  attrs ? attrs : CLEAR_ATTRS, NULL);
+      ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, LOG_PREFIX
+                    "user '%s' removed cookie: '%s'", r->user, rfc2109);
+*************** AP_DECLARE(apr_status_t) ap_cookie_remov
+*** 149,155 ****
+      va_list vp;
+  
+      /* create RFC2965 compliant cookie */
+!     char *rfc2965 = apr_pstrcat(r->pool, name2, "=;Max-Age=0;",
+                                  attrs2 ? attrs2 : CLEAR_ATTRS, NULL);
+      ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, LOG_PREFIX
+                    "user '%s' removed cookie2: '%s'", r->user, rfc2965);
+--- 149,155 ----
+      va_list vp;
+  
+      /* create RFC2965 compliant cookie */
+!     const char *rfc2965 = apr_pstrcat(r->pool, name2, "=;Max-Age=0;",
+                                  attrs2 ? attrs2 : CLEAR_ATTRS, NULL);
+      ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, LOG_PREFIX
+                    "user '%s' removed cookie2: '%s'", r->user, rfc2965);
+*************** static int extract_cookie_line(ap_cookie
+*** 178,184 ****
+      char *cookie = apr_pstrdup(v->r->pool, val);
+      const char *name = apr_pstrcat(v->r->pool, v->name ? v->name : "", "=", NULL);
+      size_t len = strlen(name);
+!     char *new_cookie = "";
+      const char *comma = ",";
+      char *next1;
+      const char *semi = ";";
+--- 178,184 ----
+      char *cookie = apr_pstrdup(v->r->pool, val);
+      const char *name = apr_pstrcat(v->r->pool, v->name ? v->name : "", "=", NULL);
+      size_t len = strlen(name);
+!     const char *new_cookie = "";
+      const char *comma = ",";
+      char *next1;
+      const char *semi = ";";
+diff -p --text -r /tmp/patch.inc.get1.502xyh/server/util_mutex.c /tmp/patch.inc.get2.6SQ2nf/server/util_mutex.c
+*** /tmp/patch.inc.get1.502xyh/server/util_mutex.c	2013-04-28 19:22:16.551326906 +0200
+--- /tmp/patch.inc.get2.6SQ2nf/server/util_mutex.c	2013-04-28 19:22:17.699332614 +0200
+*************** typedef struct {
+*** 125,130 ****
+--- 125,131 ----
+      apr_int32_t options;
+      int set;
+      int none;
++     int omit_pid;
+      apr_lockmech_e mech;
+      const char *dir;
+  } mutex_cfg_t;
+*************** static void mx_hash_init(apr_pool_t *p)
+*** 165,191 ****
+  }
+  
+  AP_DECLARE_NONSTD(const char *)ap_set_mutex(cmd_parms *cmd, void *dummy,
+!                                             const char *type,
+!                                             const char *mechdir)
+  {
+      apr_pool_t *p = cmd->pool;
+      apr_lockmech_e mech;
+      apr_status_t rv;
+      const char *mutexdir;
+!     mutex_cfg_t *mxcfg = apr_hash_get(mxcfg_by_type, type,
+!                                       APR_HASH_KEY_STRING);
+      const char *err = ap_check_cmd_context(cmd, GLOBAL_ONLY);
+  
+      if (err != NULL) {
+          return err;
+      }
+  
+!     if (!mxcfg) {
+!         return apr_psprintf(p, "Mutex type %s is not valid", type);
+      }
+  
+-     mxcfg->none = 0; /* in case that was the default */
+- 
+      rv = ap_parse_mutex(mechdir, p, &mech, &mutexdir);
+      if (rv == APR_ENOTIMPL) {
+          return apr_pstrcat(p, "Invalid Mutex argument ", mechdir,
+--- 166,194 ----
+  }
+  
+  AP_DECLARE_NONSTD(const char *)ap_set_mutex(cmd_parms *cmd, void *dummy,
+!                                             const char *arg)
+  {
+      apr_pool_t *p = cmd->pool;
++     const char **elt;
++     const char *mechdir;
++     int no_mutex = 0, omit_pid = 0;
++     apr_array_header_t *type_list;
+      apr_lockmech_e mech;
+      apr_status_t rv;
+      const char *mutexdir;
+!     mutex_cfg_t *mxcfg;
+      const char *err = ap_check_cmd_context(cmd, GLOBAL_ONLY);
+  
+      if (err != NULL) {
+          return err;
+      }
+  
+!     mechdir = ap_getword_conf(cmd->pool, &arg);
+!     if (*mechdir == '\0') {
+!         return "Mutex requires at least a mechanism argument (" 
+!                AP_ALL_AVAILABLE_MUTEXES_STRING ")";
+      }
+  
+      rv = ap_parse_mutex(mechdir, p, &mech, &mutexdir);
+      if (rv == APR_ENOTIMPL) {
+          return apr_pstrcat(p, "Invalid Mutex argument ", mechdir,
+*************** AP_DECLARE_NONSTD(const char *)ap_set_mu
+*** 196,215 ****
+          return apr_pstrcat(p, "Invalid Mutex directory in argument ",
+                             mechdir, NULL);
+      }
+  
+!     mxcfg->set = 1;
+!     if (rv == APR_ENOLOCK) { /* "none" */
+!         if (!(mxcfg->options & AP_MUTEX_ALLOW_NONE)) {
+!             return apr_psprintf(p,
+!                                 "None is not allowed for mutex type %s",
+!                                 type);
+          }
+!         mxcfg->none = 1;
+      }
+!     else {
+!         mxcfg->mech = mech;
+!         if (mutexdir) { /* retain mutex default if not configured */
+!             mxcfg->dir = mutexdir;
+          }
+      }
+  
+--- 199,253 ----
+          return apr_pstrcat(p, "Invalid Mutex directory in argument ",
+                             mechdir, NULL);
+      }
++     else if (rv == APR_ENOLOCK) { /* "none" */
++         no_mutex = 1;
++     }
+  
+!     /* "OmitPID" can appear at the end of the list, so build a list of
+!      * mutex type names while looking for "OmitPID" (anywhere) or the end
+!      */
+!     type_list = apr_array_make(cmd->pool, 4, sizeof(const char *));
+!     while (*arg) {
+!         const char *s = ap_getword_conf(cmd->pool, &arg);
+! 
+!         if (!strcasecmp(s, "omitpid")) {
+!             omit_pid = 1;
+          }
+!         else {
+!             const char **new_type = (const char **)apr_array_push(type_list);
+!             *new_type = s;
+!         }
+!     }
+! 
+!     if (apr_is_empty_array(type_list)) { /* no mutex type?  assume "default" */
+!         const char **new_type = (const char **)apr_array_push(type_list);
+!         *new_type = "default";
+      }
+! 
+!     while ((elt = (const char **)apr_array_pop(type_list)) != NULL) {
+!         const char *type = *elt;
+!         mxcfg = apr_hash_get(mxcfg_by_type, type, APR_HASH_KEY_STRING);
+!         if (!mxcfg) {
+!             return apr_psprintf(p, "Mutex type %s is not valid", type);
+!         }
+! 
+!         mxcfg->none = 0; /* in case that was the default */
+!         mxcfg->omit_pid = omit_pid;
+! 
+!         mxcfg->set = 1;
+!         if (no_mutex) {
+!             if (!(mxcfg->options & AP_MUTEX_ALLOW_NONE)) {
+!                 return apr_psprintf(p,
+!                                     "None is not allowed for mutex type %s",
+!                                     type);
+!             }
+!             mxcfg->none = 1;
+!         }
+!         else {
+!             mxcfg->mech = mech;
+!             if (mutexdir) { /* retain mutex default if not configured */
+!                 mxcfg->dir = mutexdir;
+!             }
+          }
+      }
+  
+*************** static const char *get_mutex_filename(ap
+*** 265,271 ****
+      }
+  
+  #if HAVE_UNISTD_H
+!     pid_suffix = apr_psprintf(p, ".%" APR_PID_T_FMT, getpid());
+  #endif
+  
+      return ap_server_root_relative(p,
+--- 303,311 ----
+      }
+  
+  #if HAVE_UNISTD_H
+!     if (!mxcfg->omit_pid) {
+!         pid_suffix = apr_psprintf(p, ".%" APR_PID_T_FMT, getpid());
+!     }
+  #endif
+  
+      return ap_server_root_relative(p,
+diff -p --text -r /tmp/patch.inc.get1.502xyh/server/util_script.c /tmp/patch.inc.get2.6SQ2nf/server/util_script.c
+*** /tmp/patch.inc.get1.502xyh/server/util_script.c	2013-04-28 19:22:16.551326906 +0200
+--- /tmp/patch.inc.get2.6SQ2nf/server/util_script.c	2013-04-28 19:22:17.699332614 +0200
+*************** AP_DECLARE(void) ap_add_common_vars(requ
+*** 121,129 ****
+      server_rec *s = r->server;
+      conn_rec *c = r->connection;
+      const char *rem_logname;
+!     char *env_path;
+  #if defined(WIN32) || defined(OS2)
+!     char *env_temp;
+  #endif
+      const char *host;
+      const apr_array_header_t *hdrs_arr = apr_table_elts(r->headers_in);
+--- 121,129 ----
+      server_rec *s = r->server;
+      conn_rec *c = r->connection;
+      const char *rem_logname;
+!     const char *env_path;
+  #if defined(WIN32) || defined(OS2)
+!     const char *env_temp;
+  #endif
+      const char *host;
+      const apr_array_header_t *hdrs_arr = apr_table_elts(r->headers_in);
+*************** AP_DECLARE(apr_status_t) ap_body_to_tabl
+*** 811,817 ****
+              if (!rv) {
+                  apr_size_t total;
+                  /* XXX where's our test that len fits in memory??? 
+!                  * theoretically can be a large file > ram space
+                   */
+                  buffer = apr_palloc(tpool, len+1);
+                  
+--- 811,819 ----
+              if (!rv) {
+                  apr_size_t total;
+                  /* XXX where's our test that len fits in memory??? 
+!                  * theoretically can be a large file > ram space.
+!                  * need to cast len to apr_size_t but it would mask
+!                  * this notable mistake
+                   */
+                  buffer = apr_palloc(tpool, len+1);
+                  

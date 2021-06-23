@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -o errexit
+
+CLIENT_REQ=${CLIENT_REQ:-"SHOW DATABASES"}
+
+install/bin/mysql --port 1080 --socket `pwd`/install/mysql.sock -uroot -proot test -e"$CLIENT_REQ"
+

@@ -1,0 +1,21 @@
+#!/usr/bin/perl
+# WARNING: this file is generated, do not edit
+# generated on Wed May 27 03:01:20 2020
+# 01: Apache-Test/lib/Apache/TestConfig.pm:1007
+# 02: Apache-Test/lib/Apache/TestConfig.pm:1099
+# 03: Apache-Test/lib/Apache/TestSmoke.pm:775
+# 04: Makefile.PL:51
+
+BEGIN { eval { require blib && blib->import; } }
+
+use strict;
+use warnings FATAL => 'all';
+
+use lib qw(
+    /mnt/hdd/koustubha/repos/apprecovery/apps/httpd-2.2.23/tests/perl-framework/Apache-Test/lib
+    /mnt/hdd/koustubha/repos/apprecovery/apps/httpd-2.2.23/tests/perl-framework
+);
+
+
+use Apache::TestSmoke;
+Apache::TestSmoke->new(@ARGV)->run;

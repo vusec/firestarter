@@ -1,0 +1,4 @@
+!*.d
+/fmgrtab.c
+/fmgroids.h
+/probes.h

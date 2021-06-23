@@ -1,0 +1,25 @@
+#!/bin/bash
+
+MYPWD=`pwd`
+ROOT=../..
+
+. $MYPWD/../scripts/include/configure.llvm.inc
+
+LLVM_LIBS=`build_llvm_libs $*`
+LIBS="-ltermcap"
+
+if [ ! -f ./ltmain.sh ]; then
+    BUILD/autorun.sh
+fi
+./configure --disable-shared --with-tcp-port=1080 --with-client-ldflags=-all-static \
+   --prefix=$MYPWD/install  --with-unix-socket-path=$MYPWD/install/mysql.sock --with-mysqld-user=$USER \
+   mysql_cv_btype_last_arg_accept=socklen_t \
+   mysql_cv_gethostbyname_style=glibc2 \
+   CC="$LLVMGOLD_CC" \
+   CXX="$LLVMGOLD_CXX" \
+   CFLAGS="$LLVMGOLD_CFLAGS" \
+   CXXFLAGS="$LLVMGOLD_CXXFLAGS" \
+   LIBS="$LLVM_LIBS $LIBS $LLVMGOLD_LDFLAGS" \
+   RANLIB="$LLVMGOLD_RANLIB" \
+   AR_FLAGS="$LLVMGOLD_AR_FLAGS"
+

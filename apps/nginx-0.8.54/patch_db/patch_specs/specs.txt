@@ -1,0 +1,392 @@
+* One-time annotation effort:
+- unions with inner pointers:    2 (2 unions in annotation.c)
+- memory mgm instrumentation:   22 (annotation.c) + 1 (magic region configuration)
+- update points:                 1 (annotations.c)
+- nginx total:                  26
+
+* Patches:              LOCS   Fn_changed Var_changed Ty_changed FWD_ST_LOCS BWD_ST_LOCS
+- 0.8.54_0.8.55.patch:  13     1          0           0          0           0
+- 0.8.55_0.9.0.patch:   390    32         3           3          74          0
+- 0.9.0_0.9.1.patch:    11     2          0           0          0           0
+- 0.9.1_0.9.2.patch:    78     7          1           1          0           0
+- 0.9.2_0.9.3.patch:    23     4          0           0          0           0
+- 0.9.3_0.9.4.patch:    118    15         2           0          0           0
+- 0.9.4_0.9.5.patch:    79     11         1           0          0           0
+- 0.9.5_0.9.6.patch:    160    22         3           4          54          0
+- 0.9.6_0.9.7.patch:    203    29         1           4          20          0
+- 0.9.7_1.0.0.patch:    55     17         0           0          0           0
+- 1.0.0_1.0.1.patch:    464    31         1           3          46          0
+- 1.0.1_1.0.2.patch:    353    7          0           1          0           0
+- 1.0.2_1.0.3.patch:    535    23         2           1          0           0
+- 1.0.3_1.0.4.patch:    67     11         0           0          0           0
+- 1.0.4_1.0.5.patch:    213    20         1           2          17          0
+- 1.0.5_1.0.6.patch:    524    58         4           6          36          0
+- 1.0.6_1.0.7.patch:    3319   53         11          26         27          0
+- 1.0.7_1.0.8.patch:    12     4          0           0          0           0
+- 1.0.8_1.0.9.patch:    591    114        7           1          18          0
+- 1.0.9_1.0.10.patch:   24     5          0           0          0           0
+- 1.0.10_1.0.11.patch:  806    84         8           1          17          0
+- 1.0.11_1.0.12.patch:  854    57         3           1          26          0
+- 1.0.12_1.0.13.patch:  463    60         3           0          0           0
+- 1.0.13_1.0.14.patch:  44     9          0           0          0           0
+- 1.0.14_1.0.15.patch:  282    35         0           0          0           0
+- nginx total:          9681   711        51          54         335         0
+
+- Basic stats obtained by:
+rm -f filter.log
+./serverctl patch file-clean ALL
+./serverctl patch list
+PATCH_REMOVE_TEMPS=0 ./serverctl patch getincr 0.8.54 0.9.3
+./serverctl patch file-filter-include ALL \\.[ch]      >> filter.log
+./serverctl patch file-stats ALL
+
+- Manual inspection aided by:
+./serverctl patch file-meldcmd ALL #Run individual meld commands
+
+Running: patch_file_stats 0.8.54 0.8.55 
+*** Stats for patch_db/0.8.54_0.8.55.patch:
+ - Files changed: 2
+ - Functions changed: 1
+ - LOC added: 9
+ - LOC changed: 4
+ - LOC removed: 0
+ - LOC total: 13
+Running: patch_file_stats 0.8.55 0.9.0 
+*** Stats for patch_db/0.8.55_0.9.0.patch:
+ - Files changed: 15
+ - Functions changed: 32
+ - LOC added: 115
+ - LOC changed: 224
+ - LOC removed: 51
+ - LOC total: 390
+>>> Changes:
+* VAR_ADD:
+    + static ngx_conf_enum_t  ngx_http_core_keepalive_disable[]
+* VAR_DEL:
+    - static ngx_uint_t  ngx_degraded;
+* VAR_CHG:
+    ! static ngx_command_t  ngx_http_core_commands;
+- struct ngx_http_map_conf_ctx_t
+    + ngx_array_t                 var_values; (7+9+46 LOC F)
+    + ngx_conf_t                 *cf;
+- ngx_http_map_ctx_t
+    + ngx_http_complex_value_t    value;      (9+3    LOC F)
+- struct ngx_http_core_loc_conf_s
+    + ngx_uint_t    keepalive_disable;
+Running: patch_file_stats 0.9.0 0.9.1 
+*** Stats for patch_db/0.9.0_0.9.1.patch:
+ - Files changed: 2
+ - Functions changed: 2
+ - LOC added: 0
+ - LOC changed: 6
+ - LOC removed: 5
+ - LOC total: 11
+Running: patch_file_stats 0.9.1 0.9.2 
+*** Stats for patch_db/0.9.1_0.9.2.patch:
+ - Files changed: 6
+ - Functions changed: 7
+ - LOC added: 59
+ - LOC changed: 14
+ - LOC removed: 5
+ - LOC total: 78
+* VAR_CHG:
+    ! ngx_http_header_t  ngx_http_headers_in
+- ngx_http_headers_in_t;
+    + ngx_table_elt_t                  *if_unmodified_since;
+
+Running: patch_file_stats 0.9.2 0.9.3 
+*** Stats for patch_db/0.9.2_0.9.3.patch:
+ - Files changed: 4
+ - Functions changed: 4
+ - LOC added: 5
+ - LOC changed: 18
+ - LOC removed: 0
+ - LOC total: 23
+
+ 
+ 
+Running: patch_file_stats 0.9.3 0.9.4 
+*** Stats for patch_db/0.9.3_0.9.4.patch:
+ - Files changed: 8
+ - Functions changed: 15
+ - LOC added: 38
+ - LOC changed: 58
+ - LOC removed: 22
+ - LOC total: 118
+* VAR_ADD:
+    + static char ngx_http_error_494_page[]
+* VAR_CHG:
+    ! static ngx_str_t ngx_http_error_pages[]
+Running: patch_file_stats 0.9.4 0.9.5 
+*** Stats for patch_db/0.9.4_0.9.5.patch:
+ - Files changed: 7
+ - Functions changed: 11
+ - LOC added: 26
+ - LOC changed: 51
+ - LOC removed: 2
+ - LOC total: 79
+* VAR_CHG:
+    ! static ngx_command_t  ngx_http_geoip_commands[] 
+Running: patch_file_stats 0.9.5 0.9.6 
+*** Stats for patch_db/0.9.5_0.9.6.patch:
+ - Files changed: 8
+ - Functions changed: 22
+ - LOC added: 135
+ - LOC changed: 25
+ - LOC removed: 0
+ - LOC total: 160
+* VAR_ADD:
+    + volatile ngx_str_t       ngx_cached_http_log_iso8601;
+    + static u_char            cached_http_log_iso8601[NGX_TIME_SLOTS][sizeof("1970-09-28T12:00:00+06:00")];
+* VAR_CHG:
+    ! static ngx_http_log_var_t  ngx_http_log_vars[]
+- ngx_http_map_conf_ctx_t;
+    + ngx_array_t                 regexes;       (7+9+6=32 LOC F)
+- ngx_http_map_ctx_t;
+   ! changed ngx_hash_combined_t         hash; --> map   (9+13=22 LOC F)
+- ngx_http_map_regex_t;
+   + type added
+- ngx_http_map_t;
+   + type added
+Running: patch_file_stats 0.9.6 0.9.7 
+*** Stats for patch_db/0.9.6_0.9.7.patch:
+ - Files changed: 11
+ - Functions changed: 29
+ - LOC added: 176
+ - LOC changed: 8
+ - LOC removed: 19
+ - LOC total: 203
+- struct ngx_connection_s
+   +  ngx_queue_t         queue;                          (7+9+4=20 LOC F)
+   +  unsigned            reusable:1;
+- struct ngx_cycle_s
+   +  ngx_queue_t               reusable_connections_queue;
+- } ngx_http_image_filter_conf_t;
+    + ngx_uint_t                   angle;
+    + ngx_http_complex_value_t    *acv;
+- ngx_http_image_filter_ctx_t
+    + ngx_uint_t                   angle;
+* VAR_CHG
+    ! static ngx_command_t  ngx_http_image_filter_commands[] 
+Running: patch_file_stats 0.9.7 1.0.0 
+*** Stats for patch_db/0.9.7_1.0.0.patch:
+ - Files changed: 10
+ - Functions changed: 17
+ - LOC added: 11
+ - LOC changed: 40
+ - LOC removed: 4
+ - LOC total: 55
+
+Running: patch_file_stats 1.0.0 1.0.1 
+*** Stats for patch_db/1.0.0_1.0.1.patch:
+ - Files changed: 19
+ - Functions changed: 31
+ - LOC added: 386
+ - LOC changed: 65
+ - LOC removed: 13
+ - LOC total: 464
+- } ngx_open_file_info_t;
+    +     off_t                    fs_size;              (7+9+10 LOC F)
+- } ngx_http_file_cache_node_t;
+    +     off_t                            length;       (9+1 LOC F)
+- struct ngx_http_cache_s
+    +     off_t                            fs_size;       (9+1 LOC F)
+* VAR_ADD:
+   + static ngx_http_variable_t  ngx_http_upstream_vars[] = {
+Running: patch_file_stats 1.0.1 1.0.2 
+*** Stats for patch_db/1.0.1_1.0.2.patch:
+ - Files changed: 10
+ - Functions changed: 7
+ - LOC added: 249
+ - LOC changed: 26
+ - LOC removed: 78
+ - LOC total: 353
+- } ngx_shmtx_t;
+    + ngx_uint_t     spin;
+Running: patch_file_stats 1.0.2 1.0.3 
+*** Stats for patch_db/1.0.2_1.0.3.patch:
+ - Files changed: 12
+ - Functions changed: 23
+ - LOC added: 389
+ - LOC changed: 111
+ - LOC removed: 35
+ - LOC total: 535
+- } ngx_http_geoip_conf_t;
+    + GeoIP      *org;
+* VAR_CHG:
+    ! ngx_http_geoip_commands
+    ! static ngx_http_variable_t  ngx_http_geoip_vars[] = {
+Running: patch_file_stats 1.0.3 1.0.4 
+*** Stats for patch_db/1.0.3_1.0.4.patch:
+ - Files changed: 8
+ - Functions changed: 11
+ - LOC added: 19
+ - LOC changed: 47
+ - LOC removed: 1
+ - LOC total: 67
+Running: patch_file_stats 1.0.4 1.0.5 
+*** Stats for patch_db/1.0.4_1.0.5.patch:
+ - Files changed: 8
+ - Functions changed: 20
+ - LOC added: 66
+ - LOC changed: 137
+ - LOC removed: 10
+ - LOC total: 213
+* VAR_CHG:
+    ! static ngx_command_t  ngx_http_referer_commands[] = {
+- } ngx_http_referer_conf_t;
+    + ngx_uint_t               referer_hash_max_size;           (7+9+2 LOC F)
+    + ngx_uint_t               referer_hash_bucket_size;
+- } ngx_http_userid_ctx_t;
+    +     ngx_uint_t  reset;
+    
+Running: patch_file_stats 1.0.5 1.0.6 
+*** Stats for patch_db/1.0.5_1.0.6.patch:
+ - Files changed: 23
+ - Functions changed: 58
+ - LOC added: 266
+ - LOC changed: 252
+ - LOC removed: 6
+ - LOC total: 524
+* VAR_CHG:
+    ! static ngx_command_t  ngx_http_ssl_commands[] = {
+    ! static ngx_command_t  ngx_http_core_commands[] = {
+    ! static ngx_command_t  ngx_mail_ssl_commands[] = {
+* VAR_ADD:
+    + static ngx_conf_enum_t  ngx_http_core_lingering_close[] = {
+- struct ngx_http_core_loc_conf_s {
+    +     ngx_uint_t    lingering_close;         /* lingering_close */  (7+9+1 LOC F)
+- struct ngx_tree_ctx_s {
+    +     off_t                      fs_size;                         (9+10 LOC F)
+- } ngx_http_ssl_srv_conf_t;
+    +     ngx_str_t                       ecdh_curve;
+- ngx_http_headers_in_t
+    -     unsigned                          msie4:1;
+- } ngx_http_upstream_conf_t;
+    +     ngx_str_t                        module;
+- } ngx_mail_ssl_conf_t;
+    +     ngx_str_t        ecdh_curve;
+Running: patch_file_stats 1.0.6 1.0.7 
+*** Stats for patch_db/1.0.6_1.0.7.patch:
+ - Files changed: 22
+ - Functions changed: 53
+ - LOC added: 3021
+ - LOC changed: 231
+ - LOC removed: 67
+ - LOC total: 3319
+- } ngx_epoll_conf_t;
+    +     ngx_uint_t  aio_requests;               (7+9+1 LOC F)
+- } ngx_http_chunked_filter_ctx_t;
+    + new type
+- struct ngx_http_core_loc_conf_s {
+    + ngx_uint_t    max_ranges;                   (9+1 LOC F)
+- ngx_http_mp4_module.c
+    + 23 new types
+    + 9 new vars
+* VAR_CHG:
+    ! static ngx_command_t  ngx_epoll_commands[] = {
+    ! static ngx_command_t  ngx_http_core_commands[] = {
+Running: patch_file_stats 1.0.7 1.0.8 
+*** Stats for patch_db/1.0.7_1.0.8.patch:
+ - Files changed: 2
+ - Functions changed: 4
+ - LOC added: 0
+ - LOC changed: 12
+ - LOC removed: 0
+ - LOC total: 12
+Running: patch_file_stats 1.0.8 1.0.9 
+*** Stats for patch_db/1.0.8_1.0.9.patch:
+ - Files changed: 41
+ - Functions changed: 114
+ - LOC added: 161
+ - LOC changed: 372
+ - LOC removed: 58
+ - LOC total: 591
+* VAR_ADD:
+    +     static uint32_t   uri_component[] = {
+* VAR_CHG:
+    !     static uint32_t  *map[] =
+    !     static uint32_t   escape[] = {
+    ! static ngx_command_t ngx_http_scgi_commands[] = {
+    ! static ngx_command_t ngx_http_uwsgi_commands[] = {
+    ! static ngx_command_t  ngx_http_core_commands[] = {
+    ! ngx_conf_bitmask_t  ngx_http_upstream_ignore_headers_masks[] = {
+- } ngx_http_autoindex_entry_t;
+    +     size_t         escape_html;               (7+9+2 LOC F)
+    -     unsigned       colon:1;
+Running: patch_file_stats 1.0.9 1.0.10 
+*** Stats for patch_db/1.0.9_1.0.10.patch:
+ - Files changed: 4
+ - Functions changed: 5
+ - LOC added: 2
+ - LOC changed: 15
+ - LOC removed: 7
+ - LOC total: 24
+
+Running: patch_file_stats 1.0.10 1.0.11 
+*** Stats for patch_db/1.0.10_1.0.11.patch:
+ - Files changed: 24
+ - Functions changed: 84
+ - LOC added: 181
+ - LOC changed: 560
+ - LOC removed: 65
+ - LOC total: 806
+* VAR_CHG:
+    ! static ngx_command_t  ngx_http_fastcgi_commands[] = {
+    ! static u_char  ngx_flv_header[] = "FLV\x1\x1\0\0\0\x9\0\0\0\x9";
+    ! static ngx_command_t  ngx_http_image_filter_commands[] = {
+    ! static ngx_command_t  ngx_http_ssi_filter_commands[] = {
+    ! static ngx_command_t  ngx_http_ssl_commands[] = {
+    ! type changed static ngx_conf_bitmask_t  ngx_http_core_keepalive_disable[] = {
+    ! static ngx_command_t  ngx_http_core_commands[] = {
+    ! static ngx_command_t  ngx_mail_proxy_commands[] = {
+- } ngx_http_image_filter_conf_t;
+    +     ngx_uint_t                   sharpen;   (7+9+1 F LOC)
+    +     ngx_http_complex_value_t    *shcv;
+Running: patch_file_stats 1.0.11 1.0.12 
+*** Stats for patch_db/1.0.11_1.0.12.patch:
+ - Files changed: 240
+ - Functions changed: 57
+ - LOC added: 466
+ - LOC changed: 245
+ - LOC removed: 143
+ - LOC total: 854
+* VAR_DEL:
+    - static long  ngx_ssl_protocols[] = {
+* VAR_CHG:
+    ! static ngx_conf_bitmask_t  ngx_http_ssl_protocols[] = {
+    ! static ngx_conf_bitmask_t  ngx_mail_ssl_protocols[] = {
+- } ngx_http_ssi_ctx_t;
+    + ngx_uint_t                ncaptures;       (7+9+10 F LOC)
+    + int                      *captures;
+    + u_char                   *captures_data;
+Running: patch_file_stats 1.0.12 1.0.13 
+*** Stats for patch_db/1.0.12_1.0.13.patch:
+ - Files changed: 34
+ - Functions changed: 60
+ - LOC added: 58
+ - LOC changed: 385
+ - LOC removed: 20
+ - LOC total: 463
+* VAR_CHG:
+    ! static ngx_str_t ngx_http_error_pages[] = {
+    ! static ngx_str_t ngx_http_status_lines[] = {
+* VAR_ADD:
+    + static char ngx_http_error_307_page[] =
+
+Running: patch_file_stats 1.0.13 1.0.14 
+*** Stats for patch_db/1.0.13_1.0.14.patch:
+ - Files changed: 6
+ - Functions changed: 9
+ - LOC added: 14
+ - LOC changed: 30
+ - LOC removed: 0
+ - LOC total: 44
+Running: patch_file_stats 1.0.14 1.0.15 
+*** Stats for patch_db/1.0.14_1.0.15.patch:
+ - Files changed: 2
+ - Functions changed: 35
+ - LOC added: 151
+ - LOC changed: 130
+ - LOC removed: 1
+ - LOC total: 282

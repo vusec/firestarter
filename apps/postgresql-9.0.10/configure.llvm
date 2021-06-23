@@ -1,0 +1,22 @@
+#!/bin/bash
+
+MYPWD=`pwd`
+ROOT=${LLVMAPPS-../..}
+
+. ${ROOT}/apps/scripts/include/configure.llvm.inc
+
+LLVM_LIBS=`build_llvm_libs $*`
+
+# Ensure that ar arguments are dash-prefixed
+find src/ -name "Makefile*" -exec sed -i 's/AROPT = cr/AROPT = -cr/' {} \;
+find src/ -name "Makefile*" -exec sed -i 's/AROPT = crs/AROPT = -crs/' {} \;
+
+./configure --prefix=$MYPWD/install --datarootdir=$MYPWD/datadir \
+   --without-readline \
+   CC="$LLVMGOLD_CC" \
+   CFLAGS="$LLVMGOLD_CFLAGS" \
+   LDFLAGS="$LLVMGOLD_LDFLAGS" \
+   LDFLAGS_EX="$LLVM_LIBS" \
+   RANLIB="$LLVMGOLD_RANLIB" \
+   AR="$LLVMGOLD_AR"
+

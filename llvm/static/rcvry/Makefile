@@ -1,0 +1,88 @@
+ROOT=../../..
+
+include $(ROOT)/Makefile.inc
+
+MODULE = rcvry
+
+CFLAGS+=-D_LARGEFILE64_SOURCE -D_GNU_SOURCE -mrtm -DRCVRY_CLOSE_GATE_AFTER
+#CFLAGS+= -DDEBUG_PRINT
+
+ifeq ($(RCVRY_PRINT_TO_FILE), 1)
+CFLAGS+= -DRCVRY_PRINT_TO_FILE
+endif
+
+ifeq ($(RCVRY_PER_PROCESS_PROFILE_OUTPUT), 1)
+CFLAGS+= -DRCVRY_PER_PROCESS_PROFILE_OUTPUT
+endif
+
+ifeq ($(LTCKPT_SET_PIC), 1)
+CFLAGS+= -fpic
+endif
+
+ifeq ($(RCVRY_LONGJMP), 1)
+CFLAGS+=-DRCVRY_LONGJMP
+endif
+
+ifeq ($(RCVRY_WINDOW_PROFILING), 1)
+CFLAGS+=-DRCVRY_WINDOW_PROFILING
+endif
+
+ifeq ($(RCVRY_WINDOW_PROFILING_BBTRACING), 1)
+CFLAGS+=-DRCVRY_WINDOW_PROFILING_BBTRACING
+endif
+
+ifeq ($(RCVRY_BBTRACE_APPEND), 1)
+CFLAGS+= -DRCVRY_BBTRACE_APPEND
+endif
+
+ifeq ($(EDFI_BB_TRACING_FOR_RCVRY), 1)
+CFLAGS+= -DEDFI_BB_TRACING_FOR_RCVRY
+endif
+
+ifeq ($(RCVRY_DYNAMIC_SWITCH), 1)
+CFLAGS+=-DRCVRY_DYNAMIC_SWITCH
+endif
+
+ifeq ($(RCVRY_CKPT_DEFAULT_TO_UNDOLOG), 1)
+CFLAGS+=-DRCVRY_CKPT_DEFAULT_TO_UNDOLOG
+endif
+
+ifeq ($(RCVRY_AUTO_ADAPT), 1)
+CFLAGS+=-DRCVRY_AUTO_ADAPT
+endif
+
+ifeq ($(RCVRY_FI), 1)
+CFLAGS+=-DRCVRY_FI
+endif
+
+ifeq ($(RCVRY_DBG_DISABLE_SIGNAL_HANDLER), 1)
+CFLAGS+=-DRCVRY_DBG_DISABLE_SIGNAL_HANDLER
+endif
+
+ifeq ($(RCVRY_NO_PRINT), 1)
+CFLAGS+=-DRCVRY_NO_PRINT
+endif
+
+ifeq ($(RCVRY_BBTRACE_EXCLUDE_STARTUP), 1)
+CFLAGS+=-DRCVRY_BBTRACE_EXCLUDE_STARTUP
+endif
+
+ifeq ($(RCVRY_TIME_TO_RECOVER), 1)
+CFLAGS+=-DRCVRY_TIME_TO_RECOVER
+endif
+
+SRCS = rcvry_dispatch.c                        \
+       rcvry_signal.c                          \
+       rcvry_actions.c                         \
+       rcvry_util.c			       \
+       rcvry_fi.c
+
+OBJS= $(SRCS:%.c=%.o)
+
+BUILD_ON_X86_64=yes
+
+USE_SECTIONIFY=YES
+SECTIONIFY_DATA_SECTION_MAP=.*/ltckpt_data
+SECTIONIFY_FUNCTION_SECTION_MAP=.*/ltckpt_functions
+
+include $(ROOT)/llvm/static/Makefile.inc

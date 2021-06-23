@@ -1,0 +1,41 @@
+#!/bin/bash
+
+PROC_NAME="nginx"
+BIN_PATH=`pwd`/install/sbin/nginx
+BC_PATH=`pwd`/objs/nginx.bc
+
+if [ -f "$BIN_PATH.traced" ]; then
+	PROC_NAME="$PROC_NAME.traced"
+fi
+
+PATCH_URL="http://nginx.org/download"
+PATCH_BASE_VERSION="0.8.54"
+PATCH_PROG_PREFIX="nginx-"
+PATCH_PROG_SUFFIX=".tar.gz"
+
+ROOT=${LLVMAPPS_ROOT-../..}
+
+. ${ROOT}/apps/scripts/include/cmdctl.inc
+
+mode=$1
+shift || mode="no_action"
+
+function cmdctl_server_ps {
+    FIRST_PID=`ps --sort=start_time -eo comm,pid,args | grep -e "^$PROC_NAME " | head -1 | awk '{ print $2; }'`
+    ps --sort=start_time ${2} -eo comm,${1},ppid,pid,args | grep " $FIRST_PID " | grep -v grep
+}
+
+case "$mode" in
+  'start')
+    echo "***** Starting $PROC_NAME httpd server..."
+    eval $LLVM_CMD_PREFIX $BIN_PATH $*
+    ;;
+  'cleanup')
+    cmdctl_server_cleanup
+    rm -f install/logs/*
+    ;;
+  *)
+    cmdctl_server_action $mode $*
+    ;;
+esac
+

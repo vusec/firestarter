@@ -1,0 +1,216 @@
+diff -p -N --text -r /tmp/patch.inc.get1.sQiKvH/src/core/nginx.h /tmp/patch.inc.get2.tMutGU/src/core/nginx.h
+*** /tmp/patch.inc.get1.sQiKvH/src/core/nginx.h	2013-04-29 23:58:22.753908739 +0200
+--- /tmp/patch.inc.get2.tMutGU/src/core/nginx.h	2013-04-29 23:58:26.373926694 +0200
+***************
+*** 8,15 ****
+  #define _NGINX_H_INCLUDED_
+  
+  
+! #define nginx_version         9001
+! #define NGINX_VERSION      "0.9.1"
+  #define NGINX_VER          "nginx/" NGINX_VERSION
+  
+  #define NGINX_VAR          "NGINX"
+--- 8,15 ----
+  #define _NGINX_H_INCLUDED_
+  
+  
+! #define nginx_version         9002
+! #define NGINX_VERSION      "0.9.2"
+  #define NGINX_VER          "nginx/" NGINX_VERSION
+  
+  #define NGINX_VAR          "NGINX"
+diff -p -N --text -r /tmp/patch.inc.get1.sQiKvH/src/event/ngx_event_accept.c /tmp/patch.inc.get2.tMutGU/src/event/ngx_event_accept.c
+*** /tmp/patch.inc.get1.sQiKvH/src/event/ngx_event_accept.c	2013-04-29 23:58:22.753908739 +0200
+--- /tmp/patch.inc.get2.tMutGU/src/event/ngx_event_accept.c	2013-04-29 23:58:26.369926671 +0200
+*************** ngx_event_accept(ngx_event_t *ev)
+*** 26,31 ****
+--- 26,34 ----
+      ngx_connection_t  *c, *lc;
+      ngx_event_conf_t  *ecf;
+      u_char             sa[NGX_SOCKADDRLEN];
++ #if (NGX_HAVE_ACCEPT4)
++     static ngx_uint_t  use_accept4 = 1;
++ #endif
+  
+      ecf = ngx_event_get_conf(ngx_cycle->conf_ctx, ngx_event_core_module);
+  
+*************** ngx_event_accept(ngx_event_t *ev)
+*** 47,53 ****
+          socklen = NGX_SOCKADDRLEN;
+  
+  #if (NGX_HAVE_ACCEPT4)
+!         s = accept4(lc->fd, (struct sockaddr *) sa, &socklen, SOCK_NONBLOCK);
+  #else
+          s = accept(lc->fd, (struct sockaddr *) sa, &socklen);
+  #endif
+--- 50,61 ----
+          socklen = NGX_SOCKADDRLEN;
+  
+  #if (NGX_HAVE_ACCEPT4)
+!         if (use_accept4) {
+!             s = accept4(lc->fd, (struct sockaddr *) sa, &socklen,
+!                         SOCK_NONBLOCK);
+!         } else {
+!             s = accept(lc->fd, (struct sockaddr *) sa, &socklen);
+!         }
+  #else
+          s = accept(lc->fd, (struct sockaddr *) sa, &socklen);
+  #endif
+*************** ngx_event_accept(ngx_event_t *ev)
+*** 61,69 ****
+--- 69,90 ----
+                  return;
+              }
+  
++ #if (NGX_HAVE_ACCEPT4)
++             ngx_log_error((ngx_uint_t) ((err == NGX_ECONNABORTED) ?
++                                              NGX_LOG_ERR : NGX_LOG_ALERT),
++                           ev->log, err,
++                           use_accept4 ? "accept4() failed" : "accept() failed");
++ 
++             if (use_accept4 && err == NGX_ENOSYS) {
++                 use_accept4 = 0;
++                 ngx_inherited_nonblocking = 0;
++                 continue;
++             }
++ #else
+              ngx_log_error((ngx_uint_t) ((err == NGX_ECONNABORTED) ?
+                                               NGX_LOG_ERR : NGX_LOG_ALERT),
+                            ev->log, err, "accept() failed");
++ #endif
+  
+              if (err == NGX_ECONNABORTED) {
+                  if (ngx_event_flags & NGX_USE_KQUEUE_EVENT) {
+diff -p -N --text -r /tmp/patch.inc.get1.sQiKvH/src/event/ngx_event_openssl.c /tmp/patch.inc.get2.tMutGU/src/event/ngx_event_openssl.c
+*** /tmp/patch.inc.get1.sQiKvH/src/event/ngx_event_openssl.c	2013-04-29 23:58:22.753908739 +0200
+--- /tmp/patch.inc.get2.tMutGU/src/event/ngx_event_openssl.c	2013-04-29 23:58:26.369926671 +0200
+*************** ngx_ssl_create(ngx_ssl_t *ssl, ngx_uint_
+*** 155,161 ****
+  
+      SSL_CTX_set_options(ssl->ctx, SSL_OP_MICROSOFT_SESS_ID_BUG);
+      SSL_CTX_set_options(ssl->ctx, SSL_OP_NETSCAPE_CHALLENGE_BUG);
+-     SSL_CTX_set_options(ssl->ctx, SSL_OP_NETSCAPE_REUSE_CIPHER_CHANGE_BUG);
+  
+      /* server side options */
+  
+--- 155,160 ----
+diff -p -N --text -r /tmp/patch.inc.get1.sQiKvH/src/http/modules/ngx_http_not_modified_filter_module.c /tmp/patch.inc.get2.tMutGU/src/http/modules/ngx_http_not_modified_filter_module.c
+*** /tmp/patch.inc.get1.sQiKvH/src/http/modules/ngx_http_not_modified_filter_module.c	2013-04-29 23:58:22.749908714 +0200
+--- /tmp/patch.inc.get2.tMutGU/src/http/modules/ngx_http_not_modified_filter_module.c	2013-04-29 23:58:26.369926671 +0200
+***************
+*** 9,15 ****
+  #include <ngx_http.h>
+  
+  
+! 
+  static ngx_int_t ngx_http_not_modified_filter_init(ngx_conf_t *cf);
+  
+  
+--- 9,16 ----
+  #include <ngx_http.h>
+  
+  
+! static ngx_int_t ngx_http_test_precondition(ngx_http_request_t *r);
+! static ngx_int_t ngx_http_test_not_modified(ngx_http_request_t *r);
+  static ngx_int_t ngx_http_not_modified_filter_init(ngx_conf_t *cf);
+  
+  
+*************** static ngx_http_output_header_filter_pt
+*** 50,65 ****
+  static ngx_int_t
+  ngx_http_not_modified_header_filter(ngx_http_request_t *r)
+  {
+-     time_t                     ims;
+-     ngx_http_core_loc_conf_t  *clcf;
+- 
+      if (r->headers_out.status != NGX_HTTP_OK
+          || r != r->main
+-         || r->headers_in.if_modified_since == NULL
+          || r->headers_out.last_modified_time == -1)
+      {
+          return ngx_http_next_header_filter(r);
+      }
+  
+      clcf = ngx_http_get_module_loc_conf(r, ngx_http_core_module);
+  
+--- 51,100 ----
+  static ngx_int_t
+  ngx_http_not_modified_header_filter(ngx_http_request_t *r)
+  {
+      if (r->headers_out.status != NGX_HTTP_OK
+          || r != r->main
+          || r->headers_out.last_modified_time == -1)
+      {
+          return ngx_http_next_header_filter(r);
+      }
++  
++     if (r->headers_in.if_unmodified_since) {
++         return ngx_http_test_precondition(r);
++     }
++  
++     if (r->headers_in.if_modified_since) {
++         return ngx_http_test_not_modified(r);
++     }
++ 
++     return ngx_http_next_header_filter(r);
++ }
++ 
++ 
++ static ngx_int_t
++ ngx_http_test_precondition(ngx_http_request_t *r)
++ {
++     time_t  iums;
++ 
++     iums = ngx_http_parse_time(r->headers_in.if_unmodified_since->value.data,
++                                r->headers_in.if_unmodified_since->value.len);
++ 
++     ngx_log_debug2(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
++                  "http iums:%d lm:%d", iums, r->headers_out.last_modified_time);
++ 
++     if (iums >= r->headers_out.last_modified_time) {
++         return ngx_http_next_header_filter(r);
++     }
++ 
++     return ngx_http_filter_finalize_request(r, NULL,
++                                             NGX_HTTP_PRECONDITION_FAILED);
++ }
++ 
++ 
++ static ngx_int_t
++ ngx_http_test_not_modified(ngx_http_request_t *r)
++ {
++     time_t                     ims;
++     ngx_http_core_loc_conf_t  *clcf;
+  
+      clcf = ngx_http_get_module_loc_conf(r, ngx_http_core_module);
+  
+diff -p -N --text -r /tmp/patch.inc.get1.sQiKvH/src/http/ngx_http_request.c /tmp/patch.inc.get2.tMutGU/src/http/ngx_http_request.c
+*** /tmp/patch.inc.get1.sQiKvH/src/http/ngx_http_request.c	2013-04-29 23:58:22.753908739 +0200
+--- /tmp/patch.inc.get2.tMutGU/src/http/ngx_http_request.c	2013-04-29 23:58:26.369926671 +0200
+*************** ngx_http_header_t  ngx_http_headers_in[]
+*** 88,93 ****
+--- 88,97 ----
+                   offsetof(ngx_http_headers_in_t, if_modified_since),
+                   ngx_http_process_unique_header_line },
+  
++     { ngx_string("If-Unmodified-Since"),
++                  offsetof(ngx_http_headers_in_t, if_unmodified_since),
++                  ngx_http_process_unique_header_line },
++ 
+      { ngx_string("User-Agent"), offsetof(ngx_http_headers_in_t, user_agent),
+                   ngx_http_process_user_agent },
+  
+diff -p -N --text -r /tmp/patch.inc.get1.sQiKvH/src/http/ngx_http_request.h /tmp/patch.inc.get2.tMutGU/src/http/ngx_http_request.h
+*** /tmp/patch.inc.get1.sQiKvH/src/http/ngx_http_request.h	2013-04-29 23:58:22.749908714 +0200
+--- /tmp/patch.inc.get2.tMutGU/src/http/ngx_http_request.h	2013-04-29 23:58:26.365926648 +0200
+*************** typedef struct {
+*** 167,172 ****
+--- 167,173 ----
+      ngx_table_elt_t                  *host;
+      ngx_table_elt_t                  *connection;
+      ngx_table_elt_t                  *if_modified_since;
++     ngx_table_elt_t                  *if_unmodified_since;
+      ngx_table_elt_t                  *user_agent;
+      ngx_table_elt_t                  *referer;
+      ngx_table_elt_t                  *content_length;

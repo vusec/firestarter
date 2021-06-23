@@ -1,0 +1,57 @@
+#!/bin/bash
+
+set -o errexit
+set -o errtrace
+set -o nounset
+
+RUNBENCH_THREADS=${RUNBENCH_THREADS:-1}
+RUNBENCH_TRANSACTIONS=${RUNBENCH_TRANSACTIONS:-10000}
+RUNBENCH_WORKLOAD=${RUNBENCH_WORKLOAD:-read_write}
+DBMS_OPTIONS=${DBMS_OPTIONS:- --db-driver=mysql --mysql-db=test --mysql-port=1080 --mysql-socket=./install/mysql.sock --mysql-user=root --mysql-password=root}
+SYSBENCH=${SYSBENCH:-../mysql*/install/bin/sysbench}
+
+#
+# Special configurations.
+#
+CLIENT_CP=${CLIENT_CP:-0}
+if [ $CLIENT_CP -eq 1 ]; then
+	if [ $RUNBENCH_THREADS -eq 1 ]; then
+		RUNBENCH_THREADS=10
+	fi
+fi
+
+echo "Runbench started (`date`). Workload is ${RUNBENCH_WORKLOAD}"
+CLIENT_REQ="DROP TABLE IF EXISTS sbtest" ./clientctl run
+
+#OLTP_OPTIONS='--test=oltp --oltp-table-size=1000000'
+OLTP_OPTIONS='--test=oltp'
+SYSBENCH_OPTIONS="--num-threads=$RUNBENCH_THREADS --max-requests=$RUNBENCH_TRANSACTIONS --max-time=900"
+
+# OLTP options
+# --oltp-test-mode <option>: simpe (simple), complex (advanced transactional) and nontrx (non-transactional); default is complex
+# --oltp-read-only : Read-only mode. No UPDATE, DELETE or INSERT queries will be performed; off by default
+# --oltp-table-size : Number of rows in the test table; default: 10000
+
+# MySQL options
+# --mysql-table-engine : myisam, innodb, heap, ndbcluster, bdb, maria, falcon, pbxt; default: innodb
+
+if [ "$RUNBENCH_WORKLOAD" == "read" ]; then
+# Prepare
+${SYSBENCH} ${DBMS_OPTIONS} ${OLTP_OPTIONS} prepare
+# Read-only
+${SYSBENCH} ${DBMS_OPTIONS} ${OLTP_OPTIONS} ${SYSBENCH_OPTIONS} --oltp-read-only run
+# Cleanup
+${SYSBENCH} ${DBMS_OPTIONS} ${OLTP_OPTIONS} cleanup
+
+elif [ "$RUNBENCH_WORKLOAD" == "read_write" ]; then
+# Prepare
+${SYSBENCH} ${DBMS_OPTIONS} ${OLTP_OPTIONS} prepare
+# Read-write
+${SYSBENCH} ${DBMS_OPTIONS} ${OLTP_OPTIONS} ${SYSBENCH_OPTIONS} run
+# Cleanup
+${SYSBENCH} ${DBMS_OPTIONS} ${OLTP_OPTIONS} cleanup
+else
+echo "ERROR: mysql runbench: invalid workload"
+exit 1
+fi
+

@@ -1,0 +1,14 @@
+*.a
+*.bc
+*.bcl
+*.ll
+*.la
+*.lo
+*.o
+*.so
+Makefile
+Makefile.configure
+/objs/
+/objs.configure/
+install/
+ltckpt_profile*.txt

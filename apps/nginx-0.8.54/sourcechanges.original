@@ -1,0 +1,34 @@
+Index: src/http/ngx_http_variables.c
+===================================================================
+--- src/http/ngx_http_variables.c	(revision 730)
++++ src/http/ngx_http_variables.c	(revision 731)
+@@ -258,10 +258,8 @@
+ };
+ 
+ 
+-ngx_http_variable_value_t  ngx_http_variable_null_value =
+-    ngx_http_variable("");
+-ngx_http_variable_value_t  ngx_http_variable_true_value =
+-    ngx_http_variable("1");
++ngx_http_variable_value_t  ngx_http_variable_null_value;
++ngx_http_variable_value_t  ngx_http_variable_true_value;
+ 
+ 
+ ngx_http_variable_t *
+@@ -1868,6 +1866,16 @@
+     ngx_http_variable_t        *v, *av;
+     ngx_http_core_main_conf_t  *cmcf;
+ 
++    /* XXX Fix for unsupported struct initializers. */
++    memset(&ngx_http_variable_null_value, 0, sizeof(ngx_http_variable_null_value));
++    ngx_http_variable_null_value.len = sizeof("")-1;
++    ngx_http_variable_null_value.valid = 1;
++    ngx_http_variable_null_value.data = "";
++    memset(&ngx_http_variable_true_value, 0, sizeof(ngx_http_variable_true_value));
++    ngx_http_variable_true_value.len = sizeof("1")-1;
++    ngx_http_variable_true_value.valid = 1;
++    ngx_http_variable_true_value.data = "1";
++
+     /* set the handlers for the indexed http variables */
+ 
+     cmcf = ngx_http_conf_get_module_main_conf(cf, ngx_http_core_module);

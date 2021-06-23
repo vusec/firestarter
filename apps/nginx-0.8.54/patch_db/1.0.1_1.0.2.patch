@@ -1,0 +1,558 @@
+diff -p -N --text -r /tmp/patch.inc.get1.43hrTL/src/core/nginx.h /tmp/patch.inc.get2.1uYbBu/src/core/nginx.h
+*** /tmp/patch.inc.get1.43hrTL/src/core/nginx.h	2013-04-30 01:49:02.342832697 +0200
+--- /tmp/patch.inc.get2.1uYbBu/src/core/nginx.h	2013-04-30 01:49:05.550848585 +0200
+***************
+*** 8,15 ****
+  #define _NGINX_H_INCLUDED_
+  
+  
+! #define nginx_version      1000001
+! #define NGINX_VERSION      "1.0.1"
+  #define NGINX_VER          "nginx/" NGINX_VERSION
+  
+  #define NGINX_VAR          "NGINX"
+--- 8,15 ----
+  #define _NGINX_H_INCLUDED_
+  
+  
+! #define nginx_version      1000002
+! #define NGINX_VERSION      "1.0.2"
+  #define NGINX_VER          "nginx/" NGINX_VERSION
+  
+  #define NGINX_VAR          "NGINX"
+diff -p -N --text -r /tmp/patch.inc.get1.43hrTL/src/core/ngx_shmtx.c /tmp/patch.inc.get2.1uYbBu/src/core/ngx_shmtx.c
+*** /tmp/patch.inc.get1.43hrTL/src/core/ngx_shmtx.c	2013-04-30 01:49:02.342832697 +0200
+--- /tmp/patch.inc.get2.1uYbBu/src/core/ngx_shmtx.c	2013-04-30 01:49:05.550848585 +0200
+*************** ngx_shmtx_create(ngx_shmtx_t *mtx, void
+*** 16,24 ****
+--- 16,181 ----
+  {
+      mtx->lock = addr;
+  
++     if (mtx->spin == (ngx_uint_t) -1) {
++         return NGX_OK;
++     }
++ 
++     mtx->spin = 2048;
++ 
++ #if (NGX_HAVE_POSIX_SEM)
++ 
++     if (sem_init(&mtx->sem, 1, 0) == -1) {
++         ngx_log_error(NGX_LOG_ALERT, ngx_cycle->log, ngx_errno,
++                       "sem_init() failed");
++     } else {
++         mtx->semaphore = 1;
++     }
++ 
++ #endif
++ 
+      return NGX_OK;
+  }
+  
++ 
++ void
++ ngx_shmtx_destory(ngx_shmtx_t *mtx)
++ {
++ #if (NGX_HAVE_POSIX_SEM)
++ 
++     if (mtx->semaphore) {
++         if (sem_destroy(&mtx->sem) == -1) {
++             ngx_log_error(NGX_LOG_ALERT, ngx_cycle->log, ngx_errno,
++                           "sem_destroy() failed");
++         }
++     }
++ 
++ #endif
++ }
++ 
++ 
++ ngx_uint_t
++ ngx_shmtx_trylock(ngx_shmtx_t *mtx)
++ {
++     ngx_atomic_uint_t  val;
++ 
++     val = *mtx->lock;
++ 
++     return ((val & 0x80000000) == 0
++             && ngx_atomic_cmp_set(mtx->lock, val, val | 0x80000000));
++ }
++ 
++ 
++ void
++ ngx_shmtx_lock(ngx_shmtx_t *mtx)
++ {
++     ngx_uint_t         i, n;
++     ngx_atomic_uint_t  val;
++ 
++     ngx_log_debug0(NGX_LOG_DEBUG_CORE, ngx_cycle->log, 0, "shmtx lock");
++ 
++     for ( ;; ) {
++ 
++         val = *mtx->lock;
++ 
++         if ((val & 0x80000000) == 0
++             && ngx_atomic_cmp_set(mtx->lock, val, val | 0x80000000))
++         {
++             return;
++         }
++ 
++         if (ngx_ncpu > 1) {
++ 
++             for (n = 1; n < mtx->spin; n <<= 1) {
++ 
++                 for (i = 0; i < n; i++) {
++                     ngx_cpu_pause();
++                 }
++ 
++                 val = *mtx->lock;
++ 
++                 if ((val & 0x80000000) == 0
++                     && ngx_atomic_cmp_set(mtx->lock, val, val | 0x80000000))
++                 {
++                     return;
++                 }
++             }
++         }
++ 
++ #if (NGX_HAVE_POSIX_SEM)
++ 
++         if (mtx->semaphore) {
++             val = *mtx->lock;
++ 
++             if ((val & 0x80000000)
++                 && ngx_atomic_cmp_set(mtx->lock, val, val + 1))
++             {
++                 ngx_log_debug1(NGX_LOG_DEBUG_CORE, ngx_cycle->log, 0,
++                                "shmtx wait %XA", val);
++ 
++                 while (sem_wait(&mtx->sem) == -1) {
++                     ngx_err_t  err;
++ 
++                     err = ngx_errno;
++ 
++                     if (err != NGX_EINTR) {
++                         ngx_log_error(NGX_LOG_ALERT, ngx_cycle->log, err,
++                                    "sem_wait() failed while waiting on shmtx");
++                         break;
++                     }
++                 }
++ 
++                 ngx_log_debug0(NGX_LOG_DEBUG_CORE, ngx_cycle->log, 0,
++                                "shmtx awoke");
++             }
++ 
++             continue;
++         }
++ 
++ #endif
++ 
++         ngx_sched_yield();
++     }
++ }
++ 
++ 
++ void
++ ngx_shmtx_unlock(ngx_shmtx_t *mtx)
++ {
++     ngx_atomic_uint_t  val, old, wait;
++ 
++     if (mtx->spin != (ngx_uint_t) -1) {
++         ngx_log_debug0(NGX_LOG_DEBUG_CORE, ngx_cycle->log, 0, "shmtx unlock");
++     }
++ 
++     for ( ;; ) {
++ 
++         old = *mtx->lock;
++         wait = old & 0x7fffffff;
++         val = wait ? wait - 1 : 0;
++ 
++         if (ngx_atomic_cmp_set(mtx->lock, old, val)) {
++             break;
++         }
++     }
++ 
++ #if (NGX_HAVE_POSIX_SEM)
++ 
++     if (wait == 0 || !mtx->semaphore) {
++         return;
++     }
++ 
++     ngx_log_debug1(NGX_LOG_DEBUG_CORE, ngx_cycle->log, 0,
++                    "shmtx wake %XA", old);
++ 
++     if (sem_post(&mtx->sem) == -1) {
++         ngx_log_error(NGX_LOG_ALERT, ngx_cycle->log, ngx_errno,
++                       "sem_post() failed while wake shmtx");
++     }
++ 
++ #endif
++ }
++ 
++ 
+  #else
+  
+  
+*************** ngx_shmtx_destory(ngx_shmtx_t *mtx)
+*** 65,68 ****
+--- 222,283 ----
+  }
+  
+  
++ ngx_uint_t
++ ngx_shmtx_trylock(ngx_shmtx_t *mtx)
++ {
++     ngx_err_t  err;
++ 
++     err = ngx_trylock_fd(mtx->fd);
++ 
++     if (err == 0) {
++         return 1;
++     }
++ 
++     if (err == NGX_EAGAIN) {
++         return 0;
++     }
++ 
++ #if __osf__ /* Tru64 UNIX */
++ 
++     if (err == NGX_EACCESS) {
++         return 0;
++     }
++ 
++ #endif
++ 
++     ngx_log_abort(err, ngx_trylock_fd_n " %s failed", mtx->name);
++ 
++     return 0;
++ }
++ 
++ 
++ void
++ ngx_shmtx_lock(ngx_shmtx_t *mtx)
++ {
++     ngx_err_t  err;
++ 
++     err = ngx_lock_fd(mtx->fd);
++ 
++     if (err == 0) {
++         return;
++     }
++ 
++     ngx_log_abort(err, ngx_lock_fd_n " %s failed", mtx->name);
++ }
++ 
++ 
++ void
++ ngx_shmtx_unlock(ngx_shmtx_t *mtx)
++ {
++     ngx_err_t  err;
++ 
++     err = ngx_unlock_fd(mtx->fd);
++ 
++     if (err == 0) {
++         return;
++     }
++ 
++     ngx_log_abort(err, ngx_unlock_fd_n " %s failed", mtx->name);
++ }
++ 
+  #endif
+diff -p -N --text -r /tmp/patch.inc.get1.43hrTL/src/core/ngx_shmtx.h /tmp/patch.inc.get2.1uYbBu/src/core/ngx_shmtx.h
+*** /tmp/patch.inc.get1.43hrTL/src/core/ngx_shmtx.h	2013-04-30 01:49:02.342832697 +0200
+--- /tmp/patch.inc.get2.1uYbBu/src/core/ngx_shmtx.h	2013-04-30 01:49:05.550848585 +0200
+***************
+*** 15,109 ****
+  typedef struct {
+  #if (NGX_HAVE_ATOMIC_OPS)
+      ngx_atomic_t  *lock;
+  #else
+      ngx_fd_t       fd;
+      u_char        *name;
+  #endif
+  } ngx_shmtx_t;
+  
+  
+  ngx_int_t ngx_shmtx_create(ngx_shmtx_t *mtx, void *addr, u_char *name);
+- 
+- 
+- #if (NGX_HAVE_ATOMIC_OPS)
+- 
+- static ngx_inline ngx_uint_t
+- ngx_shmtx_trylock(ngx_shmtx_t *mtx)
+- {
+-     return (*mtx->lock == 0 && ngx_atomic_cmp_set(mtx->lock, 0, ngx_pid));
+- }
+- 
+- #define ngx_shmtx_lock(mtx)   ngx_spinlock((mtx)->lock, ngx_pid, 1024)
+- 
+- #define ngx_shmtx_unlock(mtx) (void) ngx_atomic_cmp_set((mtx)->lock, ngx_pid, 0)
+- 
+- #define ngx_shmtx_destory(mtx)
+- 
+- 
+- #else
+- 
+- static ngx_inline ngx_uint_t
+- ngx_shmtx_trylock(ngx_shmtx_t *mtx)
+- {
+-     ngx_err_t  err;
+- 
+-     err = ngx_trylock_fd(mtx->fd);
+- 
+-     if (err == 0) {
+-         return 1;
+-     }
+- 
+-     if (err == NGX_EAGAIN) {
+-         return 0;
+-     }
+- 
+- #if __osf__ /* Tru64 UNIX */
+- 
+-     if (err == NGX_EACCESS) {
+-         return 0;
+-     }
+- 
+- #endif
+- 
+-     ngx_log_abort(err, ngx_trylock_fd_n " %s failed", mtx->name);
+- 
+-     return 0;
+- }
+- 
+- 
+- static ngx_inline void
+- ngx_shmtx_lock(ngx_shmtx_t *mtx)
+- {
+-     ngx_err_t  err;
+- 
+-     err = ngx_lock_fd(mtx->fd);
+- 
+-     if (err == 0) {
+-         return;
+-     }
+- 
+-     ngx_log_abort(err, ngx_lock_fd_n " %s failed", mtx->name);
+- }
+- 
+- 
+- static ngx_inline void
+- ngx_shmtx_unlock(ngx_shmtx_t *mtx)
+- {
+-     ngx_err_t  err;
+- 
+-     err = ngx_unlock_fd(mtx->fd);
+- 
+-     if (err == 0) {
+-         return;
+-     }
+- 
+-     ngx_log_abort(err, ngx_unlock_fd_n " %s failed", mtx->name);
+- }
+- 
+- 
+  void ngx_shmtx_destory(ngx_shmtx_t *mtx);
+! 
+! #endif
+  
+  
+  #endif /* _NGX_SHMTX_H_INCLUDED_ */
+--- 15,37 ----
+  typedef struct {
+  #if (NGX_HAVE_ATOMIC_OPS)
+      ngx_atomic_t  *lock;
++ #if (NGX_HAVE_POSIX_SEM)
++     ngx_uint_t     semaphore;
++     sem_t          sem;
++ #endif
+  #else
+      ngx_fd_t       fd;
+      u_char        *name;
+  #endif
++     ngx_uint_t     spin;
+  } ngx_shmtx_t;
+  
+  
+  ngx_int_t ngx_shmtx_create(ngx_shmtx_t *mtx, void *addr, u_char *name);
+  void ngx_shmtx_destory(ngx_shmtx_t *mtx);
+! ngx_uint_t ngx_shmtx_trylock(ngx_shmtx_t *mtx);
+! void ngx_shmtx_lock(ngx_shmtx_t *mtx);
+! void ngx_shmtx_unlock(ngx_shmtx_t *mtx);
+  
+  
+  #endif /* _NGX_SHMTX_H_INCLUDED_ */
+diff -p -N --text -r /tmp/patch.inc.get1.43hrTL/src/event/ngx_event.c /tmp/patch.inc.get2.1uYbBu/src/event/ngx_event.c
+*** /tmp/patch.inc.get1.43hrTL/src/event/ngx_event.c	2013-04-30 01:49:02.338832661 +0200
+--- /tmp/patch.inc.get2.1uYbBu/src/event/ngx_event.c	2013-04-30 01:49:05.550848585 +0200
+*************** ngx_event_module_init(ngx_cycle_t *cycle
+*** 519,524 ****
+--- 519,525 ----
+      shared = shm.addr;
+  
+      ngx_accept_mutex_ptr = (ngx_atomic_t *) shared;
++     ngx_accept_mutex.spin = (ngx_uint_t) -1;
+  
+      if (ngx_shmtx_create(&ngx_accept_mutex, shared, cycle->lock_file.data)
+          != NGX_OK)
+diff -p -N --text -r /tmp/patch.inc.get1.43hrTL/src/http/modules/ngx_http_image_filter_module.c /tmp/patch.inc.get2.1uYbBu/src/http/modules/ngx_http_image_filter_module.c
+*** /tmp/patch.inc.get1.43hrTL/src/http/modules/ngx_http_image_filter_module.c	2013-04-30 01:49:02.338832661 +0200
+--- /tmp/patch.inc.get2.1uYbBu/src/http/modules/ngx_http_image_filter_module.c	2013-04-30 01:49:05.546848575 +0200
+*************** ngx_http_image_size(ngx_http_request_t *
+*** 723,729 ****
+  static ngx_buf_t *
+  ngx_http_image_resize(ngx_http_request_t *r, ngx_http_image_filter_ctx_t *ctx)
+  {
+!     int                            sx, sy, dx, dy, ox, oy, size,
+                                     colors, palette, transparent,
+                                     red, green, blue, t;
+      u_char                        *out;
+--- 723,729 ----
+  static ngx_buf_t *
+  ngx_http_image_resize(ngx_http_request_t *r, ngx_http_image_filter_ctx_t *ctx)
+  {
+!     int                            sx, sy, dx, dy, ox, oy, ax, ay, size,
+                                     colors, palette, transparent,
+                                     red, green, blue, t;
+      u_char                        *out;
+*************** transparent:
+*** 852,857 ****
+--- 852,860 ----
+      if (ctx->angle) {
+          src = dst;
+  
++         ax = (dx % 2 == 0) ? 1 : 0;
++         ay = (dy % 2 == 0) ? 1 : 0;
++ 
+          switch (ctx->angle) {
+  
+          case 90:
+*************** transparent:
+*** 861,867 ****
+                  gdImageDestroy(src);
+                  return NULL;
+              }
+!             gdImageCopyRotated(dst, src, dy/2, dx/2, 0, 0, dx, dy, ctx->angle);
+              gdImageDestroy(src);
+  
+              t = dx;
+--- 864,880 ----
+                  gdImageDestroy(src);
+                  return NULL;
+              }
+!             if (ctx->angle == 90) {
+!                 ox = dy / 2 + ay;
+!                 oy = dx / 2 - ax;
+! 
+!             } else {
+!                 ox = dy / 2 - ay;
+!                 oy = dx / 2 + ax;
+!             }
+! 
+!             gdImageCopyRotated(dst, src, ox, oy, 0, 0,
+!                                dx + ax, dy + ay, ctx->angle);
+              gdImageDestroy(src);
+  
+              t = dx;
+*************** transparent:
+*** 875,881 ****
+                  gdImageDestroy(src);
+                  return NULL;
+              }
+!             gdImageCopyRotated(dst, src, dx/2, dy/2, 0, 0, dx, dy, ctx->angle);
+              gdImageDestroy(src);
+              break;
+          }
+--- 888,895 ----
+                  gdImageDestroy(src);
+                  return NULL;
+              }
+!             gdImageCopyRotated(dst, src, dx / 2 - ax, dy / 2 - ay, 0, 0,
+!                                dx + ax, dy + ay, ctx->angle);
+              gdImageDestroy(src);
+              break;
+          }
+diff -p -N --text -r /tmp/patch.inc.get1.43hrTL/src/os/unix/ngx_darwin_config.h /tmp/patch.inc.get2.1uYbBu/src/os/unix/ngx_darwin_config.h
+*** /tmp/patch.inc.get1.43hrTL/src/os/unix/ngx_darwin_config.h	2013-04-30 01:49:02.342832697 +0200
+--- /tmp/patch.inc.get2.1uYbBu/src/os/unix/ngx_darwin_config.h	2013-04-30 01:49:05.554848606 +0200
+***************
+*** 56,61 ****
+--- 56,66 ----
+  #include <ngx_auto_config.h>
+  
+  
++ #if (NGX_HAVE_POSIX_SEM)
++ #include <semaphore.h>
++ #endif
++ 
++ 
+  #if (NGX_HAVE_POLL)
+  #include <poll.h>
+  #endif
+diff -p -N --text -r /tmp/patch.inc.get1.43hrTL/src/os/unix/ngx_freebsd_config.h /tmp/patch.inc.get2.1uYbBu/src/os/unix/ngx_freebsd_config.h
+*** /tmp/patch.inc.get1.43hrTL/src/os/unix/ngx_freebsd_config.h	2013-04-30 01:49:02.346832705 +0200
+--- /tmp/patch.inc.get2.1uYbBu/src/os/unix/ngx_freebsd_config.h	2013-04-30 01:49:05.554848606 +0200
+***************
+*** 68,73 ****
+--- 68,78 ----
+  #include <ngx_auto_config.h>
+  
+  
++ #if (NGX_HAVE_POSIX_SEM)
++ #include <semaphore.h>
++ #endif
++ 
++ 
+  #if (NGX_HAVE_POLL)
+  #include <poll.h>
+  #endif
+diff -p -N --text -r /tmp/patch.inc.get1.43hrTL/src/os/unix/ngx_linux_config.h /tmp/patch.inc.get2.1uYbBu/src/os/unix/ngx_linux_config.h
+*** /tmp/patch.inc.get1.43hrTL/src/os/unix/ngx_linux_config.h	2013-04-30 01:49:02.346832705 +0200
+--- /tmp/patch.inc.get2.1uYbBu/src/os/unix/ngx_linux_config.h	2013-04-30 01:49:05.554848606 +0200
+***************
+*** 58,63 ****
+--- 58,68 ----
+  #include <ngx_auto_config.h>
+  
+  
++ #if (NGX_HAVE_POSIX_SEM)
++ #include <semaphore.h>
++ #endif
++ 
++ 
+  #if (NGX_HAVE_SYS_PRCTL_H)
+  #include <sys/prctl.h>
+  #endif
+diff -p -N --text -r /tmp/patch.inc.get1.43hrTL/src/os/unix/ngx_posix_config.h /tmp/patch.inc.get2.1uYbBu/src/os/unix/ngx_posix_config.h
+*** /tmp/patch.inc.get1.43hrTL/src/os/unix/ngx_posix_config.h	2013-04-30 01:49:02.342832697 +0200
+--- /tmp/patch.inc.get2.1uYbBu/src/os/unix/ngx_posix_config.h	2013-04-30 01:49:05.554848606 +0200
+***************
+*** 96,101 ****
+--- 96,106 ----
+  #include <ngx_auto_config.h>
+  
+  
++ #if (NGX_HAVE_POSIX_SEM)
++ #include <semaphore.h>
++ #endif
++ 
++ 
+  #if (NGX_HAVE_POLL)
+  #include <poll.h>
+  #endif
+diff -p -N --text -r /tmp/patch.inc.get1.43hrTL/src/os/unix/ngx_solaris_config.h /tmp/patch.inc.get2.1uYbBu/src/os/unix/ngx_solaris_config.h
+*** /tmp/patch.inc.get1.43hrTL/src/os/unix/ngx_solaris_config.h	2013-04-30 01:49:02.342832697 +0200
+--- /tmp/patch.inc.get2.1uYbBu/src/os/unix/ngx_solaris_config.h	2013-04-30 01:49:05.554848606 +0200
+***************
+*** 57,62 ****
+--- 57,67 ----
+  #include <ngx_auto_config.h>
+  
+  
++ #if (NGX_HAVE_POSIX_SEM)
++ #include <semaphore.h>
++ #endif
++ 
++ 
+  #if (NGX_HAVE_POLL)
+  #include <poll.h>
+  #endif

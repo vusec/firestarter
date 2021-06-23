@@ -1,0 +1,34 @@
+#!/bin/bash
+
+MYPWD=`pwd`
+ROOT=${LLVMAPPS_ROOT-../..}
+
+. ${ROOT}/apps/scripts/include/configure.llvm.inc
+
+LLVM_LIBS=`build_llvm_libs $*`
+
+rm -rf objs
+
+LLVMGOLD_CC_BIN="`echo $LLVMGOLD_CC | awk '{ print $1; }'`"
+LLVMGOLD_CC_FLAGS="`echo $LLVMGOLD_CC | awk '{$1="";print}'`"
+
+RANLIB="$LLVMGOLD_RANLIB" \
+AR_FLAGS="$LLVMGOLD_AR_FLAGS" \
+#	--without-http-cache \
+./configure \
+        --prefix=$MYPWD/install \
+        --with-cc="$LLVMGOLD_CC_BIN" \
+        --with-cc-opt="-Wno-error -O0 $CFLAGS $LLVMGOLD_CC_FLAGS $LLVMGOLD_CFLAGS" \
+        --with-ld-opt="$LLVM_LIBS $LLVMGOLD_CC_FLAGS $LLVMGOLD_LDFLAGS"
+
+cat Makefile | sed "s/install:/install: build/g" | sed "s/clean:/clean::/g" > __Makefile.tmp
+cp __Makefile.tmp Makefile
+rm -f __Makefile.tmp
+echo ""        >> Makefile
+echo "clean::" >> Makefile
+echo "	cp Makefile.configure Makefile && cp -r objs.configure objs" >> Makefile
+
+rm -rf Makefile.configure objs.configure
+cp Makefile Makefile.configure
+cp -r objs objs.configure
+

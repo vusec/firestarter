@@ -1,0 +1,22 @@
+#!/bin/bash
+
+BENCH_TYPE=${BENCH_TYPE:-1}
+
+. ../scripts/include/cmdctl.inc
+
+if [ $BENCH_TYPE -eq 2 ]; then
+    RUNBENCH_CMD="./runtest" cmdctl_runbench
+    exit 0
+fi
+
+RUNBENCH_WORKLOAD=${RUNBENCH_WORKLOAD:-GET,SET}
+RUNBENCH_THREADS=${RUNBENCH_THREADS:-50}
+RUNBENCH_REQUESTS=${RUNBENCH_REQUESTS:-500000}
+
+SERVER_PORT=1080
+
+RBENCH="install/bin/redis-benchmark -p $SERVER_PORT -q"
+
+RUNBENCH_CMD="$RBENCH -n $RUNBENCH_REQUESTS -c $RUNBENCH_THREADS -t $RUNBENCH_WORKLOAD" cmdctl_runbench \
+    "^SET:.*$::::num_threads=$RUNBENCH_THREADS" \
+    "^GET:.\([0-9.]*\).*$::::requests_per_sec=\1"

@@ -1,0 +1,413 @@
+diff -p -N --text -r /tmp/patch.inc.get1.JzRCu0/src/core/nginx.h /tmp/patch.inc.get2.gWJcaa/src/core/nginx.h
+*** /tmp/patch.inc.get1.JzRCu0/src/core/nginx.h	2013-04-30 00:52:32.150021608 +0200
+--- /tmp/patch.inc.get2.gWJcaa/src/core/nginx.h	2013-04-30 00:52:35.382037666 +0200
+***************
+*** 8,15 ****
+  #define _NGINX_H_INCLUDED_
+  
+  
+! #define nginx_version         9003
+! #define NGINX_VERSION      "0.9.3"
+  #define NGINX_VER          "nginx/" NGINX_VERSION
+  
+  #define NGINX_VAR          "NGINX"
+--- 8,15 ----
+  #define _NGINX_H_INCLUDED_
+  
+  
+! #define nginx_version         9004
+! #define NGINX_VERSION      "0.9.4"
+  #define NGINX_VER          "nginx/" NGINX_VERSION
+  
+  #define NGINX_VAR          "NGINX"
+diff -p -N --text -r /tmp/patch.inc.get1.JzRCu0/src/event/ngx_event_openssl.c /tmp/patch.inc.get2.gWJcaa/src/event/ngx_event_openssl.c
+*** /tmp/patch.inc.get1.JzRCu0/src/event/ngx_event_openssl.c	2013-04-30 00:52:32.150021608 +0200
+--- /tmp/patch.inc.get2.gWJcaa/src/event/ngx_event_openssl.c	2013-04-30 00:52:35.382037666 +0200
+*************** ngx_ssl_handshake(ngx_connection_t *c)
+*** 560,566 ****
+  #if (NGX_DEBUG)
+          {
+          char         buf[129], *s, *d;
+! #if OPENSSL_VERSION_NUMBER >= 0x1000000fL
+          const
+  #endif
+          SSL_CIPHER  *cipher;
+--- 560,566 ----
+  #if (NGX_DEBUG)
+          {
+          char         buf[129], *s, *d;
+! #if OPENSSL_VERSION_NUMBER >= 0x10000000L
+          const
+  #endif
+          SSL_CIPHER  *cipher;
+diff -p -N --text -r /tmp/patch.inc.get1.JzRCu0/src/http/modules/ngx_http_fastcgi_module.c /tmp/patch.inc.get2.gWJcaa/src/http/modules/ngx_http_fastcgi_module.c
+*** /tmp/patch.inc.get1.JzRCu0/src/http/modules/ngx_http_fastcgi_module.c	2013-04-30 00:52:32.150021608 +0200
+--- /tmp/patch.inc.get2.gWJcaa/src/http/modules/ngx_http_fastcgi_module.c	2013-04-30 00:52:35.378037658 +0200
+*************** ngx_http_fastcgi_process_header(ngx_http
+*** 1280,1287 ****
+                          } else {
+                              u->buffer.pos = u->buffer.start;
+                          }
+  #endif
+- 
+                          u->buffer.last = u->buffer.pos;
+                          f->large_stderr = 1;
+                      }
+--- 1280,1288 ----
+                          } else {
+                              u->buffer.pos = u->buffer.start;
+                          }
++ #else
++                         u->buffer.pos = u->buffer.start;
+  #endif
+                          u->buffer.last = u->buffer.pos;
+                          f->large_stderr = 1;
+                      }
+diff -p -N --text -r /tmp/patch.inc.get1.JzRCu0/src/http/modules/ngx_http_not_modified_filter_module.c /tmp/patch.inc.get2.gWJcaa/src/http/modules/ngx_http_not_modified_filter_module.c
+*** /tmp/patch.inc.get1.JzRCu0/src/http/modules/ngx_http_not_modified_filter_module.c	2013-04-30 00:52:32.150021608 +0200
+--- /tmp/patch.inc.get2.gWJcaa/src/http/modules/ngx_http_not_modified_filter_module.c	2013-04-30 00:52:35.378037658 +0200
+*************** ngx_http_not_modified_header_filter(ngx_
+*** 57,67 ****
+      {
+          return ngx_http_next_header_filter(r);
+      }
+!  
+      if (r->headers_in.if_unmodified_since) {
+          return ngx_http_test_precondition(r);
+      }
+!  
+      if (r->headers_in.if_modified_since) {
+          return ngx_http_test_not_modified(r);
+      }
+--- 57,67 ----
+      {
+          return ngx_http_next_header_filter(r);
+      }
+! 
+      if (r->headers_in.if_unmodified_since) {
+          return ngx_http_test_precondition(r);
+      }
+! 
+      if (r->headers_in.if_modified_since) {
+          return ngx_http_test_not_modified(r);
+      }
+diff -p -N --text -r /tmp/patch.inc.get1.JzRCu0/src/http/ngx_http_core_module.c /tmp/patch.inc.get2.gWJcaa/src/http/ngx_http_core_module.c
+*** /tmp/patch.inc.get1.JzRCu0/src/http/ngx_http_core_module.c	2013-04-30 00:52:32.150021608 +0200
+--- /tmp/patch.inc.get2.gWJcaa/src/http/ngx_http_core_module.c	2013-04-30 00:52:35.382037666 +0200
+*************** ngx_http_handler(ngx_http_request_t *r)
+*** 789,799 ****
+      if (!r->internal) {
+          switch (r->headers_in.connection_type) {
+          case 0:
+!             if (r->http_version > NGX_HTTP_VERSION_10) {
+!                 r->keepalive = 1;
+!             } else {
+!                 r->keepalive = 0;
+!             }
+              break;
+  
+          case NGX_HTTP_CONNECTION_CLOSE:
+--- 789,795 ----
+      if (!r->internal) {
+          switch (r->headers_in.connection_type) {
+          case 0:
+!             r->keepalive = (r->http_version > NGX_HTTP_VERSION_10);
+              break;
+  
+          case NGX_HTTP_CONNECTION_CLOSE:
+*************** ngx_http_handler(ngx_http_request_t *r)
+*** 805,817 ****
+              break;
+          }
+  
+!         if (r->headers_in.content_length_n > 0) {
+!             r->lingering_close = 1;
+! 
+!         } else {
+!             r->lingering_close = 0;
+!         }
+! 
+          r->phase_handler = 0;
+  
+      } else {
+--- 801,807 ----
+              break;
+          }
+  
+!         r->lingering_close = (r->headers_in.content_length_n > 0);
+          r->phase_handler = 0;
+  
+      } else {
+*************** ngx_http_core_merge_srv_conf(ngx_conf_t
+*** 3000,3005 ****
+--- 2990,2996 ----
+      ngx_http_core_srv_conf_t *prev = parent;
+      ngx_http_core_srv_conf_t *conf = child;
+  
++     ngx_str_t                name;
+      ngx_http_server_name_t  *sn;
+  
+      /* TODO: it does not merge, it inits only */
+*************** ngx_http_core_merge_srv_conf(ngx_conf_t
+*** 3031,3044 ****
+      ngx_conf_merge_value(conf->underscores_in_headers,
+                                prev->underscores_in_headers, 0);
+  
+!     if (conf->server_name.data == NULL) {
+!         ngx_str_set(&conf->server_name, "");
+! 
+          sn = ngx_array_push(&conf->server_names);
+-         if (sn == NULL) {
+-             return NGX_CONF_ERROR;
+-         }
+- 
+  #if (NGX_PCRE)
+          sn->regex = NULL;
+  #endif
+--- 3022,3030 ----
+      ngx_conf_merge_value(conf->underscores_in_headers,
+                                prev->underscores_in_headers, 0);
+  
+!     if (conf->server_names.nelts == 0) {
+!         /* the array has 4 empty preallocated elements, so push can not fail */
+          sn = ngx_array_push(&conf->server_names);
+  #if (NGX_PCRE)
+          sn->regex = NULL;
+  #endif
+*************** ngx_http_core_merge_srv_conf(ngx_conf_t
+*** 3046,3051 ****
+--- 3032,3058 ----
+          ngx_str_set(&sn->name, "");
+      }
+  
++     sn = conf->server_names.elts;
++     name = sn[0].name;
++ 
++ #if (NGX_PCRE)
++     if (sn->regex) {
++         name.len++;
++         name.data--;
++     } else
++ #endif
++ 
++     if (name.data[0] == '.') {
++         name.len--;
++         name.data++;
++     }
++ 
++     conf->server_name.len = name.len;
++     conf->server_name.data = ngx_pstrdup(cf->pool, &name);
++     if (conf->server_name.data == NULL) {
++         return NGX_CONF_ERROR;
++     }
++ 
+      return NGX_CONF_OK;
+  }
+  
+*************** ngx_http_core_server_name(ngx_conf_t *cf
+*** 3635,3663 ****
+      ngx_http_core_srv_conf_t *cscf = conf;
+  
+      u_char                   ch;
+!     ngx_str_t               *value, name;
+      ngx_uint_t               i;
+      ngx_http_server_name_t  *sn;
+  
+      value = cf->args->elts;
+  
+-     ch = value[1].data[0];
+- 
+-     if (cscf->server_name.data == NULL) {
+-         name = value[1];
+- 
+-         if (ch == '.') {
+-             name.len--;
+-             name.data++;
+-         }
+- 
+-         cscf->server_name.len = name.len;
+-         cscf->server_name.data = ngx_pstrdup(cf->pool, &name);
+-         if (cscf->server_name.data == NULL) {
+-             return NGX_CONF_ERROR;
+-         }
+-     }
+- 
+      for (i = 1; i < cf->args->nelts; i++) {
+  
+          ch = value[i].data[0];
+--- 3642,3653 ----
+      ngx_http_core_srv_conf_t *cscf = conf;
+  
+      u_char                   ch;
+!     ngx_str_t               *value;
+      ngx_uint_t               i;
+      ngx_http_server_name_t  *sn;
+  
+      value = cf->args->elts;
+  
+      for (i = 1; i < cf->args->nelts; i++) {
+  
+          ch = value[i].data[0];
+*************** ngx_http_core_server_name(ngx_conf_t *cf
+*** 3692,3698 ****
+          sn->regex = NULL;
+  #endif
+          sn->server = cscf;
+!         sn->name = value[i];
+  
+          if (value[i].data[0] != '~') {
+              ngx_strlow(sn->name.data, sn->name.data, sn->name.len);
+--- 3682,3694 ----
+          sn->regex = NULL;
+  #endif
+          sn->server = cscf;
+! 
+!         if (ngx_strcasecmp(value[i].data, (u_char *) "$hostname") == 0) {
+!             sn->name = cf->cycle->hostname;
+! 
+!         } else {
+!             sn->name = value[i];
+!         }
+  
+          if (value[i].data[0] != '~') {
+              ngx_strlow(sn->name.data, sn->name.data, sn->name.len);
+diff -p -N --text -r /tmp/patch.inc.get1.JzRCu0/src/http/ngx_http_request.c /tmp/patch.inc.get2.gWJcaa/src/http/ngx_http_request.c
+*** /tmp/patch.inc.get1.JzRCu0/src/http/ngx_http_request.c	2013-04-30 00:52:32.150021608 +0200
+--- /tmp/patch.inc.get2.gWJcaa/src/http/ngx_http_request.c	2013-04-30 00:52:35.382037666 +0200
+*************** ngx_http_process_request_headers(ngx_eve
+*** 978,987 ****
+                  if (rv == NGX_DECLINED) {
+                      p = r->header_name_start;
+  
+                      if (p == NULL) {
+                          ngx_log_error(NGX_LOG_INFO, c->log, 0,
+                                        "client sent too large request");
+!                         ngx_http_finalize_request(r, NGX_HTTP_BAD_REQUEST);
+                          return;
+                      }
+  
+--- 978,990 ----
+                  if (rv == NGX_DECLINED) {
+                      p = r->header_name_start;
+  
++                     r->lingering_close = 1;
++ 
+                      if (p == NULL) {
+                          ngx_log_error(NGX_LOG_INFO, c->log, 0,
+                                        "client sent too large request");
+!                         ngx_http_finalize_request(r,
+!                                             NGX_HTTP_REQUEST_HEADER_TOO_LARGE);
+                          return;
+                      }
+  
+*************** ngx_http_process_request_headers(ngx_eve
+*** 995,1001 ****
+                      ngx_log_error(NGX_LOG_INFO, c->log, 0,
+                                    "client sent too long header line: \"%*s\"",
+                                    len, r->header_name_start);
+!                     ngx_http_finalize_request(r, NGX_HTTP_BAD_REQUEST);
+                      return;
+                  }
+              }
+--- 998,1006 ----
+                      ngx_log_error(NGX_LOG_INFO, c->log, 0,
+                                    "client sent too long header line: \"%*s\"",
+                                    len, r->header_name_start);
+! 
+!                     ngx_http_finalize_request(r,
+!                                             NGX_HTTP_REQUEST_HEADER_TOO_LARGE);
+                      return;
+                  }
+              }
+diff -p -N --text -r /tmp/patch.inc.get1.JzRCu0/src/http/ngx_http_request.h /tmp/patch.inc.get2.gWJcaa/src/http/ngx_http_request.h
+*** /tmp/patch.inc.get1.JzRCu0/src/http/ngx_http_request.h	2013-04-30 00:52:32.146021581 +0200
+--- /tmp/patch.inc.get2.gWJcaa/src/http/ngx_http_request.h	2013-04-30 00:52:35.378037658 +0200
+***************
+*** 95,101 ****
+  /* The special code to close connection without any response */
+  #define NGX_HTTP_CLOSE                     444
+  
+! #define NGX_HTTP_OWN_CODES                 495
+  
+  #define NGX_HTTPS_CERT_ERROR               495
+  #define NGX_HTTPS_NO_CERT                  496
+--- 95,103 ----
+  /* The special code to close connection without any response */
+  #define NGX_HTTP_CLOSE                     444
+  
+! #define NGX_HTTP_NGINX_CODES               494
+! 
+! #define NGX_HTTP_REQUEST_HEADER_TOO_LARGE  494
+  
+  #define NGX_HTTPS_CERT_ERROR               495
+  #define NGX_HTTPS_NO_CERT                  496
+diff -p -N --text -r /tmp/patch.inc.get1.JzRCu0/src/http/ngx_http_special_response.c /tmp/patch.inc.get2.gWJcaa/src/http/ngx_http_special_response.c
+*** /tmp/patch.inc.get1.JzRCu0/src/http/ngx_http_special_response.c	2013-04-30 00:52:32.146021581 +0200
+--- /tmp/patch.inc.get2.gWJcaa/src/http/ngx_http_special_response.c	2013-04-30 00:52:35.378037658 +0200
+*************** static char ngx_http_error_416_page[] =
+*** 201,206 ****
+--- 201,216 ----
+  ;
+  
+  
++ static char ngx_http_error_494_page[] =
++ "<html>" CRLF
++ "<head><title>400 Request Header Or Cookie Too Large</title></head>"
++ CRLF
++ "<body bgcolor=\"white\">" CRLF
++ "<center><h1>400 Bad Request</h1></center>" CRLF
++ "<center>Request Header Or Cookie Too Large</center>" CRLF
++ ;
++ 
++ 
+  static char ngx_http_error_495_page[] =
+  "<html>" CRLF
+  "<head><title>400 The SSL certificate error</title></head>"
+*************** static ngx_str_t ngx_http_error_pages[]
+*** 315,320 ****
+--- 325,331 ----
+  #define NGX_HTTP_LAST_LEVEL_400  417
+  #define NGX_HTTP_LEVEL_400       (NGX_HTTP_LAST_LEVEL_400 - 400)
+  
++     ngx_string(ngx_http_error_494_page), /* 494, request header too large */
+      ngx_string(ngx_http_error_495_page), /* 495, https certificate error */
+      ngx_string(ngx_http_error_496_page), /* 496, https no certificate */
+      ngx_string(ngx_http_error_497_page), /* 497, http to https */
+*************** ngx_http_special_response_handler(ngx_ht
+*** 429,445 ****
+          err = error - NGX_HTTP_BAD_REQUEST + NGX_HTTP_LEVEL_200
+                                             + NGX_HTTP_LEVEL_300;
+  
+!     } else if (error >= NGX_HTTP_OWN_CODES
+                 && error < NGX_HTTP_LAST_LEVEL_500)
+      {
+          /* 49X, 5XX */
+!         err = error - NGX_HTTP_OWN_CODES + NGX_HTTP_LEVEL_200
+!                                          + NGX_HTTP_LEVEL_300
+!                                          + NGX_HTTP_LEVEL_400;
+          switch (error) {
+              case NGX_HTTP_TO_HTTPS:
+              case NGX_HTTPS_CERT_ERROR:
+              case NGX_HTTPS_NO_CERT:
+                  r->err_status = NGX_HTTP_BAD_REQUEST;
+                  break;
+          }
+--- 440,457 ----
+          err = error - NGX_HTTP_BAD_REQUEST + NGX_HTTP_LEVEL_200
+                                             + NGX_HTTP_LEVEL_300;
+  
+!     } else if (error >= NGX_HTTP_NGINX_CODES
+                 && error < NGX_HTTP_LAST_LEVEL_500)
+      {
+          /* 49X, 5XX */
+!         err = error - NGX_HTTP_NGINX_CODES + NGX_HTTP_LEVEL_200
+!                                            + NGX_HTTP_LEVEL_300
+!                                            + NGX_HTTP_LEVEL_400;
+          switch (error) {
+              case NGX_HTTP_TO_HTTPS:
+              case NGX_HTTPS_CERT_ERROR:
+              case NGX_HTTPS_NO_CERT:
++             case NGX_HTTP_REQUEST_HEADER_TOO_LARGE:
+                  r->err_status = NGX_HTTP_BAD_REQUEST;
+                  break;
+          }

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+BENCH_TYPE=${BENCH_TYPE:-1}
+
+. ../scripts/include/cmdctl.inc
+
+if [ $BENCH_TYPE -eq 2 ]; then
+    cp install/sbin/lighttpd src/lighttpd
+    RUNBENCH_CMD="make check" cmdctl_runbench
+    exit 0
+fi
+
+../httpd*/runbench
+

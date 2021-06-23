@@ -1,0 +1,949 @@
+diff -p -N --text -r /tmp/patch.inc.get1.ND39lx/src/core/nginx.h /tmp/patch.inc.get2.oZWBjA/src/core/nginx.h
+*** /tmp/patch.inc.get1.ND39lx/src/core/nginx.h	2013-04-30 01:49:08.854864983 +0200
+--- /tmp/patch.inc.get2.oZWBjA/src/core/nginx.h	2013-04-30 01:49:12.030880737 +0200
+***************
+*** 8,15 ****
+  #define _NGINX_H_INCLUDED_
+  
+  
+! #define nginx_version      1000002
+! #define NGINX_VERSION      "1.0.2"
+  #define NGINX_VER          "nginx/" NGINX_VERSION
+  
+  #define NGINX_VAR          "NGINX"
+--- 8,15 ----
+  #define _NGINX_H_INCLUDED_
+  
+  
+! #define nginx_version      1000003
+! #define NGINX_VERSION      "1.0.3"
+  #define NGINX_VER          "nginx/" NGINX_VERSION
+  
+  #define NGINX_VAR          "NGINX"
+diff -p -N --text -r /tmp/patch.inc.get1.ND39lx/src/core/ngx_crypt.c /tmp/patch.inc.get2.oZWBjA/src/core/ngx_crypt.c
+*** /tmp/patch.inc.get1.ND39lx/src/core/ngx_crypt.c	1970-01-01 01:00:00.000000000 +0100
+--- /tmp/patch.inc.get2.oZWBjA/src/core/ngx_crypt.c	2013-04-30 01:49:12.030880737 +0200
+***************
+*** 0 ****
+--- 1,234 ----
++ 
++ /*
++  * Copyright (C) Maxim Dounin
++  */
++ 
++ 
++ #include <ngx_config.h>
++ #include <ngx_core.h>
++ #include <ngx_md5.h>
++ #if (NGX_HAVE_SHA1)
++ #include <ngx_sha1.h>
++ #endif
++ 
++ 
++ static ngx_int_t ngx_crypt_apr1(ngx_pool_t *pool, u_char *key, u_char *salt,
++     u_char **encrypted);
++ static ngx_int_t ngx_crypt_plain(ngx_pool_t *pool, u_char *key, u_char *salt,
++     u_char **encrypted);
++ 
++ #if (NGX_HAVE_SHA1)
++ 
++ static ngx_int_t ngx_crypt_ssha(ngx_pool_t *pool, u_char *key, u_char *salt,
++     u_char **encrypted);
++ 
++ #endif
++ 
++ 
++ static u_char *ngx_crypt_to64(u_char *p, uint32_t v, size_t n);
++ 
++ 
++ ngx_int_t
++ ngx_crypt(ngx_pool_t *pool, u_char *key, u_char *salt, u_char **encrypted)
++ {
++     if (ngx_strncmp(salt, "$apr1$", sizeof("$apr1$") - 1) == 0) {
++         return ngx_crypt_apr1(pool, key, salt, encrypted);
++ 
++     } else if (ngx_strncmp(salt, "{PLAIN}", sizeof("{PLAIN}") - 1) == 0) {
++         return ngx_crypt_plain(pool, key, salt, encrypted);
++ 
++ #if (NGX_HAVE_SHA1)
++     } else if (ngx_strncmp(salt, "{SSHA}", sizeof("{SSHA}") - 1) == 0) {
++         return ngx_crypt_ssha(pool, key, salt, encrypted);
++ #endif
++     }
++ 
++     /* fallback to libc crypt() */
++ 
++     return ngx_libc_crypt(pool, key, salt, encrypted);
++ }
++ 
++ 
++ static ngx_int_t
++ ngx_crypt_apr1(ngx_pool_t *pool, u_char *key, u_char *salt, u_char **encrypted)
++ {
++     ngx_int_t          n;
++     ngx_uint_t         i;
++     u_char            *p, *last, final[16];
++     size_t             saltlen, keylen;
++     ngx_md5_t          md5, ctx1;
++ 
++     /* Apache's apr1 crypt is Paul-Henning Kamp's md5 crypt with $apr1$ magic */
++ 
++     keylen = ngx_strlen(key);
++ 
++     /* true salt: no magic, max 8 chars, stop at first $ */
++ 
++     salt += sizeof("$apr1$") - 1;
++     last = salt + 8;
++     for (p = salt; *p && *p != '$' && p < last; p++) { /* void */ }
++     saltlen = p - salt;
++ 
++     /* hash key and salt */
++ 
++     ngx_md5_init(&md5);
++     ngx_md5_update(&md5, key, keylen);
++     ngx_md5_update(&md5, "$apr1$", sizeof("$apr1$") - 1);
++     ngx_md5_update(&md5, salt, saltlen);
++ 
++     ngx_md5_init(&ctx1);
++     ngx_md5_update(&ctx1, key, keylen);
++     ngx_md5_update(&ctx1, salt, saltlen);
++     ngx_md5_update(&ctx1, key, keylen);
++     ngx_md5_final(final, &ctx1);
++ 
++     for (n = keylen; n > 0; n -= 16) {
++         ngx_md5_update(&md5, final, n > 16 ? 16 : n);
++     }
++ 
++     ngx_memzero(final, sizeof(final));
++ 
++     for (i = keylen; i; i >>= 1) {
++         if (i & 1) {
++             ngx_md5_update(&md5, final, 1);
++ 
++         } else {
++             ngx_md5_update(&md5, key, 1);
++         }
++     }
++ 
++     ngx_md5_final(final, &md5);
++ 
++     for (i = 0; i < 1000; i++) {
++         ngx_md5_init(&ctx1);
++ 
++         if (i & 1) {
++             ngx_md5_update(&ctx1, key, keylen);
++ 
++         } else {
++             ngx_md5_update(&ctx1, final, 16);
++         }
++ 
++         if (i % 3) {
++             ngx_md5_update(&ctx1, salt, saltlen);
++         }
++ 
++         if (i % 7) {
++             ngx_md5_update(&ctx1, key, keylen);
++         }
++ 
++         if (i & 1) {
++             ngx_md5_update(&ctx1, final, 16);
++ 
++         } else {
++             ngx_md5_update(&ctx1, key, keylen);
++         }
++ 
++         ngx_md5_final(final, &ctx1);
++     }
++ 
++     /* output */
++ 
++     *encrypted = ngx_pnalloc(pool, sizeof("$apr1$") - 1 + saltlen + 16 + 1);
++     if (*encrypted == NULL) {
++         return NGX_ERROR;
++     }
++ 
++     p = ngx_cpymem(*encrypted, "$apr1$", sizeof("$apr1$") - 1);
++     p = ngx_copy(p, salt, saltlen);
++     *p++ = '$';
++ 
++     p = ngx_crypt_to64(p, (final[ 0]<<16) | (final[ 6]<<8) | final[12], 4);
++     p = ngx_crypt_to64(p, (final[ 1]<<16) | (final[ 7]<<8) | final[13], 4);
++     p = ngx_crypt_to64(p, (final[ 2]<<16) | (final[ 8]<<8) | final[14], 4);
++     p = ngx_crypt_to64(p, (final[ 3]<<16) | (final[ 9]<<8) | final[15], 4);
++     p = ngx_crypt_to64(p, (final[ 4]<<16) | (final[10]<<8) | final[ 5], 4);
++     p = ngx_crypt_to64(p, final[11], 2);
++     *p = '\0';
++ 
++     return NGX_OK;
++ }
++ 
++ 
++ static u_char *
++ ngx_crypt_to64(u_char *p, uint32_t v, size_t n)
++ {
++     static u_char   itoa64[] =
++         "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
++ 
++     while (n--) {
++        *p++ = itoa64[v & 0x3f];
++        v >>= 6;
++     }
++ 
++     return p;
++ }
++ 
++ 
++ static ngx_int_t
++ ngx_crypt_plain(ngx_pool_t *pool, u_char *key, u_char *salt, u_char **encrypted)
++ {
++     size_t   len;
++     u_char  *p;
++ 
++     len = ngx_strlen(key);
++ 
++     *encrypted = ngx_pnalloc(pool, sizeof("{PLAIN}") - 1 + len + 1);
++     if (*encrypted == NULL) {
++         return NGX_ERROR;
++     }
++ 
++     p = ngx_cpymem(*encrypted, "{PLAIN}", sizeof("{PLAIN}") - 1);
++     ngx_memcpy(p, key, len + 1);
++ 
++     return NGX_OK;
++ }
++ 
++ 
++ #if (NGX_HAVE_SHA1)
++ 
++ static ngx_int_t
++ ngx_crypt_ssha(ngx_pool_t *pool, u_char *key, u_char *salt, u_char **encrypted)
++ {
++     size_t       len;
++     ngx_str_t    encoded, decoded;
++     ngx_sha1_t   sha1;
++ 
++     /* "{SSHA}" base64(SHA1(key salt) salt) */
++ 
++     /* decode base64 salt to find out true salt */
++ 
++     encoded.data = salt + sizeof("{SSHA}") - 1;
++     encoded.len = ngx_strlen(encoded.data);
++ 
++     decoded.data = ngx_pnalloc(pool, ngx_base64_decoded_length(encoded.len));
++     if (decoded.data == NULL) {
++         return NGX_ERROR;
++     }
++ 
++     ngx_decode_base64(&decoded, &encoded);
++ 
++     /* update SHA1 from key and salt */
++ 
++     ngx_sha1_init(&sha1);
++     ngx_sha1_update(&sha1, key, ngx_strlen(key));
++     ngx_sha1_update(&sha1, decoded.data + 20, decoded.len - 20);
++     ngx_sha1_final(decoded.data, &sha1);
++ 
++     /* encode it back to base64 */
++ 
++     len = sizeof("{SSHA}") - 1 + ngx_base64_encoded_length(decoded.len) + 1;
++ 
++     *encrypted = ngx_pnalloc(pool, len);
++     if (*encrypted == NULL) {
++         return NGX_ERROR;
++     }
++ 
++     encoded.data = ngx_cpymem(*encrypted, "{SSHA}", sizeof("{SSHA}") - 1);
++     ngx_encode_base64(&encoded, &decoded);
++     encoded.data[encoded.len] = '\0';
++ 
++     return NGX_OK;
++ }
++ 
++ #endif /* NGX_HAVE_SHA1 */
+diff -p -N --text -r /tmp/patch.inc.get1.ND39lx/src/core/ngx_crypt.h /tmp/patch.inc.get2.oZWBjA/src/core/ngx_crypt.h
+*** /tmp/patch.inc.get1.ND39lx/src/core/ngx_crypt.h	1970-01-01 01:00:00.000000000 +0100
+--- /tmp/patch.inc.get2.oZWBjA/src/core/ngx_crypt.h	2013-04-30 01:49:12.030880737 +0200
+***************
+*** 0 ****
+--- 1,19 ----
++ 
++ /*
++  * Copyright (C) Igor Sysoev
++  */
++ 
++ 
++ #ifndef _NGX_CRYPT_H_INCLUDED_
++ #define _NGX_CRYPT_H_INCLUDED_
++ 
++ 
++ #include <ngx_config.h>
++ #include <ngx_core.h>
++ 
++ 
++ ngx_int_t ngx_crypt(ngx_pool_t *pool, u_char *key, u_char *salt,
++     u_char **encrypted);
++ 
++ 
++ #endif /* _NGX_CRYPT_H_INCLUDED_ */
+diff -p -N --text -r /tmp/patch.inc.get1.ND39lx/src/http/modules/ngx_http_access_module.c /tmp/patch.inc.get2.oZWBjA/src/http/modules/ngx_http_access_module.c
+*** /tmp/patch.inc.get1.ND39lx/src/http/modules/ngx_http_access_module.c	2013-04-30 01:49:08.854864983 +0200
+--- /tmp/patch.inc.get2.oZWBjA/src/http/modules/ngx_http_access_module.c	2013-04-30 01:49:12.026880695 +0200
+*************** ngx_http_access_handler(ngx_http_request
+*** 108,127 ****
+  {
+      struct sockaddr_in          *sin;
+      ngx_http_access_loc_conf_t  *alcf;
+  
+      alcf = ngx_http_get_module_loc_conf(r, ngx_http_access_module);
+  
+! #if (NGX_HAVE_INET6)
+  
+!     if (alcf->rules6 && r->connection->sockaddr->sa_family == AF_INET6) {
+!         u_char               *p;
+!         in_addr_t             addr;
+!         struct sockaddr_in6  *sin6;
+  
+          sin6 = (struct sockaddr_in6 *) r->connection->sockaddr;
+          p = sin6->sin6_addr.s6_addr;
+  
+!         if (IN6_IS_ADDR_V4MAPPED(&sin6->sin6_addr)) {
+              addr = p[12] << 24;
+              addr += p[13] << 16;
+              addr += p[14] << 8;
+--- 108,137 ----
+  {
+      struct sockaddr_in          *sin;
+      ngx_http_access_loc_conf_t  *alcf;
++ #if (NGX_HAVE_INET6)
++     u_char                      *p;
++     in_addr_t                    addr;
++     struct sockaddr_in6         *sin6;
++ #endif
+  
+      alcf = ngx_http_get_module_loc_conf(r, ngx_http_access_module);
+  
+!     switch (r->connection->sockaddr->sa_family) {
+  
+!     case AF_INET:
+!         if (alcf->rules) {
+!             sin = (struct sockaddr_in *) r->connection->sockaddr;
+!             return ngx_http_access_inet(r, alcf, sin->sin_addr.s_addr);
+!         }
+!         break;
+  
++ #if (NGX_HAVE_INET6)
++ 
++     case AF_INET6:
+          sin6 = (struct sockaddr_in6 *) r->connection->sockaddr;
+          p = sin6->sin6_addr.s6_addr;
+  
+!         if (alcf->rules && IN6_IS_ADDR_V4MAPPED(&sin6->sin6_addr)) {
+              addr = p[12] << 24;
+              addr += p[13] << 16;
+              addr += p[14] << 8;
+*************** ngx_http_access_handler(ngx_http_request
+*** 129,142 ****
+              return ngx_http_access_inet(r, alcf, htonl(addr));
+          }
+  
+!         return ngx_http_access_inet6(r, alcf, p);
+!     }
+  
+  #endif
+- 
+-     if (alcf->rules && r->connection->sockaddr->sa_family == AF_INET) {
+-         sin = (struct sockaddr_in *) r->connection->sockaddr;
+-         return ngx_http_access_inet(r, alcf, sin->sin_addr.s_addr);
+      }
+  
+      return NGX_DECLINED;
+--- 139,149 ----
+              return ngx_http_access_inet(r, alcf, htonl(addr));
+          }
+  
+!         if (alcf->rules6) {
+!             return ngx_http_access_inet6(r, alcf, p);
+!         }
+  
+  #endif
+      }
+  
+      return NGX_DECLINED;
+diff -p -N --text -r /tmp/patch.inc.get1.ND39lx/src/http/modules/ngx_http_auth_basic_module.c /tmp/patch.inc.get2.oZWBjA/src/http/modules/ngx_http_auth_basic_module.c
+*** /tmp/patch.inc.get1.ND39lx/src/http/modules/ngx_http_auth_basic_module.c	2013-04-30 01:49:08.850864954 +0200
+--- /tmp/patch.inc.get2.oZWBjA/src/http/modules/ngx_http_auth_basic_module.c	2013-04-30 01:49:12.026880695 +0200
+***************
+*** 7,12 ****
+--- 7,13 ----
+  #include <ngx_config.h>
+  #include <ngx_core.h>
+  #include <ngx_http.h>
++ #include <ngx_crypt.h>
+  
+  
+  #define NGX_HTTP_AUTH_BUF_SIZE  2048
+diff -p -N --text -r /tmp/patch.inc.get1.ND39lx/src/http/modules/ngx_http_geoip_module.c /tmp/patch.inc.get2.oZWBjA/src/http/modules/ngx_http_geoip_module.c
+*** /tmp/patch.inc.get1.ND39lx/src/http/modules/ngx_http_geoip_module.c	2013-04-30 01:49:08.850864954 +0200
+--- /tmp/patch.inc.get2.oZWBjA/src/http/modules/ngx_http_geoip_module.c	2013-04-30 01:49:12.026880695 +0200
+***************
+*** 14,19 ****
+--- 14,20 ----
+  
+  typedef struct {
+      GeoIP      *country;
++     GeoIP      *org;
+      GeoIP      *city;
+  } ngx_http_geoip_conf_t;
+  
+*************** typedef const char *(*ngx_http_geoip_var
+*** 28,33 ****
+--- 29,36 ----
+  
+  static ngx_int_t ngx_http_geoip_country_variable(ngx_http_request_t *r,
+      ngx_http_variable_value_t *v, uintptr_t data);
++ static ngx_int_t ngx_http_geoip_org_variable(ngx_http_request_t *r,
++     ngx_http_variable_value_t *v, uintptr_t data);
+  static ngx_int_t ngx_http_geoip_city_variable(ngx_http_request_t *r,
+      ngx_http_variable_value_t *v, uintptr_t data);
+  static ngx_int_t ngx_http_geoip_region_name_variable(ngx_http_request_t *r,
+*************** static ngx_int_t ngx_http_geoip_add_vari
+*** 42,47 ****
+--- 45,52 ----
+  static void *ngx_http_geoip_create_conf(ngx_conf_t *cf);
+  static char *ngx_http_geoip_country(ngx_conf_t *cf, ngx_command_t *cmd,
+      void *conf);
++ static char *ngx_http_geoip_org(ngx_conf_t *cf, ngx_command_t *cmd,
++     void *conf);
+  static char *ngx_http_geoip_city(ngx_conf_t *cf, ngx_command_t *cmd,
+      void *conf);
+  static void ngx_http_geoip_cleanup(void *data);
+*************** static ngx_command_t  ngx_http_geoip_com
+*** 56,61 ****
+--- 61,73 ----
+        0,
+        NULL },
+  
++     { ngx_string("geoip_org"),
++       NGX_HTTP_MAIN_CONF|NGX_CONF_TAKE12,
++       ngx_http_geoip_org,
++       NGX_HTTP_MAIN_CONF_OFFSET,
++       0,
++       NULL },
++ 
+      { ngx_string("geoip_city"),
+        NGX_HTTP_MAIN_CONF|NGX_CONF_TAKE12,
+        ngx_http_geoip_city,
+*************** static ngx_http_variable_t  ngx_http_geo
+*** 112,117 ****
+--- 124,133 ----
+        ngx_http_geoip_country_variable,
+        (uintptr_t) GeoIP_country_name_by_ipnum, 0, 0 },
+  
++     { ngx_string("geoip_org"), NULL,
++       ngx_http_geoip_org_variable,
++       (uintptr_t) GeoIP_name_by_ipnum, 0, 0 },
++ 
+      { ngx_string("geoip_city_continent_code"), NULL,
+        ngx_http_geoip_city_variable,
+        offsetof(GeoIPRecord, continent_code), 0, 0 },
+*************** static ngx_http_variable_t  ngx_http_geo
+*** 164,169 ****
+--- 180,223 ----
+  };
+  
+  
++ static u_long
++ ngx_http_geoip_addr(ngx_http_request_t *r)
++ {
++     struct sockaddr_in   *sin;
++ #if (NGX_HAVE_INET6)
++     u_char               *p;
++     u_long                addr;
++     struct sockaddr_in6  *sin6;
++ #endif
++ 
++     switch (r->connection->sockaddr->sa_family) {
++ 
++     case AF_INET:
++         sin = (struct sockaddr_in *) r->connection->sockaddr;
++         return ntohl(sin->sin_addr.s_addr);
++ 
++ #if (NGX_HAVE_INET6)
++ 
++     case AF_INET6:
++         sin6 = (struct sockaddr_in6 *) r->connection->sockaddr;
++ 
++         if (IN6_IS_ADDR_V4MAPPED(&sin6->sin6_addr)) {
++             p = sin6->sin6_addr.s6_addr;
++             addr = p[12] << 24;
++             addr += p[13] << 16;
++             addr += p[14] << 8;
++             addr += p[15];
++ 
++             return addr;
++         }
++ 
++ #endif
++     }
++ 
++     return INADDR_NONE;
++ }
++ 
++ 
+  static ngx_int_t
+  ngx_http_geoip_country_variable(ngx_http_request_t *r,
+      ngx_http_variable_value_t *v, uintptr_t data)
+*************** ngx_http_geoip_country_variable(ngx_http
+*** 171,179 ****
+      ngx_http_geoip_variable_handler_pt  handler =
+          (ngx_http_geoip_variable_handler_pt) data;
+  
+-     u_long                  addr;
+      const char             *val;
+-     struct sockaddr_in     *sin;
+      ngx_http_geoip_conf_t  *gcf;
+  
+      gcf = ngx_http_get_module_main_conf(r, ngx_http_geoip_module);
+--- 225,231 ----
+*************** ngx_http_geoip_country_variable(ngx_http
+*** 182,195 ****
+          goto not_found;
+      }
+  
+!     if (r->connection->sockaddr->sa_family != AF_INET) {
+          goto not_found;
+      }
+  
+!     sin = (struct sockaddr_in *) r->connection->sockaddr;
+!     addr = ntohl(sin->sin_addr.s_addr);
+  
+!     val = handler(gcf->country, addr);
+  
+      if (val == NULL) {
+          goto not_found;
+--- 234,278 ----
+          goto not_found;
+      }
+  
+!     val = handler(gcf->country, ngx_http_geoip_addr(r));
+! 
+!     if (val == NULL) {
+          goto not_found;
+      }
+  
+!     v->len = ngx_strlen(val);
+!     v->valid = 1;
+!     v->no_cacheable = 0;
+!     v->not_found = 0;
+!     v->data = (u_char *) val;
+! 
+!     return NGX_OK;
+  
+! not_found:
+! 
+!     v->not_found = 1;
+! 
+!     return NGX_OK;
+! }
+! 
+! 
+! static ngx_int_t
+! ngx_http_geoip_org_variable(ngx_http_request_t *r,
+!     ngx_http_variable_value_t *v, uintptr_t data)
+! {
+!     ngx_http_geoip_variable_handler_pt  handler =
+!         (ngx_http_geoip_variable_handler_pt) data;
+! 
+!     const char             *val;
+!     ngx_http_geoip_conf_t  *gcf;
+! 
+!     gcf = ngx_http_get_module_main_conf(r, ngx_http_geoip_module);
+! 
+!     if (gcf->org == NULL) {
+!         goto not_found;
+!     }
+! 
+!     val = handler(gcf->org, ngx_http_geoip_addr(r));
+  
+      if (val == NULL) {
+          goto not_found;
+*************** ngx_http_geoip_city_int_variable(ngx_htt
+*** 364,381 ****
+  static GeoIPRecord *
+  ngx_http_geoip_get_city_record(ngx_http_request_t *r)
+  {
+-     u_long                  addr;
+-     struct sockaddr_in     *sin;
+      ngx_http_geoip_conf_t  *gcf;
+  
+      gcf = ngx_http_get_module_main_conf(r, ngx_http_geoip_module);
+  
+!     if (gcf->city && r->connection->sockaddr->sa_family == AF_INET) {
+! 
+!         sin = (struct sockaddr_in *) r->connection->sockaddr;
+!         addr = ntohl(sin->sin_addr.s_addr);
+! 
+!         return GeoIP_record_by_ipnum(gcf->city, addr);
+      }
+  
+      return NULL;
+--- 447,458 ----
+  static GeoIPRecord *
+  ngx_http_geoip_get_city_record(ngx_http_request_t *r)
+  {
+      ngx_http_geoip_conf_t  *gcf;
+  
+      gcf = ngx_http_get_module_main_conf(r, ngx_http_geoip_module);
+  
+!     if (gcf->city) {
+!         return GeoIP_record_by_ipnum(gcf->city, ngx_http_geoip_addr(r));
+      }
+  
+      return NULL;
+*************** ngx_http_geoip_country(ngx_conf_t *cf, n
+*** 441,447 ****
+  
+      if (gcf->country == NULL) {
+          ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
+!                            "GeoIO_open(\"%V\") failed", &value[1]);
+  
+          return NGX_CONF_ERROR;
+      }
+--- 518,524 ----
+  
+      if (gcf->country == NULL) {
+          ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
+!                            "GeoIP_open(\"%V\") failed", &value[1]);
+  
+          return NGX_CONF_ERROR;
+      }
+*************** ngx_http_geoip_country(ngx_conf_t *cf, n
+*** 475,480 ****
+--- 552,608 ----
+  
+  
+  static char *
++ ngx_http_geoip_org(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
++ {
++     ngx_http_geoip_conf_t  *gcf = conf;
++ 
++     ngx_str_t  *value;
++ 
++     if (gcf->org) {
++         return "is duplicate";
++     }
++ 
++     value = cf->args->elts;
++ 
++     gcf->org = GeoIP_open((char *) value[1].data, GEOIP_MEMORY_CACHE);
++ 
++     if (gcf->org == NULL) {
++         ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
++                            "GeoIP_open(\"%V\") failed", &value[1]);
++ 
++         return NGX_CONF_ERROR;
++     }
++ 
++     if (cf->args->nelts == 3) {
++         if (ngx_strcmp(value[2].data, "utf8") == 0) {
++             GeoIP_set_charset (gcf->org, GEOIP_CHARSET_UTF8);
++ 
++         } else {
++             ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
++                                "invalid parameter \"%V\"", &value[2]);
++             return NGX_CONF_ERROR;
++         }
++     }
++ 
++     switch (gcf->org->databaseType) {
++ 
++     case GEOIP_ISP_EDITION:
++     case GEOIP_ORG_EDITION:
++     case GEOIP_DOMAIN_EDITION:
++     case GEOIP_ASNUM_EDITION:
++ 
++         return NGX_CONF_OK;
++ 
++     default:
++         ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
++                            "invalid GeoIP database \"%V\" type:%d",
++                            &value[1], gcf->org->databaseType);
++         return NGX_CONF_ERROR;
++     }
++ }
++ 
++ 
++ static char *
+  ngx_http_geoip_city(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
+  {
+      ngx_http_geoip_conf_t  *gcf = conf;
+*************** ngx_http_geoip_city(ngx_conf_t *cf, ngx_
+*** 491,497 ****
+  
+      if (gcf->city == NULL) {
+          ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
+!                            "GeoIO_open(\"%V\") failed", &value[1]);
+  
+          return NGX_CONF_ERROR;
+      }
+--- 619,625 ----
+  
+      if (gcf->city == NULL) {
+          ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
+!                            "GeoIP_open(\"%V\") failed", &value[1]);
+  
+          return NGX_CONF_ERROR;
+      }
+*************** ngx_http_geoip_cleanup(void *data)
+*** 532,537 ****
+--- 660,669 ----
+          GeoIP_delete(gcf->country);
+      }
+  
++     if (gcf->org) {
++         GeoIP_delete(gcf->org);
++     }
++ 
+      if (gcf->city) {
+          GeoIP_delete(gcf->city);
+      }
+diff -p -N --text -r /tmp/patch.inc.get1.ND39lx/src/http/modules/ngx_http_geo_module.c /tmp/patch.inc.get2.oZWBjA/src/http/modules/ngx_http_geo_module.c
+*** /tmp/patch.inc.get1.ND39lx/src/http/modules/ngx_http_geo_module.c	2013-04-30 01:49:08.854864983 +0200
+--- /tmp/patch.inc.get2.oZWBjA/src/http/modules/ngx_http_geo_module.c	2013-04-30 01:49:12.026880695 +0200
+*************** ngx_http_geo_real_addr(ngx_http_request_
+*** 257,273 ****
+  {
+      struct sockaddr_in         *sin;
+      ngx_http_variable_value_t  *v;
+  
+      if (ctx->index == -1) {
+          ngx_log_debug1(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
+                         "http geo started: %V", &r->connection->addr_text);
+  
+!         if (r->connection->sockaddr->sa_family != AF_INET) {
+!             return 0;
+          }
+  
+!         sin = (struct sockaddr_in *) r->connection->sockaddr;
+!         return ntohl(sin->sin_addr.s_addr);
+      }
+  
+      v = ngx_http_get_flushed_variable(r, ctx->index);
+--- 257,297 ----
+  {
+      struct sockaddr_in         *sin;
+      ngx_http_variable_value_t  *v;
++ #if (NGX_HAVE_INET6)
++     u_char                     *p;
++     in_addr_t                   addr;
++     struct sockaddr_in6        *sin6;
++ #endif
+  
+      if (ctx->index == -1) {
+          ngx_log_debug1(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
+                         "http geo started: %V", &r->connection->addr_text);
+  
+!         switch (r->connection->sockaddr->sa_family) {
+! 
+!         case AF_INET:
+!             sin = (struct sockaddr_in *) r->connection->sockaddr;
+!             return ntohl(sin->sin_addr.s_addr);
+! 
+! #if (NGX_HAVE_INET6)
+! 
+!         case AF_INET6:
+!             sin6 = (struct sockaddr_in6 *) r->connection->sockaddr;
+! 
+!             if (IN6_IS_ADDR_V4MAPPED(&sin6->sin6_addr)) {
+!                 p = sin6->sin6_addr.s6_addr;
+!                 addr = p[12] << 24;
+!                 addr += p[13] << 16;
+!                 addr += p[14] << 8;
+!                 addr += p[15];
+! 
+!                 return addr;
+!             }
+! 
+! #endif
+          }
+  
+!         return INADDR_NONE;
+      }
+  
+      v = ngx_http_get_flushed_variable(r, ctx->index);
+diff -p -N --text -r /tmp/patch.inc.get1.ND39lx/src/http/modules/ngx_http_split_clients_module.c /tmp/patch.inc.get2.oZWBjA/src/http/modules/ngx_http_split_clients_module.c
+*** /tmp/patch.inc.get1.ND39lx/src/http/modules/ngx_http_split_clients_module.c	2013-04-30 01:49:08.854864983 +0200
+--- /tmp/patch.inc.get2.oZWBjA/src/http/modules/ngx_http_split_clients_module.c	2013-04-30 01:49:12.026880695 +0200
+*************** ngx_http_split_clients_variable(ngx_http
+*** 94,100 ****
+      for (i = 0; i < ctx->parts.nelts; i++) {
+  
+          ngx_log_debug2(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
+!                        "%D %D", hash, part[i].percent);
+  
+          if (hash < part[i].percent) {
+              *v = part[i].value;
+--- 94,100 ----
+      for (i = 0; i < ctx->parts.nelts; i++) {
+  
+          ngx_log_debug2(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
+!                        "http split: %uD %uD", hash, part[i].percent);
+  
+          if (hash < part[i].percent) {
+              *v = part[i].value;
+diff -p -N --text -r /tmp/patch.inc.get1.ND39lx/src/http/ngx_http_file_cache.c /tmp/patch.inc.get2.oZWBjA/src/http/ngx_http_file_cache.c
+*** /tmp/patch.inc.get1.ND39lx/src/http/ngx_http_file_cache.c	2013-04-30 01:49:08.850864954 +0200
+--- /tmp/patch.inc.get2.oZWBjA/src/http/ngx_http_file_cache.c	2013-04-30 01:49:12.026880695 +0200
+*************** ngx_http_file_cache_create(ngx_http_requ
+*** 174,181 ****
+      ngx_pool_cleanup_t     *cln;
+      ngx_http_file_cache_t  *cache;
+  
+-     ngx_http_file_cache_create_key(r);
+- 
+      c = r->cache;
+      cache = c->file_cache;
+  
+--- 174,179 ----
+*************** ngx_http_file_cache_free(ngx_http_cache_
+*** 906,912 ****
+      ngx_http_file_cache_t       *cache;
+      ngx_http_file_cache_node_t  *fcn;
+  
+!     if (c->updated) {
+          return;
+      }
+  
+--- 904,910 ----
+      ngx_http_file_cache_t       *cache;
+      ngx_http_file_cache_node_t  *fcn;
+  
+!     if (c->updated || c->node == NULL) {
+          return;
+      }
+  
+diff -p -N --text -r /tmp/patch.inc.get1.ND39lx/src/http/ngx_http_upstream.c /tmp/patch.inc.get2.oZWBjA/src/http/ngx_http_upstream.c
+*** /tmp/patch.inc.get1.ND39lx/src/http/ngx_http_upstream.c	2013-04-30 01:49:08.850864954 +0200
+--- /tmp/patch.inc.get2.oZWBjA/src/http/ngx_http_upstream.c	2013-04-30 01:49:12.026880695 +0200
+*************** ngx_http_upstream_cache(ngx_http_request
+*** 641,659 ****
+  
+      if (c == NULL) {
+  
+-         switch (ngx_http_test_predicates(r, u->conf->cache_bypass)) {
+- 
+-         case NGX_ERROR:
+-             return NGX_ERROR;
+- 
+-         case NGX_DECLINED:
+-             u->cache_status = NGX_HTTP_CACHE_BYPASS;
+-             return NGX_DECLINED;
+- 
+-         default: /* NGX_OK */
+-             break;
+-         }
+- 
+          if (!(r->method & u->conf->cache_methods)) {
+              return NGX_DECLINED;
+          }
+--- 641,646 ----
+*************** ngx_http_upstream_cache(ngx_http_request
+*** 674,679 ****
+--- 661,679 ----
+  
+          ngx_http_file_cache_create_key(r);
+  
++         switch (ngx_http_test_predicates(r, u->conf->cache_bypass)) {
++ 
++         case NGX_ERROR:
++             return NGX_ERROR;
++ 
++         case NGX_DECLINED:
++             u->cache_status = NGX_HTTP_CACHE_BYPASS;
++             return NGX_DECLINED;
++ 
++         default: /* NGX_OK */
++             break;
++         }
++ 
+          u->cacheable = 1;
+  
+          c = r->cache;
+*************** ngx_http_upstream_send_response(ngx_http
+*** 2135,2152 ****
+  
+          if (u->cache_status == NGX_HTTP_CACHE_BYPASS) {
+  
+-             if (ngx_http_file_cache_new(r) != NGX_OK) {
+-                 ngx_http_upstream_finalize_request(r, u, 0);
+-                 return;
+-             }
+- 
+-             if (u->create_key(r) != NGX_OK) {
+-                 ngx_http_upstream_finalize_request(r, u, 0);
+-                 return;
+-             }
+- 
+-             /* TODO: add keys */
+- 
+              r->cache->min_uses = u->conf->cache_min_uses;
+              r->cache->body_start = u->conf->buffer_size;
+              r->cache->file_cache = u->conf->cache->data;
+--- 2135,2140 ----
+diff -p -N --text -r /tmp/patch.inc.get1.ND39lx/src/os/unix/ngx_user.c /tmp/patch.inc.get2.oZWBjA/src/os/unix/ngx_user.c
+*** /tmp/patch.inc.get1.ND39lx/src/os/unix/ngx_user.c	2013-04-30 01:49:08.870865055 +0200
+--- /tmp/patch.inc.get2.oZWBjA/src/os/unix/ngx_user.c	2013-04-30 01:49:12.034880759 +0200
+***************
+*** 23,29 ****
+  #if (NGX_HAVE_GNU_CRYPT_R)
+  
+  ngx_int_t
+! ngx_crypt(ngx_pool_t *pool, u_char *key, u_char *salt, u_char **encrypted)
+  {
+      char               *value;
+      size_t              len;
+--- 23,29 ----
+  #if (NGX_HAVE_GNU_CRYPT_R)
+  
+  ngx_int_t
+! ngx_libc_crypt(ngx_pool_t *pool, u_char *key, u_char *salt, u_char **encrypted)
+  {
+      char               *value;
+      size_t              len;
+*************** ngx_crypt(ngx_pool_t *pool, u_char *key,
+*** 58,64 ****
+  #else
+  
+  ngx_int_t
+! ngx_crypt(ngx_pool_t *pool, u_char *key, u_char *salt, u_char **encrypted)
+  {
+      char       *value;
+      size_t      len;
+--- 58,64 ----
+  #else
+  
+  ngx_int_t
+! ngx_libc_crypt(ngx_pool_t *pool, u_char *key, u_char *salt, u_char **encrypted)
+  {
+      char       *value;
+      size_t      len;
+diff -p -N --text -r /tmp/patch.inc.get1.ND39lx/src/os/unix/ngx_user.h /tmp/patch.inc.get2.oZWBjA/src/os/unix/ngx_user.h
+*** /tmp/patch.inc.get1.ND39lx/src/os/unix/ngx_user.h	2013-04-30 01:49:08.870865055 +0200
+--- /tmp/patch.inc.get2.oZWBjA/src/os/unix/ngx_user.h	2013-04-30 01:49:12.034880759 +0200
+*************** typedef uid_t  ngx_uid_t;
+*** 16,22 ****
+  typedef gid_t  ngx_gid_t;
+  
+  
+! ngx_int_t ngx_crypt(ngx_pool_t *pool, u_char *key, u_char *salt,
+      u_char **encrypted);
+  
+  
+--- 16,22 ----
+  typedef gid_t  ngx_gid_t;
+  
+  
+! ngx_int_t ngx_libc_crypt(ngx_pool_t *pool, u_char *key, u_char *salt,
+      u_char **encrypted);
+  
+  

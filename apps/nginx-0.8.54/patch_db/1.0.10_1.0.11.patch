@@ -1,0 +1,2508 @@
+diff -p -N --text -r /tmp/patch.inc.get1.n8HZgM/src/core/nginx.c /tmp/patch.inc.get2.GF2KI6/src/core/nginx.c
+*** /tmp/patch.inc.get1.n8HZgM/src/core/nginx.c	2013-04-30 11:28:16.119167341 +0200
+--- /tmp/patch.inc.get2.GF2KI6/src/core/nginx.c	2013-04-30 11:28:19.215182705 +0200
+*************** main(int argc, char *const *argv)
+*** 203,208 ****
+--- 203,212 ----
+      ngx_cycle_t      *cycle, init_cycle;
+      ngx_core_conf_t  *ccf;
+  
++ #if (NGX_FREEBSD)
++     ngx_debug_init();
++ #endif
++ 
+      if (ngx_strerror_init() != NGX_OK) {
+          return 1;
+      }
+*************** main(int argc, char *const *argv)
+*** 212,258 ****
+      }
+  
+      if (ngx_show_version) {
+!         ngx_log_stderr(0, "nginx version: " NGINX_VER);
+  
+          if (ngx_show_help) {
+!             ngx_log_stderr(0,
+                  "Usage: nginx [-?hvVtq] [-s signal] [-c filename] "
+!                              "[-p prefix] [-g directives]" CRLF CRLF
+!                 "Options:" CRLF
+!                 "  -?,-h         : this help" CRLF
+!                 "  -v            : show version and exit" CRLF
+                  "  -V            : show version and configure options then exit"
+!                                    CRLF
+!                 "  -t            : test configuration and exit" CRLF
+                  "  -q            : suppress non-error messages "
+!                                    "during configuration testing" CRLF
+                  "  -s signal     : send signal to a master process: "
+!                                    "stop, quit, reopen, reload" CRLF
+  #ifdef NGX_PREFIX
+                  "  -p prefix     : set prefix path (default: "
+!                                    NGX_PREFIX ")" CRLF
+  #else
+!                 "  -p prefix     : set prefix path (default: NONE)" CRLF
+  #endif
+                  "  -c filename   : set configuration file (default: "
+!                                    NGX_CONF_PATH ")" CRLF
+                  "  -g directives : set global directives out of configuration "
+!                                    "file" CRLF
+                  );
+          }
+  
+          if (ngx_show_configure) {
+  #ifdef NGX_COMPILER
+!             ngx_log_stderr(0, "built by " NGX_COMPILER);
+  #endif
+  #if (NGX_SSL)
+  #ifdef SSL_CTRL_SET_TLSEXT_HOSTNAME
+!             ngx_log_stderr(0, "TLS SNI support enabled");
+  #else
+!             ngx_log_stderr(0, "TLS SNI support disabled");
+  #endif
+  #endif
+!             ngx_log_stderr(0, "configure arguments:" NGX_CONFIGURE);
+          }
+  
+          if (!ngx_test_config) {
+--- 216,264 ----
+      }
+  
+      if (ngx_show_version) {
+!         ngx_write_stderr("nginx version: " NGINX_VER NGX_LINEFEED);
+  
+          if (ngx_show_help) {
+!             ngx_write_stderr(
+                  "Usage: nginx [-?hvVtq] [-s signal] [-c filename] "
+!                              "[-p prefix] [-g directives]" NGX_LINEFEED
+!                              NGX_LINEFEED
+!                 "Options:" NGX_LINEFEED
+!                 "  -?,-h         : this help" NGX_LINEFEED
+!                 "  -v            : show version and exit" NGX_LINEFEED
+                  "  -V            : show version and configure options then exit"
+!                                    NGX_LINEFEED
+!                 "  -t            : test configuration and exit" NGX_LINEFEED
+                  "  -q            : suppress non-error messages "
+!                                    "during configuration testing" NGX_LINEFEED
+                  "  -s signal     : send signal to a master process: "
+!                                    "stop, quit, reopen, reload" NGX_LINEFEED
+  #ifdef NGX_PREFIX
+                  "  -p prefix     : set prefix path (default: "
+!                                    NGX_PREFIX ")" NGX_LINEFEED
+  #else
+!                 "  -p prefix     : set prefix path (default: NONE)" NGX_LINEFEED
+  #endif
+                  "  -c filename   : set configuration file (default: "
+!                                    NGX_CONF_PATH ")" NGX_LINEFEED
+                  "  -g directives : set global directives out of configuration "
+!                                    "file" NGX_LINEFEED NGX_LINEFEED
+                  );
+          }
+  
+          if (ngx_show_configure) {
++             ngx_write_stderr(
+  #ifdef NGX_COMPILER
+!                 "built by " NGX_COMPILER NGX_LINEFEED
+  #endif
+  #if (NGX_SSL)
+  #ifdef SSL_CTRL_SET_TLSEXT_HOSTNAME
+!                 "TLS SNI support enabled" NGX_LINEFEED
+  #else
+!                 "TLS SNI support disabled" NGX_LINEFEED
+  #endif
+  #endif
+!                 "configure arguments:" NGX_CONFIGURE NGX_LINEFEED);
+          }
+  
+          if (!ngx_test_config) {
+*************** main(int argc, char *const *argv)
+*** 260,269 ****
+          }
+      }
+  
+- #if (NGX_FREEBSD)
+-     ngx_debug_init();
+- #endif
+- 
+      /* TODO */ ngx_max_sockets = -1;
+  
+      ngx_time_init();
+--- 266,271 ----
+*************** main(int argc, char *const *argv)
+*** 374,379 ****
+--- 376,385 ----
+          ngx_daemonized = 1;
+      }
+  
++     if (ngx_inherited) {
++         ngx_daemonized = 1;
++     }
++ 
+  #endif
+  
+      if (ngx_create_pidfile(&ccf->pid, cycle->log) != NGX_OK) {
+diff -p -N --text -r /tmp/patch.inc.get1.n8HZgM/src/core/nginx.h /tmp/patch.inc.get2.GF2KI6/src/core/nginx.h
+*** /tmp/patch.inc.get1.n8HZgM/src/core/nginx.h	2013-04-30 11:28:16.119167341 +0200
+--- /tmp/patch.inc.get2.GF2KI6/src/core/nginx.h	2013-04-30 11:28:19.215182705 +0200
+***************
+*** 8,15 ****
+  #define _NGINX_H_INCLUDED_
+  
+  
+! #define nginx_version      1000010
+! #define NGINX_VERSION      "1.0.10"
+  #define NGINX_VER          "nginx/" NGINX_VERSION
+  
+  #define NGINX_VAR          "NGINX"
+--- 8,15 ----
+  #define _NGINX_H_INCLUDED_
+  
+  
+! #define nginx_version      1000011
+! #define NGINX_VERSION      "1.0.11"
+  #define NGINX_VER          "nginx/" NGINX_VERSION
+  
+  #define NGINX_VAR          "NGINX"
+diff -p -N --text -r /tmp/patch.inc.get1.n8HZgM/src/core/ngx_inet.c /tmp/patch.inc.get2.GF2KI6/src/core/ngx_inet.c
+*** /tmp/patch.inc.get1.n8HZgM/src/core/ngx_inet.c	2013-04-30 11:28:16.119167341 +0200
+--- /tmp/patch.inc.get2.GF2KI6/src/core/ngx_inet.c	2013-04-30 11:28:19.215182705 +0200
+*************** ngx_parse_inet_url(ngx_pool_t *pool, ngx
+*** 671,677 ****
+  
+          n = ngx_atoi(port, len);
+  
+!         if (n < 1 || n > 65536) {
+              u->err = "invalid port";
+              return NGX_ERROR;
+          }
+--- 671,677 ----
+  
+          n = ngx_atoi(port, len);
+  
+!         if (n < 1 || n > 65535) {
+              u->err = "invalid port";
+              return NGX_ERROR;
+          }
+*************** ngx_parse_inet_url(ngx_pool_t *pool, ngx
+*** 695,701 ****
+  
+                  if (n != NGX_ERROR) {
+  
+!                     if (n < 1 || n > 65536) {
+                          u->err = "invalid port";
+                          return NGX_ERROR;
+                      }
+--- 695,701 ----
+  
+                  if (n != NGX_ERROR) {
+  
+!                     if (n < 1 || n > 65535) {
+                          u->err = "invalid port";
+                          return NGX_ERROR;
+                      }
+*************** ngx_parse_inet6_url(ngx_pool_t *pool, ng
+*** 835,841 ****
+  
+              n = ngx_atoi(port, len);
+  
+!             if (n < 1 || n > 65536) {
+                  u->err = "invalid port";
+                  return NGX_ERROR;
+              }
+--- 835,841 ----
+  
+              n = ngx_atoi(port, len);
+  
+!             if (n < 1 || n > 65535) {
+                  u->err = "invalid port";
+                  return NGX_ERROR;
+              }
+diff -p -N --text -r /tmp/patch.inc.get1.n8HZgM/src/core/ngx_log.h /tmp/patch.inc.get2.GF2KI6/src/core/ngx_log.h
+*** /tmp/patch.inc.get1.n8HZgM/src/core/ngx_log.h	2013-04-30 11:28:16.119167341 +0200
+--- /tmp/patch.inc.get2.GF2KI6/src/core/ngx_log.h	2013-04-30 11:28:19.211182699 +0200
+*************** void ngx_cdecl ngx_log_stderr(ngx_err_t
+*** 203,208 ****
+--- 203,224 ----
+  u_char *ngx_log_errno(u_char *buf, u_char *last, ngx_err_t err);
+  
+  
++ /*
++  * ngx_write_stderr() cannot be implemented as macro, since
++  * MSVC does not allow to use #ifdef inside macro parameters.
++  *
++  * ngx_write_fd() is used instead of ngx_write_console(), since
++  * CharToOemBuff() inside ngx_write_console() cannot be used with
++  * read only buffer as destination and CharToOemBuff() is not needed
++  * for ngx_write_stderr() anyway.
++  */
++ static ngx_inline void
++ ngx_write_stderr(char *text)
++ {
++     (void) ngx_write_fd(ngx_stderr, text, strlen(text));
++ }
++ 
++ 
+  extern ngx_module_t  ngx_errlog_module;
+  extern ngx_uint_t    ngx_use_stderr;
+  
+diff -p -N --text -r /tmp/patch.inc.get1.n8HZgM/src/core/ngx_string.c /tmp/patch.inc.get2.GF2KI6/src/core/ngx_string.c
+*** /tmp/patch.inc.get1.n8HZgM/src/core/ngx_string.c	2013-04-30 11:28:16.119167341 +0200
+--- /tmp/patch.inc.get2.GF2KI6/src/core/ngx_string.c	2013-04-30 11:28:19.215182705 +0200
+*************** ngx_escape_html(u_char *dst, u_char *src
+*** 1657,1662 ****
+--- 1657,1666 ----
+                  len += sizeof("&amp;") - 2;
+                  break;
+  
++             case '"':
++                 len += sizeof("&quot;") - 2;
++                 break;
++ 
+              default:
+                  break;
+              }
+*************** ngx_escape_html(u_char *dst, u_char *src
+*** 1684,1689 ****
+--- 1688,1698 ----
+              *dst++ = ';';
+              break;
+  
++         case '"':
++             *dst++ = '&'; *dst++ = 'q'; *dst++ = 'u'; *dst++ = 'o';
++             *dst++ = 't'; *dst++ = ';';
++             break;
++ 
+          default:
+              *dst++ = ch;
+              break;
+diff -p -N --text -r /tmp/patch.inc.get1.n8HZgM/src/http/modules/ngx_http_fastcgi_module.c /tmp/patch.inc.get2.GF2KI6/src/http/modules/ngx_http_fastcgi_module.c
+*** /tmp/patch.inc.get1.n8HZgM/src/http/modules/ngx_http_fastcgi_module.c	2013-04-30 11:28:16.115167325 +0200
+--- /tmp/patch.inc.get2.GF2KI6/src/http/modules/ngx_http_fastcgi_module.c	2013-04-30 11:28:19.211182699 +0200
+*************** static ngx_int_t ngx_http_fastcgi_add_va
+*** 142,147 ****
+--- 142,150 ----
+  static void *ngx_http_fastcgi_create_loc_conf(ngx_conf_t *cf);
+  static char *ngx_http_fastcgi_merge_loc_conf(ngx_conf_t *cf,
+      void *parent, void *child);
++ static ngx_int_t ngx_http_fastcgi_merge_params(ngx_conf_t *cf,
++     ngx_http_fastcgi_loc_conf_t *conf, ngx_http_fastcgi_loc_conf_t *prev);
++ 
+  static ngx_int_t ngx_http_fastcgi_script_name_variable(ngx_http_request_t *r,
+      ngx_http_variable_value_t *v, uintptr_t data);
+  static ngx_int_t ngx_http_fastcgi_path_info_variable(ngx_http_request_t *r,
+*************** static ngx_command_t  ngx_http_fastcgi_c
+*** 431,437 ****
+        &ngx_http_upstream_ignore_headers_masks },
+  
+      { ngx_string("fastcgi_catch_stderr"),
+!       NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_FLAG,
+        ngx_conf_set_str_array_slot,
+        NGX_HTTP_LOC_CONF_OFFSET,
+        offsetof(ngx_http_fastcgi_loc_conf_t, catch_stderr),
+--- 434,440 ----
+        &ngx_http_upstream_ignore_headers_masks },
+  
+      { ngx_string("fastcgi_catch_stderr"),
+!       NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
+        ngx_conf_set_str_array_slot,
+        NGX_HTTP_LOC_CONF_OFFSET,
+        offsetof(ngx_http_fastcgi_loc_conf_t, catch_stderr),
+*************** ngx_http_fastcgi_merge_loc_conf(ngx_conf
+*** 2025,2041 ****
+      ngx_http_fastcgi_loc_conf_t *prev = parent;
+      ngx_http_fastcgi_loc_conf_t *conf = child;
+  
+-     u_char                       *p;
+      size_t                        size;
+-     uintptr_t                    *code;
+-     ngx_uint_t                    i;
+-     ngx_array_t                   headers_names;
+-     ngx_keyval_t                 *src;
+-     ngx_hash_key_t               *hk;
+      ngx_hash_init_t               hash;
+      ngx_http_core_loc_conf_t     *clcf;
+-     ngx_http_script_compile_t     sc;
+-     ngx_http_script_copy_code_t  *copy;
+  
+      if (conf->upstream.store != 0) {
+          ngx_conf_merge_value(conf->upstream.store,
+--- 2028,2036 ----
+*************** ngx_http_fastcgi_merge_loc_conf(ngx_conf
+*** 2293,2387 ****
+      }
+  #endif
+  
+!     if (conf->params_source == NULL) {
+!         conf->flushes = prev->flushes;
+!         conf->params_len = prev->params_len;
+!         conf->params = prev->params;
+!         conf->params_source = prev->params_source;
+!         conf->headers_hash = prev->headers_hash;
+  
+! #if (NGX_HTTP_CACHE)
+  
+-         if (conf->params_source == NULL) {
+  
+!             if ((conf->upstream.cache == NULL)
+!                 == (prev->upstream.cache == NULL))
+!             {
+!                 return NGX_CONF_OK;
+!             }
+  
+!             /* 6 is a number of ngx_http_fastcgi_cache_headers entries */
+!             conf->params_source = ngx_array_create(cf->pool, 6,
+!                                                    sizeof(ngx_keyval_t));
+!             if (conf->params_source == NULL) {
+!                 return NGX_CONF_ERROR;
+!             }
+!         }
+! #else
+  
+!         if (conf->params_source == NULL) {
+!             return NGX_CONF_OK;
+          }
+  
+  #endif
+      }
+  
+      conf->params_len = ngx_array_create(cf->pool, 64, 1);
+      if (conf->params_len == NULL) {
+!         return NGX_CONF_ERROR;
+      }
+  
+      conf->params = ngx_array_create(cf->pool, 512, 1);
+      if (conf->params == NULL) {
+!         return NGX_CONF_ERROR;
+      }
+  
+      if (ngx_array_init(&headers_names, cf->temp_pool, 4, sizeof(ngx_hash_key_t))
+          != NGX_OK)
+      {
+!         return NGX_CONF_ERROR;
+      }
+  
+!     src = conf->params_source->elts;
+  
+  #if (NGX_HTTP_CACHE)
+  
+      if (conf->upstream.cache) {
+          ngx_keyval_t  *h, *s;
+  
+!         for (h = ngx_http_fastcgi_cache_headers; h->key.len; h++) {
+  
+!             for (i = 0; i < conf->params_source->nelts; i++) {
+                  if (ngx_strcasecmp(h->key.data, src[i].key.data) == 0) {
+                      goto next;
+                  }
+              }
+  
+!             s = ngx_array_push(conf->params_source);
+              if (s == NULL) {
+!                 return NGX_CONF_ERROR;
+              }
+  
+              *s = *h;
+  
+-             src = conf->params_source->elts;
+- 
+          next:
+  
+              h++;
+          }
+      }
+  
+  #endif
+  
+!     for (i = 0; i < conf->params_source->nelts; i++) {
+  
+          if (src[i].key.len > sizeof("HTTP_") - 1
+              && ngx_strncmp(src[i].key.data, "HTTP_", sizeof("HTTP_") - 1) == 0)
+          {
+              hk = ngx_array_push(&headers_names);
+              if (hk == NULL) {
+!                 return NGX_CONF_ERROR;
+              }
+  
+              hk->key.len = src[i].key.len - 5;
+--- 2288,2433 ----
+      }
+  #endif
+  
+!     if (ngx_http_fastcgi_merge_params(cf, conf, prev) != NGX_OK) {
+!         return NGX_CONF_ERROR;
+!     }
+  
+!     return NGX_CONF_OK;
+! }
+  
+  
+! static ngx_int_t
+! ngx_http_fastcgi_merge_params(ngx_conf_t *cf,
+!     ngx_http_fastcgi_loc_conf_t *conf, ngx_http_fastcgi_loc_conf_t *prev)
+! {
+!     u_char                       *p;
+!     size_t                        size;
+!     uintptr_t                    *code;
+!     ngx_uint_t                    i, nsrc;
+!     ngx_array_t                   headers_names;
+! #if (NGX_HTTP_CACHE)
+!     ngx_array_t                   params_merged;
+! #endif
+!     ngx_keyval_t                 *src;
+!     ngx_hash_key_t               *hk;
+!     ngx_hash_init_t               hash;
+!     ngx_http_script_compile_t     sc;
+!     ngx_http_script_copy_code_t  *copy;
+  
+!     if (conf->params_source == NULL) {
+!         conf->params_source = prev->params_source;
+! 
+!         if (prev->headers_hash.buckets
+! #if (NGX_HTTP_CACHE)
+!             && ((conf->upstream.cache == NULL) == (prev->upstream.cache == NULL))
+! #endif
+!            )
+!         {
+!             conf->flushes = prev->flushes;
+!             conf->params_len = prev->params_len;
+!             conf->params = prev->params;
+!             conf->headers_hash = prev->headers_hash;
+!             conf->header_params = prev->header_params;
+  
+!             return NGX_OK;
+          }
++     }
+  
++     if (conf->params_source == NULL
++ #if (NGX_HTTP_CACHE)
++         && (conf->upstream.cache == NULL)
+  #endif
++        )
++     {
++         conf->headers_hash.buckets = (void *) 1;
++         return NGX_OK;
+      }
+  
+      conf->params_len = ngx_array_create(cf->pool, 64, 1);
+      if (conf->params_len == NULL) {
+!         return NGX_ERROR;
+      }
+  
+      conf->params = ngx_array_create(cf->pool, 512, 1);
+      if (conf->params == NULL) {
+!         return NGX_ERROR;
+      }
+  
+      if (ngx_array_init(&headers_names, cf->temp_pool, 4, sizeof(ngx_hash_key_t))
+          != NGX_OK)
+      {
+!         return NGX_ERROR;
+      }
+  
+!     if (conf->params_source) {
+!         src = conf->params_source->elts;
+!         nsrc = conf->params_source->nelts;
+! 
+!     } else {
+!         src = NULL;
+!         nsrc = 0;
+!     }
+  
+  #if (NGX_HTTP_CACHE)
+  
+      if (conf->upstream.cache) {
+          ngx_keyval_t  *h, *s;
+  
+!         if (ngx_array_init(&params_merged, cf->temp_pool, 4, sizeof(ngx_keyval_t))
+!             != NGX_OK)
+!         {
+!             return NGX_ERROR;
+!         }
+! 
+!         for (i = 0; i < nsrc; i++) {
+! 
+!             s = ngx_array_push(&params_merged);
+!             if (s == NULL) {
+!                 return NGX_ERROR;
+!             }
+! 
+!             *s = src[i];
+!         }
+! 
+!         h = ngx_http_fastcgi_cache_headers;
+! 
+!         while (h->key.len) {
+  
+!             src = params_merged.elts;
+!             nsrc = params_merged.nelts;
+! 
+!             for (i = 0; i < nsrc; i++) {
+                  if (ngx_strcasecmp(h->key.data, src[i].key.data) == 0) {
+                      goto next;
+                  }
+              }
+  
+!             s = ngx_array_push(&params_merged);
+              if (s == NULL) {
+!                 return NGX_ERROR;
+              }
+  
+              *s = *h;
+  
+          next:
+  
+              h++;
+          }
++ 
++         src = params_merged.elts;
++         nsrc = params_merged.nelts;
+      }
+  
+  #endif
+  
+!     for (i = 0; i < nsrc; i++) {
+  
+          if (src[i].key.len > sizeof("HTTP_") - 1
+              && ngx_strncmp(src[i].key.data, "HTTP_", sizeof("HTTP_") - 1) == 0)
+          {
+              hk = ngx_array_push(&headers_names);
+              if (hk == NULL) {
+!                 return NGX_ERROR;
+              }
+  
+              hk->key.len = src[i].key.len - 5;
+*************** ngx_http_fastcgi_merge_loc_conf(ngx_conf
+*** 2397,2403 ****
+          copy = ngx_array_push_n(conf->params_len,
+                                  sizeof(ngx_http_script_copy_code_t));
+          if (copy == NULL) {
+!             return NGX_CONF_ERROR;
+          }
+  
+          copy->code = (ngx_http_script_code_pt) ngx_http_script_copy_len_code;
+--- 2443,2449 ----
+          copy = ngx_array_push_n(conf->params_len,
+                                  sizeof(ngx_http_script_copy_code_t));
+          if (copy == NULL) {
+!             return NGX_ERROR;
+          }
+  
+          copy->code = (ngx_http_script_code_pt) ngx_http_script_copy_len_code;
+*************** ngx_http_fastcgi_merge_loc_conf(ngx_conf
+*** 2406,2416 ****
+  
+          size = (sizeof(ngx_http_script_copy_code_t)
+                  + src[i].key.len + sizeof(uintptr_t) - 1)
+!                 & ~(sizeof(uintptr_t) - 1);
+  
+          copy = ngx_array_push_n(conf->params, size);
+          if (copy == NULL) {
+!             return NGX_CONF_ERROR;
+          }
+  
+          copy->code = ngx_http_script_copy_code;
+--- 2452,2462 ----
+  
+          size = (sizeof(ngx_http_script_copy_code_t)
+                  + src[i].key.len + sizeof(uintptr_t) - 1)
+!                & ~(sizeof(uintptr_t) - 1);
+  
+          copy = ngx_array_push_n(conf->params, size);
+          if (copy == NULL) {
+!             return NGX_ERROR;
+          }
+  
+          copy->code = ngx_http_script_copy_code;
+*************** ngx_http_fastcgi_merge_loc_conf(ngx_conf
+*** 2429,2440 ****
+          sc.values = &conf->params;
+  
+          if (ngx_http_script_compile(&sc) != NGX_OK) {
+!             return NGX_CONF_ERROR;
+          }
+  
+          code = ngx_array_push_n(conf->params_len, sizeof(uintptr_t));
+          if (code == NULL) {
+!             return NGX_CONF_ERROR;
+          }
+  
+          *code = (uintptr_t) NULL;
+--- 2475,2486 ----
+          sc.values = &conf->params;
+  
+          if (ngx_http_script_compile(&sc) != NGX_OK) {
+!             return NGX_ERROR;
+          }
+  
+          code = ngx_array_push_n(conf->params_len, sizeof(uintptr_t));
+          if (code == NULL) {
+!             return NGX_ERROR;
+          }
+  
+          *code = (uintptr_t) NULL;
+*************** ngx_http_fastcgi_merge_loc_conf(ngx_conf
+*** 2442,2448 ****
+  
+          code = ngx_array_push_n(conf->params, sizeof(uintptr_t));
+          if (code == NULL) {
+!             return NGX_CONF_ERROR;
+          }
+  
+          *code = (uintptr_t) NULL;
+--- 2488,2494 ----
+  
+          code = ngx_array_push_n(conf->params, sizeof(uintptr_t));
+          if (code == NULL) {
+!             return NGX_ERROR;
+          }
+  
+          *code = (uintptr_t) NULL;
+*************** ngx_http_fastcgi_merge_loc_conf(ngx_conf
+*** 2450,2461 ****
+  
+      code = ngx_array_push_n(conf->params_len, sizeof(uintptr_t));
+      if (code == NULL) {
+!         return NGX_CONF_ERROR;
+      }
+  
+      *code = (uintptr_t) NULL;
+  
+- 
+      conf->header_params = headers_names.nelts;
+  
+      hash.hash = &conf->headers_hash;
+--- 2496,2506 ----
+  
+      code = ngx_array_push_n(conf->params_len, sizeof(uintptr_t));
+      if (code == NULL) {
+!         return NGX_ERROR;
+      }
+  
+      *code = (uintptr_t) NULL;
+  
+      conf->header_params = headers_names.nelts;
+  
+      hash.hash = &conf->headers_hash;
+*************** ngx_http_fastcgi_merge_loc_conf(ngx_conf
+*** 2466,2477 ****
+      hash.pool = cf->pool;
+      hash.temp_pool = NULL;
+  
+!     if (ngx_hash_init(&hash, headers_names.elts, headers_names.nelts) != NGX_OK)
+!     {
+!         return NGX_CONF_ERROR;
+!     }
+! 
+!     return NGX_CONF_OK;
+  }
+  
+  
+--- 2511,2517 ----
+      hash.pool = cf->pool;
+      hash.temp_pool = NULL;
+  
+!     return ngx_hash_init(&hash, headers_names.elts, headers_names.nelts);
+  }
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.n8HZgM/src/http/modules/ngx_http_flv_module.c /tmp/patch.inc.get2.GF2KI6/src/http/modules/ngx_http_flv_module.c
+*** /tmp/patch.inc.get1.n8HZgM/src/http/modules/ngx_http_flv_module.c	2013-04-30 11:28:16.115167325 +0200
+--- /tmp/patch.inc.get2.GF2KI6/src/http/modules/ngx_http_flv_module.c	2013-04-30 11:28:19.211182699 +0200
+*************** static ngx_command_t  ngx_http_flv_comma
+*** 23,29 ****
+  };
+  
+  
+! static u_char  ngx_flv_header[] = "FLV\x1\x1\0\0\0\x9\0\0\0\x9";
+  
+  
+  static ngx_http_module_t  ngx_http_flv_module_ctx = {
+--- 23,29 ----
+  };
+  
+  
+! static u_char  ngx_flv_header[] = "FLV\x1\x5\0\0\0\x9\0\0\0\0";
+  
+  
+  static ngx_http_module_t  ngx_http_flv_module_ctx = {
+diff -p -N --text -r /tmp/patch.inc.get1.n8HZgM/src/http/modules/ngx_http_headers_filter_module.c /tmp/patch.inc.get2.GF2KI6/src/http/modules/ngx_http_headers_filter_module.c
+*** /tmp/patch.inc.get1.n8HZgM/src/http/modules/ngx_http_headers_filter_module.c	2013-04-30 11:28:16.115167325 +0200
+--- /tmp/patch.inc.get2.GF2KI6/src/http/modules/ngx_http_headers_filter_module.c	2013-04-30 11:28:19.207182664 +0200
+*************** ngx_http_headers_filter(ngx_http_request
+*** 145,150 ****
+--- 145,151 ----
+          || r != r->main
+          || (r->headers_out.status != NGX_HTTP_OK
+              && r->headers_out.status != NGX_HTTP_NO_CONTENT
++             && r->headers_out.status != NGX_HTTP_PARTIAL_CONTENT
+              && r->headers_out.status != NGX_HTTP_MOVED_PERMANENTLY
+              && r->headers_out.status != NGX_HTTP_MOVED_TEMPORARILY
+              && r->headers_out.status != NGX_HTTP_NOT_MODIFIED))
+*************** ngx_http_set_expires(ngx_http_request_t
+*** 253,259 ****
+          return NGX_ERROR;
+      }
+  
+!     if (conf->expires_time == 0) {
+          ngx_memcpy(expires->value.data, ngx_cached_http_time.data,
+                     ngx_cached_http_time.len + 1);
+          ngx_str_set(&cc->value, "max-age=0");
+--- 254,260 ----
+          return NGX_ERROR;
+      }
+  
+!     if (conf->expires_time == 0 && conf->expires != NGX_HTTP_EXPIRES_DAILY) {
+          ngx_memcpy(expires->value.data, ngx_cached_http_time.data,
+                     ngx_cached_http_time.len + 1);
+          ngx_str_set(&cc->value, "max-age=0");
+*************** ngx_http_set_expires(ngx_http_request_t
+*** 262,277 ****
+  
+      now = ngx_time();
+  
+!     if (conf->expires == NGX_HTTP_EXPIRES_ACCESS
+!         || r->headers_out.last_modified_time == -1)
+      {
+          expires_time = now + conf->expires_time;
+          max_age = conf->expires_time;
+  
+-     } else if (conf->expires == NGX_HTTP_EXPIRES_DAILY) {
+-         expires_time = ngx_next_time(conf->expires_time);
+-         max_age = expires_time - now;
+- 
+      } else {
+          expires_time = r->headers_out.last_modified_time + conf->expires_time;
+          max_age = expires_time - now;
+--- 263,278 ----
+  
+      now = ngx_time();
+  
+!     if (conf->expires == NGX_HTTP_EXPIRES_DAILY) {
+!         expires_time = ngx_next_time(conf->expires_time);
+!         max_age = expires_time - now;
+! 
+!     } else if (conf->expires == NGX_HTTP_EXPIRES_ACCESS
+!                || r->headers_out.last_modified_time == -1)
+      {
+          expires_time = now + conf->expires_time;
+          max_age = conf->expires_time;
+  
+      } else {
+          expires_time = r->headers_out.last_modified_time + conf->expires_time;
+          max_age = expires_time - now;
+diff -p -N --text -r /tmp/patch.inc.get1.n8HZgM/src/http/modules/ngx_http_image_filter_module.c /tmp/patch.inc.get2.GF2KI6/src/http/modules/ngx_http_image_filter_module.c
+*** /tmp/patch.inc.get1.n8HZgM/src/http/modules/ngx_http_image_filter_module.c	2013-04-30 11:28:16.115167325 +0200
+--- /tmp/patch.inc.get2.GF2KI6/src/http/modules/ngx_http_image_filter_module.c	2013-04-30 11:28:19.207182664 +0200
+*************** typedef struct {
+*** 41,46 ****
+--- 41,47 ----
+      ngx_uint_t                   height;
+      ngx_uint_t                   angle;
+      ngx_uint_t                   jpeg_quality;
++     ngx_uint_t                   sharpen;
+  
+      ngx_flag_t                   transparency;
+  
+*************** typedef struct {
+*** 48,53 ****
+--- 49,55 ----
+      ngx_http_complex_value_t    *hcv;
+      ngx_http_complex_value_t    *acv;
+      ngx_http_complex_value_t    *jqcv;
++     ngx_http_complex_value_t    *shcv;
+  
+      size_t                       buffer_size;
+  } ngx_http_image_filter_conf_t;
+*************** static char *ngx_http_image_filter(ngx_c
+*** 105,117 ****
+      void *conf);
+  static char *ngx_http_image_filter_jpeg_quality(ngx_conf_t *cf,
+      ngx_command_t *cmd, void *conf);
+  static ngx_int_t ngx_http_image_filter_init(ngx_conf_t *cf);
+  
+  
+  static ngx_command_t  ngx_http_image_filter_commands[] = {
+  
+      { ngx_string("image_filter"),
+!       NGX_HTTP_LOC_CONF|NGX_CONF_TAKE13|NGX_CONF_TAKE2,
+        ngx_http_image_filter,
+        NGX_HTTP_LOC_CONF_OFFSET,
+        0,
+--- 107,121 ----
+      void *conf);
+  static char *ngx_http_image_filter_jpeg_quality(ngx_conf_t *cf,
+      ngx_command_t *cmd, void *conf);
++ static char *ngx_http_image_filter_sharpen(ngx_conf_t *cf, ngx_command_t *cmd,
++     void *conf);
+  static ngx_int_t ngx_http_image_filter_init(ngx_conf_t *cf);
+  
+  
+  static ngx_command_t  ngx_http_image_filter_commands[] = {
+  
+      { ngx_string("image_filter"),
+!       NGX_HTTP_LOC_CONF|NGX_CONF_TAKE123,
+        ngx_http_image_filter,
+        NGX_HTTP_LOC_CONF_OFFSET,
+        0,
+*************** static ngx_command_t  ngx_http_image_fil
+*** 124,129 ****
+--- 128,140 ----
+        0,
+        NULL },
+  
++     { ngx_string("image_filter_sharpen"),
++       NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
++       ngx_http_image_filter_sharpen,
++       NGX_HTTP_LOC_CONF_OFFSET,
++       0,
++       NULL },
++ 
+      { ngx_string("image_filter_transparency"),
+        NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_FLAG,
+        ngx_conf_set_flag_slot,
+*************** static ngx_buf_t *
+*** 724,730 ****
+  ngx_http_image_resize(ngx_http_request_t *r, ngx_http_image_filter_ctx_t *ctx)
+  {
+      int                            sx, sy, dx, dy, ox, oy, ax, ay, size,
+!                                    colors, palette, transparent,
+                                     red, green, blue, t;
+      u_char                        *out;
+      ngx_buf_t                     *b;
+--- 735,741 ----
+  ngx_http_image_resize(ngx_http_request_t *r, ngx_http_image_filter_ctx_t *ctx)
+  {
+      int                            sx, sy, dx, dy, ox, oy, ax, ay, size,
+!                                    colors, palette, transparent, sharpen,
+                                     red, green, blue, t;
+      u_char                        *out;
+      ngx_buf_t                     *b;
+*************** transparent:
+*** 948,953 ****
+--- 959,969 ----
+          gdImageColorTransparent(dst, gdImageColorExact(dst, red, green, blue));
+      }
+  
++     sharpen = ngx_http_image_filter_get_value(r, conf->shcv, conf->sharpen);
++     if (sharpen > 0) {
++         gdImageSharpen(dst, sharpen);
++     }
++ 
+      out = ngx_http_image_out(r, ctx->type, dst, &size);
+  
+      ngx_log_debug3(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
+*************** ngx_http_image_filter_create_conf(ngx_co
+*** 1156,1161 ****
+--- 1172,1178 ----
+  
+      conf->filter = NGX_CONF_UNSET_UINT;
+      conf->jpeg_quality = NGX_CONF_UNSET_UINT;
++     conf->sharpen = NGX_CONF_UNSET_UINT;
+      conf->angle = NGX_CONF_UNSET_UINT;
+      conf->transparency = NGX_CONF_UNSET;
+      conf->buffer_size = NGX_CONF_UNSET_SIZE;
+*************** ngx_http_image_filter_merge_conf(ngx_con
+*** 1191,1196 ****
+--- 1208,1219 ----
+          conf->jqcv = prev->jqcv;
+      }
+  
++     ngx_conf_merge_uint_value(conf->sharpen, prev->sharpen, 0);
++ 
++     if (conf->shcv == NULL) {
++         conf->shcv = prev->shcv;
++     }
++ 
+      ngx_conf_merge_uint_value(conf->angle, prev->angle, 0);
+      if (conf->acv == NULL) {
+          conf->acv = prev->acv;
+*************** ngx_http_image_filter(ngx_conf_t *cf, ng
+*** 1239,1245 ****
+      } else if (cf->args->nelts == 3) {
+  
+          if (ngx_strcmp(value[i].data, "rotate") == 0) {
+!             imcf->filter = NGX_HTTP_IMAGE_ROTATE;
+  
+              ngx_memzero(&ccv, sizeof(ngx_http_compile_complex_value_t));
+  
+--- 1262,1272 ----
+      } else if (cf->args->nelts == 3) {
+  
+          if (ngx_strcmp(value[i].data, "rotate") == 0) {
+!             if (imcf->filter != NGX_HTTP_IMAGE_RESIZE
+!                 && imcf->filter != NGX_HTTP_IMAGE_CROP)
+!             {
+!                 imcf->filter = NGX_HTTP_IMAGE_ROTATE;
+!             }
+  
+              ngx_memzero(&ccv, sizeof(ngx_http_compile_complex_value_t));
+  
+*************** ngx_http_image_filter_jpeg_quality(ngx_c
+*** 1382,1388 ****
+  
+          if (n <= 0) {
+              ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
+!                                "invalid parameter \"%V\"", &value[1]);
+              return NGX_CONF_ERROR;
+          }
+  
+--- 1409,1415 ----
+  
+          if (n <= 0) {
+              ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
+!                                "invalid value \"%V\"", &value[1]);
+              return NGX_CONF_ERROR;
+          }
+  
+*************** ngx_http_image_filter_jpeg_quality(ngx_c
+*** 1398,1403 ****
+--- 1425,1477 ----
+      }
+  
+      return NGX_CONF_OK;
++ }
++ 
++ 
++ static char *
++ ngx_http_image_filter_sharpen(ngx_conf_t *cf, ngx_command_t *cmd,
++     void *conf)
++ {
++     ngx_http_image_filter_conf_t *imcf = conf;
++ 
++     ngx_str_t                         *value;
++     ngx_int_t                          n;
++     ngx_http_complex_value_t           cv;
++     ngx_http_compile_complex_value_t   ccv;
++ 
++     value = cf->args->elts;
++ 
++     ngx_memzero(&ccv, sizeof(ngx_http_compile_complex_value_t));
++ 
++     ccv.cf = cf;
++     ccv.value = &value[1];
++     ccv.complex_value = &cv;
++ 
++     if (ngx_http_compile_complex_value(&ccv) != NGX_OK) {
++         return NGX_CONF_ERROR;
++     }
++ 
++     if (cv.lengths == NULL) {
++         n = ngx_http_image_filter_value(&value[1]);
++ 
++         if (n < 0) {
++             ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
++                                "invalid value \"%V\"", &value[1]);
++             return NGX_CONF_ERROR;
++         }
++ 
++         imcf->sharpen = (ngx_uint_t) n;
++ 
++     } else {
++         imcf->shcv = ngx_palloc(cf->pool, sizeof(ngx_http_complex_value_t));
++         if (imcf->shcv == NULL) {
++             return NGX_CONF_ERROR;
++         }
++ 
++         *imcf->shcv = cv;
++     }
++ 
++     return NGX_CONF_OK;
+  }
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.n8HZgM/src/http/modules/ngx_http_mp4_module.c /tmp/patch.inc.get2.GF2KI6/src/http/modules/ngx_http_mp4_module.c
+*** /tmp/patch.inc.get1.n8HZgM/src/http/modules/ngx_http_mp4_module.c	2013-04-30 11:28:16.115167325 +0200
+--- /tmp/patch.inc.get2.GF2KI6/src/http/modules/ngx_http_mp4_module.c	2013-04-30 11:28:19.211182699 +0200
+*************** ngx_http_mp4_update_stts_atom(ngx_http_m
+*** 1899,1905 ****
+          ngx_log_debug2(NGX_LOG_DEBUG_HTTP, mp4->file.log, 0,
+                         "count:%uD, duration:%uD", count, duration);
+  
+!         if (start_time < count * duration) {
+              start_sample += (ngx_uint_t) (start_time / duration);
+              count -= start_sample;
+              ngx_mp4_set_32value(entry->count, count);
+--- 1899,1905 ----
+          ngx_log_debug2(NGX_LOG_DEBUG_HTTP, mp4->file.log, 0,
+                         "count:%uD, duration:%uD", count, duration);
+  
+!         if (start_time < (uint64_t) count * duration) {
+              start_sample += (ngx_uint_t) (start_time / duration);
+              count -= start_sample;
+              ngx_mp4_set_32value(entry->count, count);
+diff -p -N --text -r /tmp/patch.inc.get1.n8HZgM/src/http/modules/ngx_http_proxy_module.c /tmp/patch.inc.get2.GF2KI6/src/http/modules/ngx_http_proxy_module.c
+*** /tmp/patch.inc.get1.n8HZgM/src/http/modules/ngx_http_proxy_module.c	2013-04-30 11:28:16.115167325 +0200
+--- /tmp/patch.inc.get2.GF2KI6/src/http/modules/ngx_http_proxy_module.c	2013-04-30 11:28:19.211182699 +0200
+*************** ngx_http_proxy_merge_loc_conf(ngx_conf_t
+*** 1722,1728 ****
+  
+      u_char                     *p;
+      size_t                      size;
+-     ngx_keyval_t               *s;
+      ngx_hash_init_t             hash;
+      ngx_http_core_loc_conf_t   *clcf;
+      ngx_http_proxy_redirect_t  *pr;
+--- 1722,1727 ----
+*************** ngx_http_proxy_merge_loc_conf(ngx_conf_t
+*** 2067,2088 ****
+          if (ngx_http_script_compile(&sc) != NGX_OK) {
+              return NGX_CONF_ERROR;
+          }
+- 
+-         if (conf->headers_source == NULL) {
+-             conf->headers_source = ngx_array_create(cf->pool, 4,
+-                                                     sizeof(ngx_keyval_t));
+-             if (conf->headers_source == NULL) {
+-                 return NGX_CONF_ERROR;
+-             }
+-         }
+- 
+-         s = ngx_array_push(conf->headers_source);
+-         if (s == NULL) {
+-             return NGX_CONF_ERROR;
+-         }
+- 
+-         ngx_str_set(&s->key, "Content-Length");
+-         ngx_str_set(&s->value, "$proxy_internal_body_length");
+      }
+  
+      if (ngx_http_proxy_merge_headers(cf, conf, prev) != NGX_OK) {
+--- 2066,2071 ----
+*************** ngx_http_proxy_merge_headers(ngx_conf_t
+*** 2101,2107 ****
+      size_t                        size;
+      uintptr_t                    *code;
+      ngx_uint_t                    i;
+!     ngx_array_t                   headers_names;
+      ngx_keyval_t                 *src, *s, *h;
+      ngx_hash_key_t               *hk;
+      ngx_hash_init_t               hash;
+--- 2084,2090 ----
+      size_t                        size;
+      uintptr_t                    *code;
+      ngx_uint_t                    i;
+!     ngx_array_t                   headers_names, headers_merged;
+      ngx_keyval_t                 *src, *s, *h;
+      ngx_hash_key_t               *hk;
+      ngx_hash_init_t               hash;
+*************** ngx_http_proxy_merge_headers(ngx_conf_t
+*** 2117,2122 ****
+--- 2100,2107 ----
+      }
+  
+      if (conf->headers_set_hash.buckets
++         && ((conf->body_source.data == NULL)
++             == (prev->body_source.data == NULL))
+  #if (NGX_HTTP_CACHE)
+          && ((conf->upstream.cache == NULL) == (prev->upstream.cache == NULL))
+  #endif
+*************** ngx_http_proxy_merge_headers(ngx_conf_t
+*** 2132,2137 ****
+--- 2117,2128 ----
+          return NGX_ERROR;
+      }
+  
++     if (ngx_array_init(&headers_merged, cf->temp_pool, 4, sizeof(ngx_keyval_t))
++         != NGX_OK)
++     {
++         return NGX_ERROR;
++     }
++ 
+      if (conf->headers_source == NULL) {
+          conf->headers_source = ngx_array_create(cf->pool, 4,
+                                                  sizeof(ngx_keyval_t));
+*************** ngx_http_proxy_merge_headers(ngx_conf_t
+*** 2151,2158 ****
+      }
+  
+  
+-     src = conf->headers_source->elts;
+- 
+  #if (NGX_HTTP_CACHE)
+  
+      h = conf->upstream.cache ? ngx_http_proxy_cache_headers:
+--- 2142,2147 ----
+*************** ngx_http_proxy_merge_headers(ngx_conf_t
+*** 2163,2193 ****
+  
+  #endif
+  
+      while (h->key.len) {
+  
+!         for (i = 0; i < conf->headers_source->nelts; i++) {
+              if (ngx_strcasecmp(h->key.data, src[i].key.data) == 0) {
+                  goto next;
+              }
+          }
+  
+!         s = ngx_array_push(conf->headers_source);
+          if (s == NULL) {
+              return NGX_ERROR;
+          }
+  
+          *s = *h;
+  
+-         src = conf->headers_source->elts;
+- 
+      next:
+  
+          h++;
+      }
+  
+  
+!     src = conf->headers_source->elts;
+!     for (i = 0; i < conf->headers_source->nelts; i++) {
+  
+          hk = ngx_array_push(&headers_names);
+          if (hk == NULL) {
+--- 2152,2202 ----
+  
+  #endif
+  
++     src = conf->headers_source->elts;
++     for (i = 0; i < conf->headers_source->nelts; i++) {
++ 
++         s = ngx_array_push(&headers_merged);
++         if (s == NULL) {
++             return NGX_ERROR;
++         }
++ 
++         *s = src[i];
++     }
++ 
+      while (h->key.len) {
+  
+!         src = headers_merged.elts;
+!         for (i = 0; i < headers_merged.nelts; i++) {
+              if (ngx_strcasecmp(h->key.data, src[i].key.data) == 0) {
+                  goto next;
+              }
+          }
+  
+!         s = ngx_array_push(&headers_merged);
+          if (s == NULL) {
+              return NGX_ERROR;
+          }
+  
+          *s = *h;
+  
+      next:
+  
+          h++;
+      }
+  
++     if (conf->body_source.data) {
++         s = ngx_array_push(&headers_merged);
++         if (s == NULL) {
++             return NGX_ERROR;
++         }
+  
+!         ngx_str_set(&s->key, "Content-Length");
+!         ngx_str_set(&s->value, "$proxy_internal_body_length");
+!     }
+! 
+! 
+!     src = headers_merged.elts;
+!     for (i = 0; i < headers_merged.nelts; i++) {
+  
+          hk = ngx_array_push(&headers_names);
+          if (hk == NULL) {
+diff -p -N --text -r /tmp/patch.inc.get1.n8HZgM/src/http/modules/ngx_http_scgi_module.c /tmp/patch.inc.get2.GF2KI6/src/http/modules/ngx_http_scgi_module.c
+*** /tmp/patch.inc.get1.n8HZgM/src/http/modules/ngx_http_scgi_module.c	2013-04-30 11:28:16.115167325 +0200
+--- /tmp/patch.inc.get2.GF2KI6/src/http/modules/ngx_http_scgi_module.c	2013-04-30 11:28:19.211182699 +0200
+*************** static void ngx_http_scgi_finalize_reque
+*** 43,48 ****
+--- 43,50 ----
+  static void *ngx_http_scgi_create_loc_conf(ngx_conf_t *cf);
+  static char *ngx_http_scgi_merge_loc_conf(ngx_conf_t *cf, void *parent,
+      void *child);
++ static ngx_int_t ngx_http_scgi_merge_params(ngx_conf_t *cf,
++     ngx_http_scgi_loc_conf_t *conf, ngx_http_scgi_loc_conf_t *prev);
+  
+  static char *ngx_http_scgi_pass(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
+  static char *ngx_http_scgi_store(ngx_conf_t *cf, ngx_command_t *cmd,
+*************** ngx_http_scgi_create_request(ngx_http_re
+*** 556,563 ****
+  
+              while (*(uintptr_t *) le.ip) {
+                  lcode = *(ngx_http_script_len_code_pt *) le.ip;
+!                 len += lcode(&le) + 1;
+              }
+              le.ip += sizeof(uintptr_t);
+          }
+      }
+--- 558,567 ----
+  
+              while (*(uintptr_t *) le.ip) {
+                  lcode = *(ngx_http_script_len_code_pt *) le.ip;
+!                 len += lcode(&le);
+              }
++             len++;
++ 
+              le.ip += sizeof(uintptr_t);
+          }
+      }
+*************** ngx_http_scgi_merge_loc_conf(ngx_conf_t
+*** 1059,1075 ****
+      ngx_http_scgi_loc_conf_t *prev = parent;
+      ngx_http_scgi_loc_conf_t *conf = child;
+  
+-     u_char                       *p;
+      size_t                        size;
+-     uintptr_t                    *code;
+-     ngx_uint_t                    i;
+-     ngx_array_t                   headers_names;
+-     ngx_keyval_t                 *src;
+-     ngx_hash_key_t               *hk;
+      ngx_hash_init_t               hash;
+      ngx_http_core_loc_conf_t     *clcf;
+-     ngx_http_script_compile_t     sc;
+-     ngx_http_script_copy_code_t  *copy;
+  
+      if (conf->upstream.store != 0) {
+          ngx_conf_merge_value(conf->upstream.store, prev->upstream.store, 0);
+--- 1063,1071 ----
+*************** ngx_http_scgi_merge_loc_conf(ngx_conf_t
+*** 1307,1401 ****
+          }
+      }
+  
+!     if (conf->params_source == NULL) {
+!         conf->flushes = prev->flushes;
+!         conf->params_len = prev->params_len;
+!         conf->params = prev->params;
+!         conf->params_source = prev->params_source;
+!         conf->headers_hash = prev->headers_hash;
+  
+! #if (NGX_HTTP_CACHE)
+  
+-         if (conf->params_source == NULL) {
+  
+!             if ((conf->upstream.cache == NULL)
+!                 == (prev->upstream.cache == NULL))
+!             {
+!                 return NGX_CONF_OK;
+!             }
+  
+!             /* 6 is a number of ngx_http_scgi_cache_headers entries */
+!             conf->params_source = ngx_array_create(cf->pool, 6,
+!                                                    sizeof(ngx_keyval_t));
+!             if (conf->params_source == NULL) {
+!                 return NGX_CONF_ERROR;
+!             }
+!         }
+! #else
+  
+!         if (conf->params_source == NULL) {
+!             return NGX_CONF_OK;
+          }
+  
+  #endif
+      }
+  
+      conf->params_len = ngx_array_create(cf->pool, 64, 1);
+      if (conf->params_len == NULL) {
+!         return NGX_CONF_ERROR;
+      }
+  
+      conf->params = ngx_array_create(cf->pool, 512, 1);
+      if (conf->params == NULL) {
+!         return NGX_CONF_ERROR;
+      }
+  
+      if (ngx_array_init(&headers_names, cf->temp_pool, 4, sizeof(ngx_hash_key_t))
+          != NGX_OK)
+      {
+!         return NGX_CONF_ERROR;
+      }
+  
+!     src = conf->params_source->elts;
+  
+  #if (NGX_HTTP_CACHE)
+  
+      if (conf->upstream.cache) {
+          ngx_keyval_t  *h, *s;
+  
+!         for (h = ngx_http_scgi_cache_headers; h->key.len; h++) {
+  
+!             for (i = 0; i < conf->params_source->nelts; i++) {
+                  if (ngx_strcasecmp(h->key.data, src[i].key.data) == 0) {
+                      goto next;
+                  }
+              }
+  
+!             s = ngx_array_push(conf->params_source);
+              if (s == NULL) {
+!                 return NGX_CONF_ERROR;
+              }
+  
+              *s = *h;
+  
+-             src = conf->params_source->elts;
+- 
+          next:
+  
+              h++;
+          }
+      }
+  
+  #endif
+  
+!     for (i = 0; i < conf->params_source->nelts; i++) {
+  
+          if (src[i].key.len > sizeof("HTTP_") - 1
+              && ngx_strncmp(src[i].key.data, "HTTP_", sizeof("HTTP_") - 1) == 0)
+          {
+              hk = ngx_array_push(&headers_names);
+              if (hk == NULL) {
+!                 return NGX_CONF_ERROR;
+              }
+  
+              hk->key.len = src[i].key.len - 5;
+--- 1303,1448 ----
+          }
+      }
+  
+!     if (ngx_http_scgi_merge_params(cf, conf, prev) != NGX_OK) {
+!         return NGX_CONF_ERROR;
+!     }
+  
+!     return NGX_CONF_OK;
+! }
+  
+  
+! static ngx_int_t
+! ngx_http_scgi_merge_params(ngx_conf_t *cf, ngx_http_scgi_loc_conf_t *conf,
+!     ngx_http_scgi_loc_conf_t *prev)
+! {
+!     u_char                       *p;
+!     size_t                        size;
+!     uintptr_t                    *code;
+!     ngx_uint_t                    i, nsrc;
+!     ngx_array_t                   headers_names;
+! #if (NGX_HTTP_CACHE)
+!     ngx_array_t                   params_merged;
+! #endif
+!     ngx_keyval_t                 *src;
+!     ngx_hash_key_t               *hk;
+!     ngx_hash_init_t               hash;
+!     ngx_http_script_compile_t     sc;
+!     ngx_http_script_copy_code_t  *copy;
+  
+!     if (conf->params_source == NULL) {
+!         conf->params_source = prev->params_source;
+  
+!         if (prev->headers_hash.buckets
+! #if (NGX_HTTP_CACHE)
+!             && ((conf->upstream.cache == NULL) == (prev->upstream.cache == NULL))
+! #endif
+!            )
+!         {
+!             conf->flushes = prev->flushes;
+!             conf->params_len = prev->params_len;
+!             conf->params = prev->params;
+!             conf->headers_hash = prev->headers_hash;
+!             conf->header_params = prev->header_params;
+! 
+!             return NGX_OK;
+          }
++     }
+  
++     if (conf->params_source == NULL
++ #if (NGX_HTTP_CACHE)
++         && (conf->upstream.cache == NULL)
+  #endif
++        )
++     {
++         conf->headers_hash.buckets = (void *) 1;
++         return NGX_OK;
+      }
+  
+      conf->params_len = ngx_array_create(cf->pool, 64, 1);
+      if (conf->params_len == NULL) {
+!         return NGX_ERROR;
+      }
+  
+      conf->params = ngx_array_create(cf->pool, 512, 1);
+      if (conf->params == NULL) {
+!         return NGX_ERROR;
+      }
+  
+      if (ngx_array_init(&headers_names, cf->temp_pool, 4, sizeof(ngx_hash_key_t))
+          != NGX_OK)
+      {
+!         return NGX_ERROR;
+      }
+  
+!     if (conf->params_source) {
+!         src = conf->params_source->elts;
+!         nsrc = conf->params_source->nelts;
+! 
+!     } else {
+!         src = NULL;
+!         nsrc = 0;
+!     }
+  
+  #if (NGX_HTTP_CACHE)
+  
+      if (conf->upstream.cache) {
+          ngx_keyval_t  *h, *s;
+  
+!         if (ngx_array_init(&params_merged, cf->temp_pool, 4, sizeof(ngx_keyval_t))
+!             != NGX_OK)
+!         {
+!             return NGX_ERROR;
+!         }
+! 
+!         for (i = 0; i < nsrc; i++) {
+! 
+!             s = ngx_array_push(&params_merged);
+!             if (s == NULL) {
+!                 return NGX_ERROR;
+!             }
+! 
+!             *s = src[i];
+!         }
+! 
+!         h = ngx_http_scgi_cache_headers;
+! 
+!         while (h->key.len) {
+  
+!             src = params_merged.elts;
+!             nsrc = params_merged.nelts;
+! 
+!             for (i = 0; i < nsrc; i++) {
+                  if (ngx_strcasecmp(h->key.data, src[i].key.data) == 0) {
+                      goto next;
+                  }
+              }
+  
+!             s = ngx_array_push(&params_merged);
+              if (s == NULL) {
+!                 return NGX_ERROR;
+              }
+  
+              *s = *h;
+  
+          next:
+  
+              h++;
+          }
++ 
++         src = params_merged.elts;
++         nsrc = params_merged.nelts;
+      }
+  
+  #endif
+  
+!     for (i = 0; i < nsrc; i++) {
+  
+          if (src[i].key.len > sizeof("HTTP_") - 1
+              && ngx_strncmp(src[i].key.data, "HTTP_", sizeof("HTTP_") - 1) == 0)
+          {
+              hk = ngx_array_push(&headers_names);
+              if (hk == NULL) {
+!                 return NGX_ERROR;
+              }
+  
+              hk->key.len = src[i].key.len - 5;
+*************** ngx_http_scgi_merge_loc_conf(ngx_conf_t
+*** 1411,1417 ****
+          copy = ngx_array_push_n(conf->params_len,
+                                  sizeof(ngx_http_script_copy_code_t));
+          if (copy == NULL) {
+!             return NGX_CONF_ERROR;
+          }
+  
+          copy->code = (ngx_http_script_code_pt) ngx_http_script_copy_len_code;
+--- 1458,1464 ----
+          copy = ngx_array_push_n(conf->params_len,
+                                  sizeof(ngx_http_script_copy_code_t));
+          if (copy == NULL) {
+!             return NGX_ERROR;
+          }
+  
+          copy->code = (ngx_http_script_code_pt) ngx_http_script_copy_len_code;
+*************** ngx_http_scgi_merge_loc_conf(ngx_conf_t
+*** 1424,1430 ****
+  
+          copy = ngx_array_push_n(conf->params, size);
+          if (copy == NULL) {
+!             return NGX_CONF_ERROR;
+          }
+  
+          copy->code = ngx_http_script_copy_code;
+--- 1471,1477 ----
+  
+          copy = ngx_array_push_n(conf->params, size);
+          if (copy == NULL) {
+!             return NGX_ERROR;
+          }
+  
+          copy->code = ngx_http_script_copy_code;
+*************** ngx_http_scgi_merge_loc_conf(ngx_conf_t
+*** 1443,1454 ****
+          sc.values = &conf->params;
+  
+          if (ngx_http_script_compile(&sc) != NGX_OK) {
+!             return NGX_CONF_ERROR;
+          }
+  
+          code = ngx_array_push_n(conf->params_len, sizeof(uintptr_t));
+          if (code == NULL) {
+!             return NGX_CONF_ERROR;
+          }
+  
+          *code = (uintptr_t) NULL;
+--- 1490,1501 ----
+          sc.values = &conf->params;
+  
+          if (ngx_http_script_compile(&sc) != NGX_OK) {
+!             return NGX_ERROR;
+          }
+  
+          code = ngx_array_push_n(conf->params_len, sizeof(uintptr_t));
+          if (code == NULL) {
+!             return NGX_ERROR;
+          }
+  
+          *code = (uintptr_t) NULL;
+*************** ngx_http_scgi_merge_loc_conf(ngx_conf_t
+*** 1456,1462 ****
+  
+          code = ngx_array_push_n(conf->params, sizeof(uintptr_t));
+          if (code == NULL) {
+!             return NGX_CONF_ERROR;
+          }
+  
+          *code = (uintptr_t) NULL;
+--- 1503,1509 ----
+  
+          code = ngx_array_push_n(conf->params, sizeof(uintptr_t));
+          if (code == NULL) {
+!             return NGX_ERROR;
+          }
+  
+          *code = (uintptr_t) NULL;
+*************** ngx_http_scgi_merge_loc_conf(ngx_conf_t
+*** 1464,1477 ****
+  
+      code = ngx_array_push_n(conf->params_len, sizeof(uintptr_t));
+      if (code == NULL) {
+!         return NGX_CONF_ERROR;
+      }
+  
+      *code = (uintptr_t) NULL;
+  
+      code = ngx_array_push_n(conf->params, sizeof(uintptr_t));
+      if (code == NULL) {
+!         return NGX_CONF_ERROR;
+      }
+  
+      *code = (uintptr_t) NULL;
+--- 1511,1524 ----
+  
+      code = ngx_array_push_n(conf->params_len, sizeof(uintptr_t));
+      if (code == NULL) {
+!         return NGX_ERROR;
+      }
+  
+      *code = (uintptr_t) NULL;
+  
+      code = ngx_array_push_n(conf->params, sizeof(uintptr_t));
+      if (code == NULL) {
+!         return NGX_ERROR;
+      }
+  
+      *code = (uintptr_t) NULL;
+*************** ngx_http_scgi_merge_loc_conf(ngx_conf_t
+*** 1486,1497 ****
+      hash.pool = cf->pool;
+      hash.temp_pool = NULL;
+  
+!     if (ngx_hash_init(&hash, headers_names.elts, headers_names.nelts) != NGX_OK)
+!     {
+!         return NGX_CONF_ERROR;
+!     }
+! 
+!     return NGX_CONF_OK;
+  }
+  
+  
+--- 1533,1539 ----
+      hash.pool = cf->pool;
+      hash.temp_pool = NULL;
+  
+!     return ngx_hash_init(&hash, headers_names.elts, headers_names.nelts);
+  }
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.n8HZgM/src/http/modules/ngx_http_ssi_filter_module.c /tmp/patch.inc.get2.GF2KI6/src/http/modules/ngx_http_ssi_filter_module.c
+*** /tmp/patch.inc.get1.n8HZgM/src/http/modules/ngx_http_ssi_filter_module.c	2013-04-30 11:28:16.115167325 +0200
+--- /tmp/patch.inc.get2.GF2KI6/src/http/modules/ngx_http_ssi_filter_module.c	2013-04-30 11:28:19.211182699 +0200
+*************** static ngx_command_t  ngx_http_ssi_filte
+*** 139,152 ****
+        NULL },
+  
+      { ngx_string("ssi_min_file_chunk"),
+!       NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_FLAG,
+        ngx_conf_set_size_slot,
+        NGX_HTTP_LOC_CONF_OFFSET,
+        offsetof(ngx_http_ssi_loc_conf_t, min_file_chunk),
+        NULL },
+  
+      { ngx_string("ssi_value_length"),
+!       NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_FLAG,
+        ngx_conf_set_size_slot,
+        NGX_HTTP_LOC_CONF_OFFSET,
+        offsetof(ngx_http_ssi_loc_conf_t, value_len),
+--- 139,152 ----
+        NULL },
+  
+      { ngx_string("ssi_min_file_chunk"),
+!       NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
+        ngx_conf_set_size_slot,
+        NGX_HTTP_LOC_CONF_OFFSET,
+        offsetof(ngx_http_ssi_loc_conf_t, min_file_chunk),
+        NULL },
+  
+      { ngx_string("ssi_value_length"),
+!       NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
+        ngx_conf_set_size_slot,
+        NGX_HTTP_LOC_CONF_OFFSET,
+        offsetof(ngx_http_ssi_loc_conf_t, value_len),
+diff -p -N --text -r /tmp/patch.inc.get1.n8HZgM/src/http/modules/ngx_http_ssl_module.c /tmp/patch.inc.get2.GF2KI6/src/http/modules/ngx_http_ssl_module.c
+*** /tmp/patch.inc.get1.n8HZgM/src/http/modules/ngx_http_ssl_module.c	2013-04-30 11:28:16.115167325 +0200
+--- /tmp/patch.inc.get2.GF2KI6/src/http/modules/ngx_http_ssl_module.c	2013-04-30 11:28:19.211182699 +0200
+*************** static ngx_command_t  ngx_http_ssl_comma
+*** 101,107 ****
+        NULL },
+  
+      { ngx_string("ssl_verify_client"),
+!       NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_CONF_FLAG,
+        ngx_conf_set_enum_slot,
+        NGX_HTTP_SRV_CONF_OFFSET,
+        offsetof(ngx_http_ssl_srv_conf_t, verify),
+--- 101,107 ----
+        NULL },
+  
+      { ngx_string("ssl_verify_client"),
+!       NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_CONF_TAKE1,
+        ngx_conf_set_enum_slot,
+        NGX_HTTP_SRV_CONF_OFFSET,
+        offsetof(ngx_http_ssl_srv_conf_t, verify),
+diff -p -N --text -r /tmp/patch.inc.get1.n8HZgM/src/http/modules/ngx_http_uwsgi_module.c /tmp/patch.inc.get2.GF2KI6/src/http/modules/ngx_http_uwsgi_module.c
+*** /tmp/patch.inc.get1.n8HZgM/src/http/modules/ngx_http_uwsgi_module.c	2013-04-30 11:28:16.115167325 +0200
+--- /tmp/patch.inc.get2.GF2KI6/src/http/modules/ngx_http_uwsgi_module.c	2013-04-30 11:28:19.211182699 +0200
+*************** static void ngx_http_uwsgi_finalize_requ
+*** 50,55 ****
+--- 50,57 ----
+  static void *ngx_http_uwsgi_create_loc_conf(ngx_conf_t *cf);
+  static char *ngx_http_uwsgi_merge_loc_conf(ngx_conf_t *cf, void *parent,
+      void *child);
++ static ngx_int_t ngx_http_uwsgi_merge_params(ngx_conf_t *cf,
++     ngx_http_uwsgi_loc_conf_t *conf, ngx_http_uwsgi_loc_conf_t *prev);
+  
+  static char *ngx_http_uwsgi_pass(ngx_conf_t *cf, ngx_command_t *cmd,
+      void *conf);
+*************** ngx_http_uwsgi_merge_loc_conf(ngx_conf_t
+*** 1112,1128 ****
+      ngx_http_uwsgi_loc_conf_t *prev = parent;
+      ngx_http_uwsgi_loc_conf_t *conf = child;
+  
+-     u_char                       *p;
+      size_t                        size;
+-     uintptr_t                    *code;
+-     ngx_uint_t                    i;
+-     ngx_array_t                   headers_names;
+-     ngx_keyval_t                 *src;
+-     ngx_hash_key_t               *hk;
+      ngx_hash_init_t               hash;
+      ngx_http_core_loc_conf_t     *clcf;
+-     ngx_http_script_compile_t     sc;
+-     ngx_http_script_copy_code_t  *copy;
+  
+      if (conf->upstream.store != 0) {
+          ngx_conf_merge_value(conf->upstream.store, prev->upstream.store, 0);
+--- 1114,1122 ----
+*************** ngx_http_uwsgi_merge_loc_conf(ngx_conf_t
+*** 1365,1459 ****
+      ngx_conf_merge_uint_value(conf->modifier1, prev->modifier1, 0);
+      ngx_conf_merge_uint_value(conf->modifier2, prev->modifier2, 0);
+  
+!     if (conf->params_source == NULL) {
+!         conf->flushes = prev->flushes;
+!         conf->params_len = prev->params_len;
+!         conf->params = prev->params;
+!         conf->params_source = prev->params_source;
+!         conf->headers_hash = prev->headers_hash;
+  
+! #if (NGX_HTTP_CACHE)
+  
+-         if (conf->params_source == NULL) {
+  
+!             if ((conf->upstream.cache == NULL)
+!                 == (prev->upstream.cache == NULL))
+!             {
+!                 return NGX_CONF_OK;
+!             }
+  
+!             /* 6 is a number of ngx_http_uwsgi_cache_headers entries */
+!             conf->params_source = ngx_array_create(cf->pool, 6,
+!                                                    sizeof(ngx_keyval_t));
+!             if (conf->params_source == NULL) {
+!                 return NGX_CONF_ERROR;
+!             }
+!         }
+! #else
+  
+!         if (conf->params_source == NULL) {
+!             return NGX_CONF_OK;
+          }
+  
+  #endif
+      }
+  
+      conf->params_len = ngx_array_create(cf->pool, 64, 1);
+      if (conf->params_len == NULL) {
+!         return NGX_CONF_ERROR;
+      }
+  
+      conf->params = ngx_array_create(cf->pool, 512, 1);
+      if (conf->params == NULL) {
+!         return NGX_CONF_ERROR;
+      }
+  
+      if (ngx_array_init(&headers_names, cf->temp_pool, 4, sizeof(ngx_hash_key_t))
+          != NGX_OK)
+      {
+!         return NGX_CONF_ERROR;
+      }
+  
+!     src = conf->params_source->elts;
+  
+  #if (NGX_HTTP_CACHE)
+  
+      if (conf->upstream.cache) {
+          ngx_keyval_t  *h, *s;
+  
+!         for (h = ngx_http_uwsgi_cache_headers; h->key.len; h++) {
+  
+!             for (i = 0; i < conf->params_source->nelts; i++) {
+                  if (ngx_strcasecmp(h->key.data, src[i].key.data) == 0) {
+                      goto next;
+                  }
+              }
+  
+!             s = ngx_array_push(conf->params_source);
+              if (s == NULL) {
+!                 return NGX_CONF_ERROR;
+              }
+  
+              *s = *h;
+  
+-             src = conf->params_source->elts;
+- 
+          next:
+  
+              h++;
+          }
+      }
+  
+  #endif
+  
+!     for (i = 0; i < conf->params_source->nelts; i++) {
+  
+          if (src[i].key.len > sizeof("HTTP_") - 1
+              && ngx_strncmp(src[i].key.data, "HTTP_", sizeof("HTTP_") - 1) == 0)
+          {
+              hk = ngx_array_push(&headers_names);
+              if (hk == NULL) {
+!                 return NGX_CONF_ERROR;
+              }
+  
+              hk->key.len = src[i].key.len - 5;
+--- 1359,1504 ----
+      ngx_conf_merge_uint_value(conf->modifier1, prev->modifier1, 0);
+      ngx_conf_merge_uint_value(conf->modifier2, prev->modifier2, 0);
+  
+!     if (ngx_http_uwsgi_merge_params(cf, conf, prev) != NGX_OK) {
+!         return NGX_CONF_ERROR;
+!     }
+  
+!     return NGX_CONF_OK;
+! }
+  
+  
+! static ngx_int_t
+! ngx_http_uwsgi_merge_params(ngx_conf_t *cf, ngx_http_uwsgi_loc_conf_t *conf,
+!     ngx_http_uwsgi_loc_conf_t *prev)
+! {
+!     u_char                       *p;
+!     size_t                        size;
+!     uintptr_t                    *code;
+!     ngx_uint_t                    i, nsrc;
+!     ngx_array_t                   headers_names;
+! #if (NGX_HTTP_CACHE)
+!     ngx_array_t                   params_merged;
+! #endif
+!     ngx_keyval_t                 *src;
+!     ngx_hash_key_t               *hk;
+!     ngx_hash_init_t               hash;
+!     ngx_http_script_compile_t     sc;
+!     ngx_http_script_copy_code_t  *copy;
+  
+!     if (conf->params_source == NULL) {
+!         conf->params_source = prev->params_source;
+  
+!         if (prev->headers_hash.buckets
+! #if (NGX_HTTP_CACHE)
+!             && ((conf->upstream.cache == NULL) == (prev->upstream.cache == NULL))
+! #endif
+!            )
+!         {
+!             conf->flushes = prev->flushes;
+!             conf->params_len = prev->params_len;
+!             conf->params = prev->params;
+!             conf->headers_hash = prev->headers_hash;
+!             conf->header_params = prev->header_params;
+! 
+!             return NGX_OK;
+          }
++     }
+  
++     if (conf->params_source == NULL
++ #if (NGX_HTTP_CACHE)
++         && (conf->upstream.cache == NULL)
+  #endif
++        )
++     {
++         conf->headers_hash.buckets = (void *) 1;
++         return NGX_OK;
+      }
+  
+      conf->params_len = ngx_array_create(cf->pool, 64, 1);
+      if (conf->params_len == NULL) {
+!         return NGX_ERROR;
+      }
+  
+      conf->params = ngx_array_create(cf->pool, 512, 1);
+      if (conf->params == NULL) {
+!         return NGX_ERROR;
+      }
+  
+      if (ngx_array_init(&headers_names, cf->temp_pool, 4, sizeof(ngx_hash_key_t))
+          != NGX_OK)
+      {
+!         return NGX_ERROR;
+      }
+  
+!     if (conf->params_source) {
+!         src = conf->params_source->elts;
+!         nsrc = conf->params_source->nelts;
+! 
+!     } else {
+!         src = NULL;
+!         nsrc = 0;
+!     }
+  
+  #if (NGX_HTTP_CACHE)
+  
+      if (conf->upstream.cache) {
+          ngx_keyval_t  *h, *s;
+  
+!         if (ngx_array_init(&params_merged, cf->temp_pool, 4, sizeof(ngx_keyval_t))
+!             != NGX_OK)
+!         {
+!             return NGX_ERROR;
+!         }
+! 
+!         for (i = 0; i < nsrc; i++) {
+! 
+!             s = ngx_array_push(&params_merged);
+!             if (s == NULL) {
+!                 return NGX_ERROR;
+!             }
+! 
+!             *s = src[i];
+!         }
+! 
+!         h = ngx_http_uwsgi_cache_headers;
+  
+!         while (h->key.len) {
+! 
+!             src = params_merged.elts;
+!             nsrc = params_merged.nelts;
+! 
+!             for (i = 0; i < nsrc; i++) {
+                  if (ngx_strcasecmp(h->key.data, src[i].key.data) == 0) {
+                      goto next;
+                  }
+              }
+  
+!             s = ngx_array_push(&params_merged);
+              if (s == NULL) {
+!                 return NGX_ERROR;
+              }
+  
+              *s = *h;
+  
+          next:
+  
+              h++;
+          }
++ 
++         src = params_merged.elts;
++         nsrc = params_merged.nelts;
+      }
+  
+  #endif
+  
+!     for (i = 0; i < nsrc; i++) {
+  
+          if (src[i].key.len > sizeof("HTTP_") - 1
+              && ngx_strncmp(src[i].key.data, "HTTP_", sizeof("HTTP_") - 1) == 0)
+          {
+              hk = ngx_array_push(&headers_names);
+              if (hk == NULL) {
+!                 return NGX_ERROR;
+              }
+  
+              hk->key.len = src[i].key.len - 5;
+*************** ngx_http_uwsgi_merge_loc_conf(ngx_conf_t
+*** 1469,1475 ****
+          copy = ngx_array_push_n(conf->params_len,
+                                  sizeof(ngx_http_script_copy_code_t));
+          if (copy == NULL) {
+!             return NGX_CONF_ERROR;
+          }
+  
+          copy->code = (ngx_http_script_code_pt) ngx_http_script_copy_len_code;
+--- 1514,1520 ----
+          copy = ngx_array_push_n(conf->params_len,
+                                  sizeof(ngx_http_script_copy_code_t));
+          if (copy == NULL) {
+!             return NGX_ERROR;
+          }
+  
+          copy->code = (ngx_http_script_code_pt) ngx_http_script_copy_len_code;
+*************** ngx_http_uwsgi_merge_loc_conf(ngx_conf_t
+*** 1482,1488 ****
+  
+          copy = ngx_array_push_n(conf->params, size);
+          if (copy == NULL) {
+!             return NGX_CONF_ERROR;
+          }
+  
+          copy->code = ngx_http_script_copy_code;
+--- 1527,1533 ----
+  
+          copy = ngx_array_push_n(conf->params, size);
+          if (copy == NULL) {
+!             return NGX_ERROR;
+          }
+  
+          copy->code = ngx_http_script_copy_code;
+*************** ngx_http_uwsgi_merge_loc_conf(ngx_conf_t
+*** 1501,1512 ****
+          sc.values = &conf->params;
+  
+          if (ngx_http_script_compile(&sc) != NGX_OK) {
+!             return NGX_CONF_ERROR;
+          }
+  
+          code = ngx_array_push_n(conf->params_len, sizeof(uintptr_t));
+          if (code == NULL) {
+!             return NGX_CONF_ERROR;
+          }
+  
+          *code = (uintptr_t) NULL;
+--- 1546,1557 ----
+          sc.values = &conf->params;
+  
+          if (ngx_http_script_compile(&sc) != NGX_OK) {
+!             return NGX_ERROR;
+          }
+  
+          code = ngx_array_push_n(conf->params_len, sizeof(uintptr_t));
+          if (code == NULL) {
+!             return NGX_ERROR;
+          }
+  
+          *code = (uintptr_t) NULL;
+*************** ngx_http_uwsgi_merge_loc_conf(ngx_conf_t
+*** 1514,1520 ****
+  
+          code = ngx_array_push_n(conf->params, sizeof(uintptr_t));
+          if (code == NULL) {
+!             return NGX_CONF_ERROR;
+          }
+  
+          *code = (uintptr_t) NULL;
+--- 1559,1565 ----
+  
+          code = ngx_array_push_n(conf->params, sizeof(uintptr_t));
+          if (code == NULL) {
+!             return NGX_ERROR;
+          }
+  
+          *code = (uintptr_t) NULL;
+*************** ngx_http_uwsgi_merge_loc_conf(ngx_conf_t
+*** 1522,1528 ****
+  
+      code = ngx_array_push_n(conf->params_len, sizeof(uintptr_t));
+      if (code == NULL) {
+!         return NGX_CONF_ERROR;
+      }
+  
+      *code = (uintptr_t) NULL;
+--- 1567,1573 ----
+  
+      code = ngx_array_push_n(conf->params_len, sizeof(uintptr_t));
+      if (code == NULL) {
+!         return NGX_ERROR;
+      }
+  
+      *code = (uintptr_t) NULL;
+*************** ngx_http_uwsgi_merge_loc_conf(ngx_conf_t
+*** 1537,1548 ****
+      hash.pool = cf->pool;
+      hash.temp_pool = NULL;
+  
+!     if (ngx_hash_init(&hash, headers_names.elts, headers_names.nelts) != NGX_OK)
+!     {
+!         return NGX_CONF_ERROR;
+!     }
+! 
+!     return NGX_CONF_OK;
+  }
+  
+  
+--- 1582,1588 ----
+      hash.pool = cf->pool;
+      hash.temp_pool = NULL;
+  
+!     return ngx_hash_init(&hash, headers_names.elts, headers_names.nelts);
+  }
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.n8HZgM/src/http/ngx_http_core_module.c /tmp/patch.inc.get2.GF2KI6/src/http/ngx_http_core_module.c
+*** /tmp/patch.inc.get1.n8HZgM/src/http/ngx_http_core_module.c	2013-04-30 11:28:16.115167325 +0200
+--- /tmp/patch.inc.get2.GF2KI6/src/http/ngx_http_core_module.c	2013-04-30 11:28:19.211182699 +0200
+*************** static ngx_conf_enum_t  ngx_http_core_if
+*** 143,149 ****
+  };
+  
+  
+! static ngx_conf_enum_t  ngx_http_core_keepalive_disable[] = {
+      { ngx_string("none"), NGX_HTTP_KEEPALIVE_DISABLE_NONE },
+      { ngx_string("msie6"), NGX_HTTP_KEEPALIVE_DISABLE_MSIE6 },
+      { ngx_string("safari"), NGX_HTTP_KEEPALIVE_DISABLE_SAFARI },
+--- 143,149 ----
+  };
+  
+  
+! static ngx_conf_bitmask_t  ngx_http_core_keepalive_disable[] = {
+      { ngx_string("none"), NGX_HTTP_KEEPALIVE_DISABLE_NONE },
+      { ngx_string("msie6"), NGX_HTTP_KEEPALIVE_DISABLE_MSIE6 },
+      { ngx_string("safari"), NGX_HTTP_KEEPALIVE_DISABLE_SAFARI },
+*************** static ngx_command_t  ngx_http_core_comm
+*** 513,520 ****
+        NULL },
+  
+      { ngx_string("keepalive_disable"),
+!       NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
+!       ngx_conf_set_enum_slot,
+        NGX_HTTP_LOC_CONF_OFFSET,
+        offsetof(ngx_http_core_loc_conf_t, keepalive_disable),
+        &ngx_http_core_keepalive_disable },
+--- 513,520 ----
+        NULL },
+  
+      { ngx_string("keepalive_disable"),
+!       NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE12,
+!       ngx_conf_set_bitmask_slot,
+        NGX_HTTP_LOC_CONF_OFFSET,
+        offsetof(ngx_http_core_loc_conf_t, keepalive_disable),
+        &ngx_http_core_keepalive_disable },
+*************** ngx_http_core_create_loc_conf(ngx_conf_t
+*** 3264,3275 ****
+       *     clcf->auto_redirect = 0;
+       *     clcf->alias = 0;
+       *     clcf->gzip_proxied = 0;
+       */
+  
+      clcf->client_max_body_size = NGX_CONF_UNSET;
+      clcf->client_body_buffer_size = NGX_CONF_UNSET_SIZE;
+      clcf->client_body_timeout = NGX_CONF_UNSET_MSEC;
+-     clcf->keepalive_disable = NGX_CONF_UNSET_UINT;
+      clcf->satisfy = NGX_CONF_UNSET_UINT;
+      clcf->if_modified_since = NGX_CONF_UNSET_UINT;
+      clcf->max_ranges = NGX_CONF_UNSET_UINT;
+--- 3264,3275 ----
+       *     clcf->auto_redirect = 0;
+       *     clcf->alias = 0;
+       *     clcf->gzip_proxied = 0;
++      *     clcf->keepalive_disable = 0;
+       */
+  
+      clcf->client_max_body_size = NGX_CONF_UNSET;
+      clcf->client_body_buffer_size = NGX_CONF_UNSET_SIZE;
+      clcf->client_body_timeout = NGX_CONF_UNSET_MSEC;
+      clcf->satisfy = NGX_CONF_UNSET_UINT;
+      clcf->if_modified_since = NGX_CONF_UNSET_UINT;
+      clcf->max_ranges = NGX_CONF_UNSET_UINT;
+*************** ngx_http_core_merge_loc_conf(ngx_conf_t
+*** 3472,3480 ****
+      ngx_conf_merge_msec_value(conf->client_body_timeout,
+                                prev->client_body_timeout, 60000);
+  
+!     ngx_conf_merge_uint_value(conf->keepalive_disable, prev->keepalive_disable,
+!                               NGX_HTTP_KEEPALIVE_DISABLE_MSIE6
+!                               |NGX_HTTP_KEEPALIVE_DISABLE_SAFARI);
+      ngx_conf_merge_uint_value(conf->satisfy, prev->satisfy,
+                                NGX_HTTP_SATISFY_ALL);
+      ngx_conf_merge_uint_value(conf->if_modified_since, prev->if_modified_since,
+--- 3472,3482 ----
+      ngx_conf_merge_msec_value(conf->client_body_timeout,
+                                prev->client_body_timeout, 60000);
+  
+!     ngx_conf_merge_bitmask_value(conf->keepalive_disable,
+!                               prev->keepalive_disable,
+!                               (NGX_CONF_BITMASK_SET
+!                                |NGX_HTTP_KEEPALIVE_DISABLE_MSIE6
+!                                |NGX_HTTP_KEEPALIVE_DISABLE_SAFARI));
+      ngx_conf_merge_uint_value(conf->satisfy, prev->satisfy,
+                                NGX_HTTP_SATISFY_ALL);
+      ngx_conf_merge_uint_value(conf->if_modified_since, prev->if_modified_since,
+*************** ngx_http_core_open_file_cache(ngx_conf_t
+*** 4395,4401 ****
+          if (ngx_strncmp(value[i].data, "max=", 4) == 0) {
+  
+              max = ngx_atoi(value[i].data + 4, value[i].len - 4);
+!             if (max == NGX_ERROR) {
+                  goto failed;
+              }
+  
+--- 4397,4403 ----
+          if (ngx_strncmp(value[i].data, "max=", 4) == 0) {
+  
+              max = ngx_atoi(value[i].data + 4, value[i].len - 4);
+!             if (max <= 0) {
+                  goto failed;
+              }
+  
+diff -p -N --text -r /tmp/patch.inc.get1.n8HZgM/src/http/ngx_http_request.c /tmp/patch.inc.get2.GF2KI6/src/http/ngx_http_request.c
+*** /tmp/patch.inc.get1.n8HZgM/src/http/ngx_http_request.c	2013-04-30 11:28:16.115167325 +0200
+--- /tmp/patch.inc.get2.GF2KI6/src/http/ngx_http_request.c	2013-04-30 11:28:19.211182699 +0200
+*************** ngx_http_ssl_servername(ngx_ssl_conn_t *
+*** 671,695 ****
+  
+      sscf = ngx_http_get_module_srv_conf(r, ngx_http_ssl_module);
+  
+!     SSL_set_SSL_CTX(ssl_conn, sscf->ssl.ctx);
+  
+!     /*
+!      * SSL_set_SSL_CTX() only changes certs as of 1.0.0d
+!      * adjust other things we care about
+!      */
+  
+!     SSL_set_verify(ssl_conn, SSL_CTX_get_verify_mode(sscf->ssl.ctx),
+!                    SSL_CTX_get_verify_callback(sscf->ssl.ctx));
+  
+!     SSL_set_verify_depth(ssl_conn, SSL_CTX_get_verify_depth(sscf->ssl.ctx));
+  
+  #ifdef SSL_CTRL_CLEAR_OPTIONS
+!     /* only in 0.9.8m+ */
+!     SSL_clear_options(ssl_conn, SSL_get_options(ssl_conn) &
+!                                 ~SSL_CTX_get_options(sscf->ssl.ctx));
+  #endif
+  
+!     SSL_set_options(ssl_conn, SSL_CTX_get_options(sscf->ssl.ctx));
+  
+      return SSL_TLSEXT_ERR_OK;
+  }
+--- 671,697 ----
+  
+      sscf = ngx_http_get_module_srv_conf(r, ngx_http_ssl_module);
+  
+!     if (sscf->ssl.ctx) {
+!         SSL_set_SSL_CTX(ssl_conn, sscf->ssl.ctx);
+  
+!         /*
+!          * SSL_set_SSL_CTX() only changes certs as of 1.0.0d
+!          * adjust other things we care about
+!          */
+  
+!         SSL_set_verify(ssl_conn, SSL_CTX_get_verify_mode(sscf->ssl.ctx),
+!                        SSL_CTX_get_verify_callback(sscf->ssl.ctx));
+  
+!         SSL_set_verify_depth(ssl_conn, SSL_CTX_get_verify_depth(sscf->ssl.ctx));
+  
+  #ifdef SSL_CTRL_CLEAR_OPTIONS
+!         /* only in 0.9.8m+ */
+!         SSL_clear_options(ssl_conn, SSL_get_options(ssl_conn) &
+!                                     ~SSL_CTX_get_options(sscf->ssl.ctx));
+  #endif
+  
+!         SSL_set_options(ssl_conn, SSL_CTX_get_options(sscf->ssl.ctx));
+!     }
+  
+      return SSL_TLSEXT_ERR_OK;
+  }
+diff -p -N --text -r /tmp/patch.inc.get1.n8HZgM/src/http/ngx_http_upstream.c /tmp/patch.inc.get2.GF2KI6/src/http/ngx_http_upstream.c
+*** /tmp/patch.inc.get1.n8HZgM/src/http/ngx_http_upstream.c	2013-04-30 11:28:16.115167325 +0200
+--- /tmp/patch.inc.get2.GF2KI6/src/http/ngx_http_upstream.c	2013-04-30 11:28:19.207182664 +0200
+*************** ngx_http_upstream_next(ngx_http_request_
+*** 2888,2893 ****
+--- 2888,2894 ----
+  #endif
+  
+          ngx_close_connection(u->peer.connection);
++         u->peer.connection = NULL;
+      }
+  
+  #if 0
+*************** ngx_http_upstream_add(ngx_conf_t *cf, ng
+*** 4279,4284 ****
+--- 4280,4289 ----
+              continue;
+          }
+  
++         if (flags & NGX_HTTP_UPSTREAM_CREATE) {
++             uscfp[i]->flags = flags;
++         }
++ 
+          return uscfp[i];
+      }
+  
+diff -p -N --text -r /tmp/patch.inc.get1.n8HZgM/src/mail/ngx_mail_auth_http_module.c /tmp/patch.inc.get2.GF2KI6/src/mail/ngx_mail_auth_http_module.c
+*** /tmp/patch.inc.get1.n8HZgM/src/mail/ngx_mail_auth_http_module.c	2013-04-30 11:28:16.119167341 +0200
+--- /tmp/patch.inc.get2.GF2KI6/src/mail/ngx_mail_auth_http_module.c	2013-04-30 11:28:19.211182699 +0200
+*************** ngx_mail_auth_http_process_headers(ngx_m
+*** 783,789 ****
+              sin->sin_family = AF_INET;
+  
+              port = ngx_atoi(ctx->port.data, ctx->port.len);
+!             if (port == NGX_ERROR || port < 1 || port > 65536) {
+                  ngx_log_error(NGX_LOG_ERR, s->connection->log, 0,
+                                "auth http server %V sent invalid server "
+                                "port:\"%V\"",
+--- 783,789 ----
+              sin->sin_family = AF_INET;
+  
+              port = ngx_atoi(ctx->port.data, ctx->port.len);
+!             if (port == NGX_ERROR || port < 1 || port > 65535) {
+                  ngx_log_error(NGX_LOG_ERR, s->connection->log, 0,
+                                "auth http server %V sent invalid server "
+                                "port:\"%V\"",
+diff -p -N --text -r /tmp/patch.inc.get1.n8HZgM/src/mail/ngx_mail_proxy_module.c /tmp/patch.inc.get2.GF2KI6/src/mail/ngx_mail_proxy_module.c
+*** /tmp/patch.inc.get1.n8HZgM/src/mail/ngx_mail_proxy_module.c	2013-04-30 11:28:16.119167341 +0200
+--- /tmp/patch.inc.get2.GF2KI6/src/mail/ngx_mail_proxy_module.c	2013-04-30 11:28:19.211182699 +0200
+*************** static ngx_command_t  ngx_mail_proxy_com
+*** 60,66 ****
+        NULL },
+  
+      { ngx_string("proxy_pass_error_message"),
+!       NGX_MAIL_MAIN_CONF|NGX_MAIL_SRV_CONF|NGX_CONF_TAKE1,
+        ngx_conf_set_flag_slot,
+        NGX_MAIL_SRV_CONF_OFFSET,
+        offsetof(ngx_mail_proxy_conf_t, pass_error_message),
+--- 60,66 ----
+        NULL },
+  
+      { ngx_string("proxy_pass_error_message"),
+!       NGX_MAIL_MAIN_CONF|NGX_MAIL_SRV_CONF|NGX_CONF_FLAG,
+        ngx_conf_set_flag_slot,
+        NGX_MAIL_SRV_CONF_OFFSET,
+        offsetof(ngx_mail_proxy_conf_t, pass_error_message),
+diff -p -N --text -r /tmp/patch.inc.get1.n8HZgM/src/os/unix/ngx_darwin_init.c /tmp/patch.inc.get2.GF2KI6/src/os/unix/ngx_darwin_init.c
+*** /tmp/patch.inc.get1.n8HZgM/src/os/unix/ngx_darwin_init.c	2013-04-30 11:28:16.119167341 +0200
+--- /tmp/patch.inc.get2.GF2KI6/src/os/unix/ngx_darwin_init.c	2013-04-30 11:28:19.215182705 +0200
+*************** sysctl_t sysctls[] = {
+*** 58,64 ****
+  ngx_int_t
+  ngx_os_specific_init(ngx_log_t *log)
+  {
+-     int         somaxconn;
+      size_t      size;
+      ngx_err_t   err;
+      ngx_uint_t  i;
+--- 58,63 ----
+*************** ngx_os_specific_init(ngx_log_t *log)
+*** 125,136 ****
+  
+      ngx_ncpu = ngx_darwin_hw_ncpu;
+  
+!     somaxconn = 32676;
+! 
+!     if (ngx_darwin_kern_ipc_somaxconn > somaxconn) {
+          ngx_log_error(NGX_LOG_ALERT, log, 0,
+!                       "sysctl kern.ipc.somaxconn must be no more than %d",
+!                       somaxconn);
+          return NGX_ERROR;
+      }
+  
+--- 124,132 ----
+  
+      ngx_ncpu = ngx_darwin_hw_ncpu;
+  
+!     if (ngx_darwin_kern_ipc_somaxconn > 32767) {
+          ngx_log_error(NGX_LOG_ALERT, log, 0,
+!                       "sysctl kern.ipc.somaxconn must be less than 32768");
+          return NGX_ERROR;
+      }
+  
+diff -p -N --text -r /tmp/patch.inc.get1.n8HZgM/src/os/unix/ngx_files.c /tmp/patch.inc.get2.GF2KI6/src/os/unix/ngx_files.c
+*** /tmp/patch.inc.get1.n8HZgM/src/os/unix/ngx_files.c	2013-04-30 11:28:16.123167379 +0200
+--- /tmp/patch.inc.get2.GF2KI6/src/os/unix/ngx_files.c	2013-04-30 11:28:19.215182705 +0200
+*************** ngx_write_chain_to_file(ngx_file_t *file
+*** 153,159 ****
+  {
+      u_char        *prev;
+      size_t         size;
+!     ssize_t        n;
+      ngx_array_t    vec;
+      struct iovec  *iov, iovs[NGX_IOVS];
+  
+--- 153,159 ----
+  {
+      u_char        *prev;
+      size_t         size;
+!     ssize_t        total, n;
+      ngx_array_t    vec;
+      struct iovec  *iov, iovs[NGX_IOVS];
+  
+*************** ngx_write_chain_to_file(ngx_file_t *file
+*** 165,170 ****
+--- 165,172 ----
+                                offset);
+      }
+  
++     total = 0;
++ 
+      vec.elts = iovs;
+      vec.size = sizeof(struct iovec);
+      vec.nalloc = NGX_IOVS;
+*************** ngx_write_chain_to_file(ngx_file_t *file
+*** 202,209 ****
+  
+          if (vec.nelts == 1) {
+              iov = vec.elts;
+!             return ngx_write_file(file, (u_char *) iov[0].iov_base,
+!                                   iov[0].iov_len, offset);
+          }
+  
+          if (file->sys_offset != offset) {
+--- 204,218 ----
+  
+          if (vec.nelts == 1) {
+              iov = vec.elts;
+! 
+!             n = ngx_write_file(file, (u_char *) iov[0].iov_base,
+!                                iov[0].iov_len, offset);
+! 
+!             if (n == NGX_ERROR) {
+!                 return n;
+!             }
+! 
+!             return total + n;
+          }
+  
+          if (file->sys_offset != offset) {
+*************** ngx_write_chain_to_file(ngx_file_t *file
+*** 233,242 ****
+  
+          file->sys_offset += n;
+          file->offset += n;
+  
+      } while (cl);
+  
+!     return n;
+  }
+  
+  
+--- 242,252 ----
+  
+          file->sys_offset += n;
+          file->offset += n;
++         total += n;
+  
+      } while (cl);
+  
+!     return total;
+  }
+  
+  
+*************** ngx_unlock_fd(ngx_fd_t fd)
+*** 454,460 ****
+  }
+  
+  
+! #if (NGX_HAVE_POSIX_FADVISE)
+  
+  ngx_int_t
+  ngx_read_ahead(ngx_fd_t fd, size_t n)
+--- 464,470 ----
+  }
+  
+  
+! #if (NGX_HAVE_POSIX_FADVISE) && !(NGX_HAVE_F_READAHEAD)
+  
+  ngx_int_t
+  ngx_read_ahead(ngx_fd_t fd, size_t n)
+diff -p -N --text -r /tmp/patch.inc.get1.n8HZgM/src/os/unix/ngx_files.h /tmp/patch.inc.get2.GF2KI6/src/os/unix/ngx_files.h
+*** /tmp/patch.inc.get1.n8HZgM/src/os/unix/ngx_files.h	2013-04-30 11:28:16.123167379 +0200
+--- /tmp/patch.inc.get2.GF2KI6/src/os/unix/ngx_files.h	2013-04-30 11:28:19.215182705 +0200
+*************** ngx_write_fd(ngx_fd_t fd, void *buf, siz
+*** 128,133 ****
+--- 128,134 ----
+  
+  #define ngx_linefeed(p)          *p++ = LF;
+  #define NGX_LINEFEED_SIZE        1
++ #define NGX_LINEFEED             "\x0a"
+  
+  
+  #define ngx_rename_file(o, n)    rename((const char *) o, (const char *) n)
+diff -p -N --text -r /tmp/patch.inc.get1.n8HZgM/src/os/unix/ngx_freebsd_init.c /tmp/patch.inc.get2.GF2KI6/src/os/unix/ngx_freebsd_init.c
+*** /tmp/patch.inc.get1.n8HZgM/src/os/unix/ngx_freebsd_init.c	2013-04-30 11:28:16.123167379 +0200
+--- /tmp/patch.inc.get2.GF2KI6/src/os/unix/ngx_freebsd_init.c	2013-04-30 11:28:19.215182705 +0200
+*************** ngx_debug_init()
+*** 97,103 ****
+  ngx_int_t
+  ngx_os_specific_init(ngx_log_t *log)
+  {
+!     int         version, somaxconn;
+      size_t      size;
+      ngx_err_t   err;
+      ngx_uint_t  i;
+--- 97,103 ----
+  ngx_int_t
+  ngx_os_specific_init(ngx_log_t *log)
+  {
+!     int         version;
+      size_t      size;
+      ngx_err_t   err;
+      ngx_uint_t  i;
+*************** ngx_os_specific_init(ngx_log_t *log)
+*** 209,220 ****
+          ngx_ncpu = ngx_freebsd_hw_ncpu;
+      }
+  
+!     somaxconn = version < 600008 ? 32676 : 65535;
+! 
+!     if (ngx_freebsd_kern_ipc_somaxconn > somaxconn) {
+          ngx_log_error(NGX_LOG_ALERT, log, 0,
+!                       "sysctl kern.ipc.somaxconn must be no more than %d",
+!                       somaxconn);
+          return NGX_ERROR;
+      }
+  
+--- 209,217 ----
+          ngx_ncpu = ngx_freebsd_hw_ncpu;
+      }
+  
+!     if (version < 600008 && ngx_freebsd_kern_ipc_somaxconn > 32767) {
+          ngx_log_error(NGX_LOG_ALERT, log, 0,
+!                       "sysctl kern.ipc.somaxconn must be less than 32768");
+          return NGX_ERROR;
+      }
+  

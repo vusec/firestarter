@@ -1,0 +1,98 @@
+checking for OS
+ + Linux 2.6.32-29-generic i686
+checking for C compiler ... found
+ + using GNU C compiler
+ + gcc version: 4.4.3 (Ubuntu 4.4.3-4ubuntu5) 
+checking for gcc -pipe switch ... found
+checking for gcc builtin atomic operations ... found
+checking for C99 variadic macros ... found
+checking for gcc variadic macros ... found
+checking for unistd.h ... found
+checking for inttypes.h ... found
+checking for limits.h ... found
+checking for sys/filio.h ... not found
+checking for sys/param.h ... found
+checking for sys/mount.h ... found
+checking for sys/statvfs.h ... found
+checking for crypt.h ... found
+checking for Linux specific features
+checking for epoll ... found
+checking for sendfile() ... found
+checking for sendfile64() ... found
+checking for sys/prctl.h ... found
+checking for prctl(PR_SET_DUMPABLE) ... found
+checking for sched_setaffinity() ... found
+checking for crypt_r() ... found
+checking for sys/vfs.h ... found
+checking for nobody group ... not found
+checking for nogroup group ... found
+checking for poll() ... found
+checking for /dev/poll ... not found
+checking for kqueue ... not found
+checking for crypt() ... not found
+checking for crypt() in libcrypt ... found
+checking for F_READAHEAD ... not found
+checking for posix_fadvise() ... found
+checking for O_DIRECT ... found
+checking for F_NOCACHE ... not found
+checking for directio() ... not found
+checking for statfs() ... found
+checking for statvfs() ... found
+checking for dlopen() ... not found
+checking for dlopen() in libdl ... found
+checking for sched_yield() ... found
+checking for SO_SETFIB ... not found
+creating objs/Makefile
+checking for int size ... 4 bytes
+checking for long size ... 4 bytes
+checking for long long size ... 8 bytes
+checking for void * size ... 4 bytes
+checking for uint64_t ... found
+checking for sig_atomic_t ... found
+checking for sig_atomic_t size ... 4 bytes
+checking for socklen_t ... found
+checking for in_addr_t ... found
+checking for in_port_t ... found
+checking for rlim_t ... found
+checking for uintptr_t ... uintptr_t found
+checking for system endianess ... little endianess
+checking for size_t size ... 4 bytes
+checking for off_t size ... 8 bytes
+checking for time_t size ... 4 bytes
+checking for setproctitle() ... not found
+checking for pread() ... found
+checking for pwrite() ... found
+checking for strerror_r() ... found but is not working
+checking for gnu style strerror_r() ... found
+checking for sys_errlist[] ... found
+checking for localtime_r() ... found
+checking for posix_memalign() ... found
+checking for memalign() ... found
+checking for mmap(MAP_ANON|MAP_SHARED) ... found
+checking for mmap("/dev/zero", MAP_SHARED) ... found
+checking for System V shared memory ... found
+checking for struct msghdr.msg_control ... found
+checking for ioctl(FIONBIO) ... found
+checking for struct tm.tm_gmtoff ... found
+checking for struct dirent.d_namlen ... not found
+checking for struct dirent.d_type ... found
+
+Configuration summary
+  + PCRE library is not used
+  + OpenSSL library is not used
+  + md5 library is not used
+  + sha1 library is not used
+  + zlib library is not used
+
+  nginx path prefix: "/media/shared/workspace/magic-apps/apps/nginx-0.8.54/install_idr"
+  nginx binary file: "/media/shared/workspace/magic-apps/apps/nginx-0.8.54/install_idr/sbin/nginx"
+  nginx configuration prefix: "/media/shared/workspace/magic-apps/apps/nginx-0.8.54/install_idr/conf"
+  nginx configuration file: "/media/shared/workspace/magic-apps/apps/nginx-0.8.54/install_idr/conf/nginx.conf"
+  nginx pid file: "/media/shared/workspace/magic-apps/apps/nginx-0.8.54/install_idr/logs/nginx.pid"
+  nginx error log file: "/media/shared/workspace/magic-apps/apps/nginx-0.8.54/install_idr/logs/error.log"
+  nginx http access log file: "/media/shared/workspace/magic-apps/apps/nginx-0.8.54/install_idr/logs/access.log"
+  nginx http client request body temporary files: "client_body_temp"
+  nginx http proxy temporary files: "proxy_temp"
+  nginx http fastcgi temporary files: "fastcgi_temp"
+  nginx http uwsgi temporary files: "uwsgi_temp"
+  nginx http scgi temporary files: "scgi_temp"

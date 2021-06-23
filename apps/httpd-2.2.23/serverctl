@@ -1,0 +1,48 @@
+#!/bin/bash
+
+PROC_NAME="httpd"
+BIN_PATH=`pwd`/install/bin/httpd
+BC_PATH=`pwd`/httpd.bc
+
+if [ -f "$BIN_PATH.traced" ]; then
+	PROC_NAME="$PROC_NAME.traced"
+fi
+
+PATCH_URL="http://archive.apache.org/dist/httpd"
+PATCH_BASE_VERSION="2.2.23"
+PATCH_PROG_PREFIX="httpd-"
+PATCH_PROG_SUFFIX=".tar.gz"
+
+. ../scripts/include/cmdctl.inc
+
+function patch_list {
+    wget -O index.html -q ${PATCH_URL}/
+    cat index.html | grep ${PATCH_PROG_PREFIX}.*${PATCH_PROG_SUFFIX} | sed "s/.*${PATCH_PROG_PREFIX}\(.*\)${PATCH_PROG_SUFFIX}.*/\1/g" | grep -v deps | patch_list_sort | uniq
+    rm -f index.html
+}
+
+SERVER_CONFIG_FILE=`pwd`/myhttpd.conf
+mode=$1
+shift || mode="no_action"
+
+case "$mode" in
+  'start')
+    echo "***** Starting $PROC_NAME server..."
+    cmdctl_server_check_not_running
+    echo "<?php phpinfo(); ?>" > install/htdocs/index.php
+    rm -f install/logs/access_log install/logs/error_log install/logs/httpd.pid # erik: remove log files for more determinism
+    eval $LLVM_CMD_PREFIX $BIN_PATH -f $SERVER_CONFIG_FILE -k ustart $*
+    ;;
+  'fix')
+    cmdctl_server_stop
+    ipcs -s | grep ^0 | awk ' { print $2 } ' | xargs ipcrm sem
+    ;;
+  'cleanup')
+    cmdctl_server_cleanup
+    rm -f install/logs/*
+    ;;
+    *)
+    cmdctl_server_action $mode $*
+    ;;
+esac
+

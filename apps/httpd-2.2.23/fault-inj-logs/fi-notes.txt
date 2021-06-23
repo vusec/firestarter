@@ -1,0 +1,4 @@
+fault_site_id, reason
+0,	
+1,	No error handling,	malloc returns a value but it's never NULL checked later.
+

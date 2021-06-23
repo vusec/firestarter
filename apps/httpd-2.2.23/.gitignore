@@ -1,0 +1,11 @@
+*.mk
+.deps
+.libs
+.make.dirs
+modules.c
+modules/metadata/modules.mk
+Makefile
+install/
+config.nice
+*.lo
+*.la

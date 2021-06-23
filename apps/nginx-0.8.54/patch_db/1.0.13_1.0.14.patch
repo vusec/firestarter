@@ -1,0 +1,182 @@
+diff -p -N --text -r /tmp/patch.inc.get1.z8x9PY/src/core/nginx.h /tmp/patch.inc.get2.Gsbk4a/src/core/nginx.h
+*** /tmp/patch.inc.get1.z8x9PY/src/core/nginx.h	2013-04-30 11:28:36.303267442 +0200
+--- /tmp/patch.inc.get2.Gsbk4a/src/core/nginx.h	2013-04-30 11:28:39.659284074 +0200
+***************
+*** 9,16 ****
+  #define _NGINX_H_INCLUDED_
+  
+  
+! #define nginx_version      1000013
+! #define NGINX_VERSION      "1.0.13"
+  #define NGINX_VER          "nginx/" NGINX_VERSION
+  
+  #define NGINX_VAR          "NGINX"
+--- 9,16 ----
+  #define _NGINX_H_INCLUDED_
+  
+  
+! #define nginx_version      1000014
+! #define NGINX_VERSION      "1.0.14"
+  #define NGINX_VER          "nginx/" NGINX_VERSION
+  
+  #define NGINX_VAR          "NGINX"
+diff -p -N --text -r /tmp/patch.inc.get1.z8x9PY/src/http/modules/ngx_http_fastcgi_module.c /tmp/patch.inc.get2.Gsbk4a/src/http/modules/ngx_http_fastcgi_module.c
+*** /tmp/patch.inc.get1.z8x9PY/src/http/modules/ngx_http_fastcgi_module.c	2013-04-30 11:28:36.299267426 +0200
+--- /tmp/patch.inc.get2.Gsbk4a/src/http/modules/ngx_http_fastcgi_module.c	2013-04-30 11:28:39.655284059 +0200
+*************** ngx_http_fastcgi_process_header(ngx_http
+*** 1446,1455 ****
+                      h->lowcase_key = h->key.data + h->key.len + 1
+                                       + h->value.len + 1;
+  
+!                     ngx_cpystrn(h->key.data, r->header_name_start,
+!                                 h->key.len + 1);
+!                     ngx_cpystrn(h->value.data, r->header_start,
+!                                 h->value.len + 1);
+                  }
+  
+                  h->hash = r->header_hash;
+--- 1446,1455 ----
+                      h->lowcase_key = h->key.data + h->key.len + 1
+                                       + h->value.len + 1;
+  
+!                     ngx_memcpy(h->key.data, r->header_name_start, h->key.len);
+!                     h->key.data[h->key.len] = '\0';
+!                     ngx_memcpy(h->value.data, r->header_start, h->value.len);
+!                     h->value.data[h->value.len] = '\0';
+                  }
+  
+                  h->hash = r->header_hash;
+diff -p -N --text -r /tmp/patch.inc.get1.z8x9PY/src/http/modules/ngx_http_proxy_module.c /tmp/patch.inc.get2.Gsbk4a/src/http/modules/ngx_http_proxy_module.c
+*** /tmp/patch.inc.get1.z8x9PY/src/http/modules/ngx_http_proxy_module.c	2013-04-30 11:28:36.299267426 +0200
+--- /tmp/patch.inc.get2.Gsbk4a/src/http/modules/ngx_http_proxy_module.c	2013-04-30 11:28:39.655284059 +0200
+*************** ngx_http_proxy_process_header(ngx_http_r
+*** 1278,1285 ****
+              h->value.data = h->key.data + h->key.len + 1;
+              h->lowcase_key = h->key.data + h->key.len + 1 + h->value.len + 1;
+  
+!             ngx_cpystrn(h->key.data, r->header_name_start, h->key.len + 1);
+!             ngx_cpystrn(h->value.data, r->header_start, h->value.len + 1);
+  
+              if (h->key.len == r->lowcase_index) {
+                  ngx_memcpy(h->lowcase_key, r->lowcase_header, h->key.len);
+--- 1278,1287 ----
+              h->value.data = h->key.data + h->key.len + 1;
+              h->lowcase_key = h->key.data + h->key.len + 1 + h->value.len + 1;
+  
+!             ngx_memcpy(h->key.data, r->header_name_start, h->key.len);
+!             h->key.data[h->key.len] = '\0';
+!             ngx_memcpy(h->value.data, r->header_start, h->value.len);
+!             h->value.data[h->value.len] = '\0';
+  
+              if (h->key.len == r->lowcase_index) {
+                  ngx_memcpy(h->lowcase_key, r->lowcase_header, h->key.len);
+diff -p -N --text -r /tmp/patch.inc.get1.z8x9PY/src/http/modules/ngx_http_scgi_module.c /tmp/patch.inc.get2.Gsbk4a/src/http/modules/ngx_http_scgi_module.c
+*** /tmp/patch.inc.get1.z8x9PY/src/http/modules/ngx_http_scgi_module.c	2013-04-30 11:28:36.299267426 +0200
+--- /tmp/patch.inc.get2.Gsbk4a/src/http/modules/ngx_http_scgi_module.c	2013-04-30 11:28:39.655284059 +0200
+*************** ngx_http_scgi_process_header(ngx_http_re
+*** 894,901 ****
+              h->value.data = h->key.data + h->key.len + 1;
+              h->lowcase_key = h->key.data + h->key.len + 1 + h->value.len + 1;
+  
+!             ngx_cpystrn(h->key.data, r->header_name_start, h->key.len + 1);
+!             ngx_cpystrn(h->value.data, r->header_start, h->value.len + 1);
+  
+              if (h->key.len == r->lowcase_index) {
+                  ngx_memcpy(h->lowcase_key, r->lowcase_header, h->key.len);
+--- 894,903 ----
+              h->value.data = h->key.data + h->key.len + 1;
+              h->lowcase_key = h->key.data + h->key.len + 1 + h->value.len + 1;
+  
+!             ngx_memcpy(h->key.data, r->header_name_start, h->key.len);
+!             h->key.data[h->key.len] = '\0';
+!             ngx_memcpy(h->value.data, r->header_start, h->value.len);
+!             h->value.data[h->value.len] = '\0';
+  
+              if (h->key.len == r->lowcase_index) {
+                  ngx_memcpy(h->lowcase_key, r->lowcase_header, h->key.len);
+diff -p -N --text -r /tmp/patch.inc.get1.z8x9PY/src/http/modules/ngx_http_uwsgi_module.c /tmp/patch.inc.get2.Gsbk4a/src/http/modules/ngx_http_uwsgi_module.c
+*** /tmp/patch.inc.get1.z8x9PY/src/http/modules/ngx_http_uwsgi_module.c	2013-04-30 11:28:36.299267426 +0200
+--- /tmp/patch.inc.get2.Gsbk4a/src/http/modules/ngx_http_uwsgi_module.c	2013-04-30 11:28:39.655284059 +0200
+*************** ngx_http_uwsgi_process_header(ngx_http_r
+*** 947,954 ****
+              h->value.data = h->key.data + h->key.len + 1;
+              h->lowcase_key = h->key.data + h->key.len + 1 + h->value.len + 1;
+  
+!             ngx_cpystrn(h->key.data, r->header_name_start, h->key.len + 1);
+!             ngx_cpystrn(h->value.data, r->header_start, h->value.len + 1);
+  
+              if (h->key.len == r->lowcase_index) {
+                  ngx_memcpy(h->lowcase_key, r->lowcase_header, h->key.len);
+--- 947,956 ----
+              h->value.data = h->key.data + h->key.len + 1;
+              h->lowcase_key = h->key.data + h->key.len + 1 + h->value.len + 1;
+  
+!             ngx_memcpy(h->key.data, r->header_name_start, h->key.len);
+!             h->key.data[h->key.len] = '\0';
+!             ngx_memcpy(h->value.data, r->header_start, h->value.len);
+!             h->value.data[h->value.len] = '\0';
+  
+              if (h->key.len == r->lowcase_index) {
+                  ngx_memcpy(h->lowcase_key, r->lowcase_header, h->key.len);
+diff -p -N --text -r /tmp/patch.inc.get1.z8x9PY/src/http/ngx_http_parse.c /tmp/patch.inc.get2.Gsbk4a/src/http/ngx_http_parse.c
+*** /tmp/patch.inc.get1.z8x9PY/src/http/ngx_http_parse.c	2013-04-30 11:28:36.299267426 +0200
+--- /tmp/patch.inc.get2.Gsbk4a/src/http/ngx_http_parse.c	2013-04-30 11:28:39.655284059 +0200
+*************** ngx_http_parse_header_line(ngx_http_requ
+*** 814,819 ****
+--- 814,823 ----
+                      break;
+                  }
+  
++                 if (ch == '\0') {
++                     return NGX_HTTP_PARSE_INVALID_HEADER;
++                 }
++ 
+                  r->invalid_header = 1;
+  
+                  break;
+*************** ngx_http_parse_header_line(ngx_http_requ
+*** 876,881 ****
+--- 880,889 ----
+                  break;
+              }
+  
++             if (ch == '\0') {
++                 return NGX_HTTP_PARSE_INVALID_HEADER;
++             }
++ 
+              r->invalid_header = 1;
+  
+              break;
+*************** ngx_http_parse_header_line(ngx_http_requ
+*** 894,899 ****
+--- 902,909 ----
+                  r->header_start = p;
+                  r->header_end = p;
+                  goto done;
++             case '\0':
++                 return NGX_HTTP_PARSE_INVALID_HEADER;
+              default:
+                  r->header_start = p;
+                  state = sw_value;
+*************** ngx_http_parse_header_line(ngx_http_requ
+*** 915,920 ****
+--- 925,932 ----
+              case LF:
+                  r->header_end = p;
+                  goto done;
++             case '\0':
++                 return NGX_HTTP_PARSE_INVALID_HEADER;
+              }
+              break;
+  
+*************** ngx_http_parse_header_line(ngx_http_requ
+*** 928,933 ****
+--- 940,947 ----
+                  break;
+              case LF:
+                  goto done;
++             case '\0':
++                 return NGX_HTTP_PARSE_INVALID_HEADER;
+              default:
+                  state = sw_value;
+                  break;

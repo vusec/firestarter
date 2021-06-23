@@ -1,0 +1,312 @@
+***** Running lighttpd benchmark...
+Making check in src
+make[1]: Entering directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/src'
+make  check-am
+make[2]: Entering directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/src'
+make  check-TESTS
+make[3]: Entering directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/src'
+test_buffer.c.24: buffer_path_simplify('') succeeded: got ''
+test_buffer.c.24: buffer_path_simplify(' ') succeeded: got '/'
+test_buffer.c.24: buffer_path_simplify('/') succeeded: got '/'
+test_buffer.c.24: buffer_path_simplify('//') succeeded: got '/'
+test_buffer.c.24: buffer_path_simplify('abc') succeeded: got '/abc'
+test_buffer.c.24: buffer_path_simplify('abc//') succeeded: got '/abc/'
+test_buffer.c.24: buffer_path_simplify('abc/./xyz') succeeded: got '/abc/xyz'
+test_buffer.c.24: buffer_path_simplify('abc/.//xyz') succeeded: got '/abc/xyz'
+test_buffer.c.24: buffer_path_simplify('abc/../xyz') succeeded: got '/xyz'
+test_buffer.c.24: buffer_path_simplify('/abc/./xyz') succeeded: got '/abc/xyz'
+test_buffer.c.24: buffer_path_simplify('/abc//./xyz') succeeded: got '/abc/xyz'
+test_buffer.c.24: buffer_path_simplify('/abc/../xyz') succeeded: got '/xyz'
+test_buffer.c.24: buffer_path_simplify('abc/../xyz/.') succeeded: got '/xyz/'
+test_buffer.c.24: buffer_path_simplify('/abc/../xyz/.') succeeded: got '/xyz/'
+test_buffer.c.24: buffer_path_simplify('abc/./xyz/..') succeeded: got '/abc/'
+test_buffer.c.24: buffer_path_simplify('/abc/./xyz/..') succeeded: got '/abc/'
+test_buffer.c.24: buffer_path_simplify('./xyz/..') succeeded: got '/'
+test_buffer.c.24: buffer_path_simplify('.//xyz/..') succeeded: got '/'
+test_buffer.c.24: buffer_path_simplify('/./xyz/..') succeeded: got '/'
+test_buffer.c.24: buffer_path_simplify('.././xyz/..') succeeded: got '/'
+test_buffer.c.24: buffer_path_simplify('/.././xyz/..') succeeded: got '/'
+test_buffer.c.24: buffer_path_simplify('') succeeded: got ''
+test_buffer.c.24: buffer_path_simplify(' ') succeeded: got '/'
+test_buffer.c.24: buffer_path_simplify('/') succeeded: got '/'
+test_buffer.c.24: buffer_path_simplify('//') succeeded: got '/'
+test_buffer.c.24: buffer_path_simplify('abc') succeeded: got '/abc'
+test_buffer.c.24: buffer_path_simplify('abc//') succeeded: got '/abc/'
+test_buffer.c.24: buffer_path_simplify('abc/./xyz') succeeded: got '/abc/xyz'
+test_buffer.c.24: buffer_path_simplify('abc/.//xyz') succeeded: got '/abc/xyz'
+test_buffer.c.24: buffer_path_simplify('abc/../xyz') succeeded: got '/xyz'
+test_buffer.c.24: buffer_path_simplify('/abc/./xyz') succeeded: got '/abc/xyz'
+test_buffer.c.24: buffer_path_simplify('/abc//./xyz') succeeded: got '/abc/xyz'
+test_buffer.c.24: buffer_path_simplify('/abc/../xyz') succeeded: got '/xyz'
+test_buffer.c.24: buffer_path_simplify('abc/../xyz/.') succeeded: got '/xyz/'
+test_buffer.c.24: buffer_path_simplify('/abc/../xyz/.') succeeded: got '/xyz/'
+test_buffer.c.24: buffer_path_simplify('abc/./xyz/..') succeeded: got '/abc/'
+test_buffer.c.24: buffer_path_simplify('/abc/./xyz/..') succeeded: got '/abc/'
+test_buffer.c.24: buffer_path_simplify('./xyz/..') succeeded: got '/'
+test_buffer.c.24: buffer_path_simplify('.//xyz/..') succeeded: got '/'
+test_buffer.c.24: buffer_path_simplify('/./xyz/..') succeeded: got '/'
+test_buffer.c.24: buffer_path_simplify('.././xyz/..') succeeded: got '/'
+test_buffer.c.24: buffer_path_simplify('/.././xyz/..') succeeded: got '/'
+PASS: test_buffer
+PASS: test_base64
+PASS: test_configfile
+==================
+All 3 tests passed
+==================
+make[3]: Leaving directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/src'
+make[2]: Leaving directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/src'
+make[1]: Leaving directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/src'
+Making check in doc
+make[1]: Entering directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/doc'
+Making check in config
+make[2]: Entering directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/doc/config'
+Making check in conf.d
+make[3]: Entering directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/doc/config/conf.d'
+make[3]: Nothing to be done for 'check'.
+make[3]: Leaving directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/doc/config/conf.d'
+Making check in vhosts.d
+make[3]: Entering directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/doc/config/vhosts.d'
+make[3]: Nothing to be done for 'check'.
+make[3]: Leaving directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/doc/config/vhosts.d'
+make[3]: Entering directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/doc/config'
+make[3]: Nothing to be done for 'check-am'.
+make[3]: Leaving directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/doc/config'
+make[2]: Leaving directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/doc/config'
+Making check in scripts
+make[2]: Entering directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/doc/scripts'
+make[2]: Nothing to be done for 'check'.
+make[2]: Leaving directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/doc/scripts'
+Making check in initscripts
+make[2]: Entering directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/doc/initscripts'
+make[2]: Nothing to be done for 'check'.
+make[2]: Leaving directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/doc/initscripts'
+Making check in systemd
+make[2]: Entering directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/doc/systemd'
+make[2]: Nothing to be done for 'check'.
+make[2]: Leaving directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/doc/systemd'
+Making check in outdated
+make[2]: Entering directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/doc/outdated'
+make[2]: Nothing to be done for 'check'.
+make[2]: Leaving directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/doc/outdated'
+make[2]: Entering directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/doc'
+make[2]: Nothing to be done for 'check-am'.
+make[2]: Leaving directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/doc'
+make[1]: Leaving directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/doc'
+Making check in tests
+make[1]: Entering directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests'
+Making check in docroot
+make[2]: Entering directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests/docroot'
+Making check in 123
+make[3]: Entering directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests/docroot/123'
+make[3]: Nothing to be done for 'check'.
+make[3]: Leaving directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests/docroot/123'
+Making check in www
+make[3]: Entering directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests/docroot/www'
+Making check in expire
+make[4]: Entering directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests/docroot/www/expire'
+make[4]: Nothing to be done for 'check'.
+make[4]: Leaving directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests/docroot/www/expire'
+Making check in go
+make[4]: Entering directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests/docroot/www/go'
+make[4]: Nothing to be done for 'check'.
+make[4]: Leaving directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests/docroot/www/go'
+Making check in indexfile
+make[4]: Entering directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests/docroot/www/indexfile'
+make[4]: Nothing to be done for 'check'.
+make[4]: Leaving directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests/docroot/www/indexfile'
+make[4]: Entering directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests/docroot/www'
+make[4]: Nothing to be done for 'check-am'.
+make[4]: Leaving directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests/docroot/www'
+make[3]: Leaving directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests/docroot/www'
+make[3]: Entering directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests/docroot'
+make[3]: Nothing to be done for 'check-am'.
+make[3]: Leaving directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests/docroot'
+make[2]: Leaving directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests/docroot'
+make[2]: Entering directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests'
+make  
+make[3]: Entering directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests'
+Making all in docroot
+make[4]: Entering directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests/docroot'
+Making all in 123
+make[5]: Entering directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests/docroot/123'
+make[5]: Nothing to be done for 'all'.
+make[5]: Leaving directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests/docroot/123'
+Making all in www
+make[5]: Entering directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests/docroot/www'
+Making all in expire
+make[6]: Entering directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests/docroot/www/expire'
+make[6]: Nothing to be done for 'all'.
+make[6]: Leaving directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests/docroot/www/expire'
+Making all in go
+make[6]: Entering directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests/docroot/www/go'
+make[6]: Nothing to be done for 'all'.
+make[6]: Leaving directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests/docroot/www/go'
+Making all in indexfile
+make[6]: Entering directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests/docroot/www/indexfile'
+make[6]: Nothing to be done for 'all'.
+make[6]: Leaving directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests/docroot/www/indexfile'
+make[6]: Entering directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests/docroot/www'
+make[6]: Nothing to be done for 'all-am'.
+make[6]: Leaving directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests/docroot/www'
+make[5]: Leaving directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests/docroot/www'
+make[5]: Entering directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests/docroot'
+make[5]: Nothing to be done for 'all-am'.
+make[5]: Leaving directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests/docroot'
+make[4]: Leaving directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests/docroot'
+make[4]: Entering directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests'
+make[4]: Nothing to be done for 'all-am'.
+make[4]: Leaving directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests'
+make[3]: Leaving directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests'
+make  check-TESTS
+make[3]: Entering directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests'
+preparing infrastructure                PASS: prepare.sh
+# 
+# status failed: expected '304', got '200'
+# 
+# status failed: expected '304', got '200'
+./cachable.t .......... ok
+./core-404-handler.t .. ok
+./core-condition.t .... ok
+./core-keepalive.t .... ok
+# 
+# status failed: expected '200', got '400'
+
+#   Failed test 'IPv6 address'
+#   at ./core-request.t line 61.
+# 
+# status failed: expected '200', got '400'
+
+#   Failed test 'IPv6 address + port'
+#   at ./core-request.t line 85.
+# Looks like you failed 2 tests of 38.
+./core-request.t ...... 
+Dubious, test returned 2 (wstat 512, 0x200)
+Failed 2/38 subtests 
+./core-response.t ..... ok
+./core-var-include.t .. ok
+./core.t .............. ok
+./lowercase.t ......... ok
+./mod-access.t ........ ok
+# 
+# status failed: expected '200', got '401'
+
+#   Failed test 'Basic-Auth: Valid Auth-token - htpasswd (sha)'
+#   at ./mod-auth.t line 75.
+# Looks like you failed 1 test of 20.
+./mod-auth.t .......... 
+Dubious, test returned 1 (wstat 256, 0x100)
+Failed 1/20 subtests 
+./mod-cgi.t ........... ok
+# 
+# required header 'content-encoding' is missing
+
+#   Failed test 'deflate - Content-Length and Content-Encoding is set'
+#   at ./mod-compress.t line 36.
+# 
+# required header 'content-encoding' is missing
+
+#   Failed test 'deflate - Content-Length and Content-Encoding is set'
+#   at ./mod-compress.t line 45.
+# 
+# response-header failed: expected '1306', got '4348'
+
+#   Failed test 'gzip - Content-Length and Content-Encoding is set'
+#   at ./mod-compress.t line 54.
+# 
+# required header 'content-encoding' is missing
+
+#   Failed test 'gzip - Content-Length and Content-Encoding is set'
+#   at ./mod-compress.t line 63.
+# 
+# required header 'content-encoding' is missing
+
+#   Failed test 'gzip, deflate - Content-Length and Content-Encoding is set'
+#   at ./mod-compress.t line 72.
+# 
+# required header 'content-encoding' is missing
+
+#   Failed test 'Content-Type is from the original file'
+#   at ./mod-compress.t line 80.
+# 
+# required header 'content-encoding' is missing
+
+#   Failed test 'bzip2 requested but disabled'
+#   at ./mod-compress.t line 100.
+# Looks like you failed 7 tests of 11.
+./mod-compress.t ...... 
+Dubious, test returned 7 (wstat 1792, 0x700)
+Failed 7/11 subtests 
+./mod-evhost.t ........ ok
+./mod-extforward.t .... ok
+./mod-fastcgi.t ....... ok
+./mod-proxy.t ......... ok
+./mod-redirect.t ...... ok
+./mod-rewrite.t ....... ok
+# 
+# status failed: expected '200', got '403'
+
+#   Failed test 'secdownload (hmac-sha1)'
+#   at ./mod-secdownload.t line 94.
+# 
+# status failed: expected '404', got '403'
+
+#   Failed test 'secdownload - timeout (hmac-sha1)'
+#   at ./mod-secdownload.t line 129.
+# 
+# status failed: expected '200', got '403'
+
+#   Failed test 'secdownload (hmac-sha256)'
+#   at ./mod-secdownload.t line 143.
+# 
+# status failed: expected '404', got '403'
+
+#   Failed test 'secdownload - timeout (hmac-sha256)'
+#   at ./mod-secdownload.t line 178.
+# Looks like you failed 4 tests of 15.
+./mod-secdownload.t ... 
+Dubious, test returned 4 (wstat 1024, 0x400)
+Failed 4/15 subtests 
+./mod-setenv.t ........ ok
+./mod-simplevhost.t ... ok
+./mod-ssi.t ........... ok
+./mod-userdir.t ....... ok
+./request.t ........... ok
+./symlink.t ........... ok
+
+Test Summary Report
+-------------------
+./core-request.t    (Wstat: 512 Tests: 38 Failed: 2)
+  Failed tests:  6, 9
+  Non-zero exit status: 2
+./mod-auth.t        (Wstat: 256 Tests: 20 Failed: 1)
+  Failed test:  8
+  Non-zero exit status: 1
+./mod-compress.t    (Wstat: 1792 Tests: 11 Failed: 7)
+  Failed tests:  3-8, 10
+  Non-zero exit status: 7
+./mod-secdownload.t (Wstat: 1024 Tests: 15 Failed: 4)
+  Failed tests:  7, 10-11, 14
+  Non-zero exit status: 4
+Files=26, Tests=416,  4 wallclock secs ( 0.06 usr  0.01 sys +  0.68 cusr  0.04 csys =  0.79 CPU)
+Result: FAIL
+Failed 4/26 test programs. 14/416 subtests failed.
+FAIL: run-tests.pl
+cleaning up                             PASS: cleanup.sh
+=====================================
+1 of 3 tests failed
+Please report to contact@lighttpd.net
+=====================================
+Makefile:659: recipe for target 'check-TESTS' failed
+make[3]: *** [check-TESTS] Error 1
+make[3]: Leaving directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests'
+Makefile:807: recipe for target 'check-am' failed
+make[2]: *** [check-am] Error 2
+make[2]: Leaving directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests'
+Makefile:566: recipe for target 'check-recursive' failed
+make[1]: *** [check-recursive] Error 1
+make[1]: Leaving directory '/mnt/hdd/koustubha/repos/apprecovery/apps/lighttpd-1.4.45/tests'
+Makefile:442: recipe for target 'check-recursive' failed
+make: *** [check-recursive] Error 1
+Command exited with non-zero status 2
+
+runbench_secs = 6.67 (sys: 0.06 user: 3.35)

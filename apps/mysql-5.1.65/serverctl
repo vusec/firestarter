@@ -1,0 +1,46 @@
+#!/bin/bash
+
+PROC_NAME="mysqld"
+BIN_PATH=`pwd`/install/libexec/mysqld
+
+. ../scripts/include/cmdctl.inc
+
+BASEDIR=`pwd`/install
+DATADIR=$BASEDIR/var
+SOCKET=$BASEDIR/mysql.sock
+CONFIG_FILE=$BASEDIR/home/$USER/my.cnf
+LISTEN_PORT=$( grep ^port $CONFIG_FILE | head -1 | awk '{ print $3; }' 2> /dev/null )
+mode=$1
+shift || mode="no_action"
+
+function cmdctl_help {
+    cmdctl_help_gen --verbose --help
+}
+
+case "$mode" in
+  'start')
+    if [ ! -f mysql.init.done ]; then
+    	echo "***** Initializing $PROC_NAME server..."
+    	./mysql.init
+    fi
+    echo "***** Starting $PROC_NAME server..."
+    cmdctl_server_check_not_running
+    if [ "$LLVM_CMD_IS_GDB" == "1" ]; then
+        eval $LLVM_CMD_PREFIX $BIN_PATH --defaults-file=$CONFIG_FILE --basedir=$BASEDIR --datadir=$DATADIR --log-error=$DATADIR/mysql.err --pid-file=$DATADIR/mysql.pid $*
+    else
+        eval $LLVM_CMD_PREFIX $BIN_PATH --defaults-file=$CONFIG_FILE --basedir=$BASEDIR --datadir=$DATADIR --log-error=$DATADIR/mysql.err --pid-file=$DATADIR/mysql.pid $* &> __serverctl.tmp &
+        cmdctl_server_wait_for_listen_port $LISTEN_PORT
+        cmdctl_server_wait_for_file $SOCKET
+        cat __serverctl.tmp 1>&2
+#       rm -f __serverctl.tmp
+    fi
+    ;;
+  'fix')
+    cmdctl_server_stop
+    ./mysql.init
+    ;;
+  *)
+    cmdctl_server_action $mode $*
+    ;;
+esac
+

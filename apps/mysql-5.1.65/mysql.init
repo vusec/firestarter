@@ -1,0 +1,26 @@
+#!/bin/sh
+
+INSTALL_DIR=`pwd`/install
+mkdir -p $INSTALL_DIR/home/
+rm -rf $INSTALL_DIR/home/$USER
+mkdir -p $INSTALL_DIR/home/$USER
+cp support-files/my-medium.cnf $INSTALL_DIR/home/$USER/my.cnf
+
+cd install
+mkdir tmp
+TMPDIR=`pwd`/tmp bin/mysql_install_db --defaults-file=$INSTALL_DIR/home/$USER/my.cnf --basedir=`pwd` --data=`pwd`/var --force
+rm -rf tmp
+chown -R $USER .
+cd ..
+
+echo "GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY 'root';" > mysql.init.tmp
+echo "FLUSH PRIVILEGES;" >> mysql.init.tmp
+echo "DROP DATABASE IF EXISTS sbtest;" >> mysql.init.tmp
+echo "CREATE DATABASE IF NOT EXISTS sbtest;" >> mysql.init.tmp
+touch mysql.init.done
+
+./serverctl start --init-file=`pwd`/mysql.init.tmp
+sleep 3
+./serverctl stop
+rm -f mysql.init.tmp
+

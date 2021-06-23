@@ -1,0 +1,347 @@
+diff -p -N --text -r /tmp/patch.inc.get1.MeUw68/src/core/nginx.h /tmp/patch.inc.get2.BxGdze/src/core/nginx.h
+*** /tmp/patch.inc.get1.MeUw68/src/core/nginx.h	2013-04-30 00:52:58.538152523 +0200
+--- /tmp/patch.inc.get2.BxGdze/src/core/nginx.h	2013-04-30 00:53:01.954169424 +0200
+***************
+*** 8,15 ****
+  #define _NGINX_H_INCLUDED_
+  
+  
+! #define nginx_version         9007
+! #define NGINX_VERSION      "0.9.7"
+  #define NGINX_VER          "nginx/" NGINX_VERSION
+  
+  #define NGINX_VAR          "NGINX"
+--- 8,15 ----
+  #define _NGINX_H_INCLUDED_
+  
+  
+! #define nginx_version      1000000
+! #define NGINX_VERSION      "1.0.0"
+  #define NGINX_VER          "nginx/" NGINX_VERSION
+  
+  #define NGINX_VAR          "NGINX"
+diff -p -N --text -r /tmp/patch.inc.get1.MeUw68/src/core/ngx_conf_file.c /tmp/patch.inc.get2.BxGdze/src/core/ngx_conf_file.c
+*** /tmp/patch.inc.get1.MeUw68/src/core/ngx_conf_file.c	2013-04-30 00:52:58.538152523 +0200
+--- /tmp/patch.inc.get2.BxGdze/src/core/ngx_conf_file.c	2013-04-30 00:53:01.954169424 +0200
+*************** ngx_conf_read_token(ngx_conf_t *cf)
+*** 507,513 ****
+              }
+  
+              if (len) {
+!                 ngx_memcpy(b->start, start, len);
+              }
+  
+              size = (ssize_t) (file_size - cf->conf_file->file.offset);
+--- 507,513 ----
+              }
+  
+              if (len) {
+!                 ngx_memmove(b->start, start, len);
+              }
+  
+              size = (ssize_t) (file_size - cf->conf_file->file.offset);
+diff -p -N --text -r /tmp/patch.inc.get1.MeUw68/src/core/ngx_string.h /tmp/patch.inc.get2.BxGdze/src/core/ngx_string.h
+*** /tmp/patch.inc.get1.MeUw68/src/core/ngx_string.h	2013-04-30 00:52:58.538152523 +0200
+--- /tmp/patch.inc.get2.BxGdze/src/core/ngx_string.h	2013-04-30 00:53:01.954169424 +0200
+*************** ngx_copy(u_char *dst, u_char *src, size_
+*** 135,140 ****
+--- 135,144 ----
+  #endif
+  
+  
++ #define ngx_memmove(dst, src, n)   (void) memmove(dst, src, n)
++ #define ngx_movemem(dst, src, n)   (((u_char *) memmove(dst, src, n)) + (n))
++ 
++ 
+  /* msvc and icc7 compile memcmp() to the inline loop */
+  #define ngx_memcmp(s1, s2, n)  memcmp((const char *) s1, (const char *) s2, n)
+  
+diff -p -N --text -r /tmp/patch.inc.get1.MeUw68/src/http/modules/ngx_http_auth_basic_module.c /tmp/patch.inc.get2.BxGdze/src/http/modules/ngx_http_auth_basic_module.c
+*** /tmp/patch.inc.get1.MeUw68/src/http/modules/ngx_http_auth_basic_module.c	2013-04-30 00:52:58.534152523 +0200
+--- /tmp/patch.inc.get2.BxGdze/src/http/modules/ngx_http_auth_basic_module.c	2013-04-30 00:53:01.950169412 +0200
+*************** ngx_http_auth_basic_handler(ngx_http_req
+*** 248,254 ****
+  
+          if (state == sw_passwd) {
+              left = left + n - passwd;
+!             ngx_memcpy(buf, &buf[passwd], left);
+              passwd = 0;
+  
+          } else {
+--- 248,254 ----
+  
+          if (state == sw_passwd) {
+              left = left + n - passwd;
+!             ngx_memmove(buf, &buf[passwd], left);
+              passwd = 0;
+  
+          } else {
+diff -p -N --text -r /tmp/patch.inc.get1.MeUw68/src/http/modules/ngx_http_geo_module.c /tmp/patch.inc.get2.BxGdze/src/http/modules/ngx_http_geo_module.c
+*** /tmp/patch.inc.get1.MeUw68/src/http/modules/ngx_http_geo_module.c	2013-04-30 00:52:58.534152523 +0200
+--- /tmp/patch.inc.get2.BxGdze/src/http/modules/ngx_http_geo_module.c	2013-04-30 00:53:01.950169412 +0200
+*************** ngx_http_geo_add_range(ngx_conf_t *cf, n
+*** 685,691 ****
+  
+                  range = a->elts;
+  
+!                 ngx_memcpy(&range[i + 2], &range[i + 1],
+                             (a->nelts - 2 - i) * sizeof(ngx_http_geo_range_t));
+  
+                  range[i + 1].start = (u_short) s;
+--- 685,691 ----
+  
+                  range = a->elts;
+  
+!                 ngx_memmove(&range[i + 2], &range[i + 1],
+                             (a->nelts - 2 - i) * sizeof(ngx_http_geo_range_t));
+  
+                  range[i + 1].start = (u_short) s;
+*************** ngx_http_geo_add_range(ngx_conf_t *cf, n
+*** 724,730 ****
+  
+                  range = a->elts;
+  
+!                 ngx_memcpy(&range[i + 3], &range[i + 1],
+                             (a->nelts - 3 - i) * sizeof(ngx_http_geo_range_t));
+  
+                  range[i + 2].start = (u_short) (e + 1);
+--- 724,730 ----
+  
+                  range = a->elts;
+  
+!                 ngx_memmove(&range[i + 3], &range[i + 1],
+                             (a->nelts - 3 - i) * sizeof(ngx_http_geo_range_t));
+  
+                  range[i + 2].start = (u_short) (e + 1);
+*************** ngx_http_geo_add_range(ngx_conf_t *cf, n
+*** 752,758 ****
+  
+                  range = a->elts;
+  
+!                 ngx_memcpy(&range[i + 1], &range[i],
+                             (a->nelts - 1 - i) * sizeof(ngx_http_geo_range_t));
+  
+                  range[i + 1].start = (u_short) (e + 1);
+--- 752,758 ----
+  
+                  range = a->elts;
+  
+!                 ngx_memmove(&range[i + 1], &range[i],
+                             (a->nelts - 1 - i) * sizeof(ngx_http_geo_range_t));
+  
+                  range[i + 1].start = (u_short) (e + 1);
+*************** ngx_http_geo_add_range(ngx_conf_t *cf, n
+*** 776,782 ****
+  
+                  range = a->elts;
+  
+!                 ngx_memcpy(&range[i + 2], &range[i + 1],
+                             (a->nelts - 2 - i) * sizeof(ngx_http_geo_range_t));
+  
+                  range[i + 1].start = (u_short) s;
+--- 776,782 ----
+  
+                  range = a->elts;
+  
+!                 ngx_memmove(&range[i + 2], &range[i + 1],
+                             (a->nelts - 2 - i) * sizeof(ngx_http_geo_range_t));
+  
+                  range[i + 1].start = (u_short) s;
+*************** ngx_http_geo_delete_range(ngx_conf_t *cf
+*** 861,867 ****
+              if (s == (ngx_uint_t) range[i].start
+                  && e == (ngx_uint_t) range[i].end)
+              {
+!                 ngx_memcpy(&range[i], &range[i + 1],
+                             (a->nelts - 1 - i) * sizeof(ngx_http_geo_range_t));
+  
+                  a->nelts--;
+--- 861,867 ----
+              if (s == (ngx_uint_t) range[i].start
+                  && e == (ngx_uint_t) range[i].end)
+              {
+!                 ngx_memmove(&range[i], &range[i + 1],
+                             (a->nelts - 1 - i) * sizeof(ngx_http_geo_range_t));
+  
+                  a->nelts--;
+diff -p -N --text -r /tmp/patch.inc.get1.MeUw68/src/http/modules/ngx_http_image_filter_module.c /tmp/patch.inc.get2.BxGdze/src/http/modules/ngx_http_image_filter_module.c
+*** /tmp/patch.inc.get1.MeUw68/src/http/modules/ngx_http_image_filter_module.c	2013-04-30 00:52:58.534152523 +0200
+--- /tmp/patch.inc.get2.BxGdze/src/http/modules/ngx_http_image_filter_module.c	2013-04-30 00:53:01.950169412 +0200
+*************** transparent:
+*** 863,868 ****
+--- 863,872 ----
+              }
+              gdImageCopyRotated(dst, src, dy/2, dx/2, 0, 0, dx, dy, ctx->angle);
+              gdImageDestroy(src);
++ 
++             t = dx;
++             dx = dy;
++             dy = t;
+              break;
+  
+          case 180:
+*************** transparent:
+*** 875,884 ****
+              gdImageDestroy(src);
+              break;
+          }
+- 
+-         t = dx;
+-         dx = dy;
+-         dy = t;
+      }
+  
+      if (conf->filter == NGX_HTTP_IMAGE_CROP) {
+--- 879,884 ----
+diff -p -N --text -r /tmp/patch.inc.get1.MeUw68/src/http/modules/ngx_http_ssi_filter_module.c /tmp/patch.inc.get2.BxGdze/src/http/modules/ngx_http_ssi_filter_module.c
+*** /tmp/patch.inc.get1.MeUw68/src/http/modules/ngx_http_ssi_filter_module.c	2013-04-30 00:52:58.534152523 +0200
+--- /tmp/patch.inc.get2.BxGdze/src/http/modules/ngx_http_ssi_filter_module.c	2013-04-30 00:53:01.950169412 +0200
+*************** ngx_http_ssi_include(ngx_http_request_t
+*** 1902,1908 ****
+  
+      len = (uri->data + uri->len) - src;
+      if (len) {
+!         dst = ngx_copy(dst, src, len);
+      }
+  
+      uri->len = dst - uri->data;
+--- 1902,1908 ----
+  
+      len = (uri->data + uri->len) - src;
+      if (len) {
+!         dst = ngx_movemem(dst, src, len);
+      }
+  
+      uri->len = dst - uri->data;
+diff -p -N --text -r /tmp/patch.inc.get1.MeUw68/src/http/ngx_http_core_module.c /tmp/patch.inc.get2.BxGdze/src/http/ngx_http_core_module.c
+*** /tmp/patch.inc.get1.MeUw68/src/http/ngx_http_core_module.c	2013-04-30 00:52:58.534152523 +0200
+--- /tmp/patch.inc.get2.BxGdze/src/http/ngx_http_core_module.c	2013-04-30 00:53:01.950169412 +0200
+*************** ngx_int_t
+*** 1108,1124 ****
+  ngx_http_core_post_access_phase(ngx_http_request_t *r,
+      ngx_http_phase_handler_t *ph)
+  {
+      ngx_log_debug1(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
+                     "post access phase: %ui", r->phase_handler);
+  
+!     if (r->access_code) {
+  
+!         if (r->access_code == NGX_HTTP_FORBIDDEN) {
+              ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
+                            "access forbidden by rule");
+          }
+  
+!         ngx_http_finalize_request(r, r->access_code);
+          return NGX_OK;
+      }
+  
+--- 1108,1128 ----
+  ngx_http_core_post_access_phase(ngx_http_request_t *r,
+      ngx_http_phase_handler_t *ph)
+  {
++     ngx_int_t  access_code;
++ 
+      ngx_log_debug1(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
+                     "post access phase: %ui", r->phase_handler);
+  
+!     access_code = r->access_code;
+  
+!     if (access_code) {
+!         if (access_code == NGX_HTTP_FORBIDDEN) {
+              ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
+                            "access forbidden by rule");
+          }
+  
+!         r->access_code = 0;
+!         ngx_http_finalize_request(r, access_code);
+          return NGX_OK;
+      }
+  
+*************** ngx_http_core_try_files_phase(ngx_http_r
+*** 1221,1227 ****
+              *e.pos = '\0';
+  
+              if (alias && ngx_strncmp(name, clcf->name.data, alias) == 0) {
+!                 ngx_memcpy(name, name + alias, len - alias);
+                  path.len -= alias;
+              }
+          }
+--- 1225,1231 ----
+              *e.pos = '\0';
+  
+              if (alias && ngx_strncmp(name, clcf->name.data, alias) == 0) {
+!                 ngx_memmove(name, name + alias, len - alias);
+                  path.len -= alias;
+              }
+          }
+diff -p -N --text -r /tmp/patch.inc.get1.MeUw68/src/http/ngx_http_file_cache.c /tmp/patch.inc.get2.BxGdze/src/http/ngx_http_file_cache.c
+*** /tmp/patch.inc.get1.MeUw68/src/http/ngx_http_file_cache.c	2013-04-30 00:52:58.530152499 +0200
+--- /tmp/patch.inc.get2.BxGdze/src/http/ngx_http_file_cache.c	2013-04-30 00:53:01.950169412 +0200
+*************** ngx_http_file_cache_forced_expire(ngx_ht
+*** 1027,1032 ****
+--- 1027,1033 ----
+  
+          if (fcn->count == 0) {
+              ngx_http_file_cache_delete(cache, q, name);
++             wait = 0;
+  
+          } else {
+              if (--tries) {
+*************** ngx_http_file_cache_manager(void *data)
+*** 1191,1197 ****
+      ngx_http_file_cache_t  *cache = data;
+  
+      off_t   size;
+!     time_t  next;
+  
+      next = ngx_http_file_cache_expire(cache);
+  
+--- 1192,1198 ----
+      ngx_http_file_cache_t  *cache = data;
+  
+      off_t   size;
+!     time_t  next, wait;
+  
+      next = ngx_http_file_cache_expire(cache);
+  
+*************** ngx_http_file_cache_manager(void *data)
+*** 1212,1218 ****
+              return next;
+          }
+  
+!         next = ngx_http_file_cache_forced_expire(cache);
+  
+          if (ngx_http_file_cache_manager_sleep(cache) != NGX_OK) {
+              return next;
+--- 1213,1223 ----
+              return next;
+          }
+  
+!         wait = ngx_http_file_cache_forced_expire(cache);
+! 
+!         if (wait > 0) {
+!             return wait;
+!         }
+  
+          if (ngx_http_file_cache_manager_sleep(cache) != NGX_OK) {
+              return next;
+diff -p -N --text -r /tmp/patch.inc.get1.MeUw68/src/http/ngx_http_script.c /tmp/patch.inc.get2.BxGdze/src/http/ngx_http_script.c
+*** /tmp/patch.inc.get1.MeUw68/src/http/ngx_http_script.c	2013-04-30 00:52:58.530152499 +0200
+--- /tmp/patch.inc.get2.BxGdze/src/http/ngx_http_script.c	2013-04-30 00:53:01.946169372 +0200
+*************** ngx_http_script_regex_end_code(ngx_http_
+*** 1089,1095 ****
+                           NGX_UNESCAPE_REDIRECT);
+  
+          if (src < e->pos) {
+!             dst = ngx_copy(dst, src, e->pos - src);
+          }
+  
+          e->pos = dst;
+--- 1089,1095 ----
+                           NGX_UNESCAPE_REDIRECT);
+  
+          if (src < e->pos) {
+!             dst = ngx_movemem(dst, src, e->pos - src);
+          }
+  
+          e->pos = dst;

@@ -1,0 +1,443 @@
+diff -p -N --text -r /tmp/patch.inc.get1.xGSSvS/src/core/nginx.h /tmp/patch.inc.get2.SuUtWq/src/core/nginx.h
+*** /tmp/patch.inc.get1.xGSSvS/src/core/nginx.h	2013-04-30 00:52:45.106085858 +0200
+--- /tmp/patch.inc.get2.SuUtWq/src/core/nginx.h	2013-04-30 00:52:48.334101869 +0200
+***************
+*** 8,15 ****
+  #define _NGINX_H_INCLUDED_
+  
+  
+! #define nginx_version         9005
+! #define NGINX_VERSION      "0.9.5"
+  #define NGINX_VER          "nginx/" NGINX_VERSION
+  
+  #define NGINX_VAR          "NGINX"
+--- 8,15 ----
+  #define _NGINX_H_INCLUDED_
+  
+  
+! #define nginx_version         9006
+! #define NGINX_VERSION      "0.9.6"
+  #define NGINX_VER          "nginx/" NGINX_VERSION
+  
+  #define NGINX_VAR          "NGINX"
+diff -p -N --text -r /tmp/patch.inc.get1.xGSSvS/src/core/ngx_log.c /tmp/patch.inc.get2.SuUtWq/src/core/ngx_log.c
+*** /tmp/patch.inc.get1.xGSSvS/src/core/ngx_log.c	2013-04-30 00:52:45.106085858 +0200
+--- /tmp/patch.inc.get2.SuUtWq/src/core/ngx_log.c	2013-04-30 00:52:48.338101892 +0200
+*************** ngx_log_init(u_char *prefix)
+*** 328,334 ****
+  
+      if (ngx_log_file.fd == NGX_INVALID_FILE) {
+          ngx_log_stderr(ngx_errno,
+!                        "[alert]: could not open error log file: "
+                         ngx_open_file_n " \"%s\" failed", name);
+  #if (NGX_WIN32)
+          ngx_event_log(ngx_errno,
+--- 328,334 ----
+  
+      if (ngx_log_file.fd == NGX_INVALID_FILE) {
+          ngx_log_stderr(ngx_errno,
+!                        "[alert] could not open error log file: "
+                         ngx_open_file_n " \"%s\" failed", name);
+  #if (NGX_WIN32)
+          ngx_event_log(ngx_errno,
+diff -p -N --text -r /tmp/patch.inc.get1.xGSSvS/src/core/ngx_times.c /tmp/patch.inc.get2.SuUtWq/src/core/ngx_times.c
+*** /tmp/patch.inc.get1.xGSSvS/src/core/ngx_times.c	2013-04-30 00:52:45.106085858 +0200
+--- /tmp/patch.inc.get2.SuUtWq/src/core/ngx_times.c	2013-04-30 00:52:48.334101869 +0200
+*************** volatile ngx_time_t     *ngx_cached_time
+*** 27,32 ****
+--- 27,33 ----
+  volatile ngx_str_t       ngx_cached_err_log_time;
+  volatile ngx_str_t       ngx_cached_http_time;
+  volatile ngx_str_t       ngx_cached_http_log_time;
++ volatile ngx_str_t       ngx_cached_http_log_iso8601;
+  
+  #if !(NGX_WIN32)
+  
+*************** static u_char            cached_http_tim
+*** 46,51 ****
+--- 47,54 ----
+                                      [sizeof("Mon, 28 Sep 1970 06:00:00 GMT")];
+  static u_char            cached_http_log_time[NGX_TIME_SLOTS]
+                                      [sizeof("28/Sep/1970:12:00:00 +0600")];
++ static u_char            cached_http_log_iso8601[NGX_TIME_SLOTS]
++                                     [sizeof("1970-09-28T12:00:00+06:00")];
+  
+  
+  static char  *week[] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+*************** ngx_time_init(void)
+*** 58,63 ****
+--- 61,67 ----
+      ngx_cached_err_log_time.len = sizeof("1970/09/28 12:00:00") - 1;
+      ngx_cached_http_time.len = sizeof("Mon, 28 Sep 1970 06:00:00 GMT") - 1;
+      ngx_cached_http_log_time.len = sizeof("28/Sep/1970:12:00:00 +0600") - 1;
++     ngx_cached_http_log_iso8601.len = sizeof("1970-09-28T12:00:00+06:00") - 1;
+  
+      ngx_cached_time = &cached_time[0];
+  
+*************** ngx_time_init(void)
+*** 68,74 ****
+  void
+  ngx_time_update(void)
+  {
+!     u_char          *p0, *p1, *p2;
+      ngx_tm_t         tm, gmt;
+      time_t           sec;
+      ngx_uint_t       msec;
+--- 72,78 ----
+  void
+  ngx_time_update(void)
+  {
+!     u_char          *p0, *p1, *p2, *p3;
+      ngx_tm_t         tm, gmt;
+      time_t           sec;
+      ngx_uint_t       msec;
+*************** ngx_time_update(void)
+*** 152,157 ****
+--- 156,170 ----
+                         tp->gmtoff < 0 ? '-' : '+',
+                         ngx_abs(tp->gmtoff / 60), ngx_abs(tp->gmtoff % 60));
+  
++     p3 = &cached_http_log_iso8601[slot][0];
++ 
++     (void) ngx_sprintf(p3, "%4d-%02d-%02dT%02d:%02d:%02d%c%02d:%02d",
++                        tm.ngx_tm_year, tm.ngx_tm_mon,
++                        tm.ngx_tm_mday, tm.ngx_tm_hour,
++                        tm.ngx_tm_min, tm.ngx_tm_sec,
++                        tp->gmtoff < 0 ? '-' : '+',
++                        ngx_abs(tp->gmtoff / 60), ngx_abs(tp->gmtoff % 60));
++ 
+  
+      ngx_memory_barrier();
+  
+*************** ngx_time_update(void)
+*** 159,164 ****
+--- 172,178 ----
+      ngx_cached_http_time.data = p0;
+      ngx_cached_err_log_time.data = p1;
+      ngx_cached_http_log_time.data = p2;
++     ngx_cached_http_log_iso8601.data = p3;
+  
+      ngx_unlock(&ngx_time_lock);
+  }
+diff -p -N --text -r /tmp/patch.inc.get1.xGSSvS/src/core/ngx_times.h /tmp/patch.inc.get2.SuUtWq/src/core/ngx_times.h
+*** /tmp/patch.inc.get1.xGSSvS/src/core/ngx_times.h	2013-04-30 00:52:45.106085858 +0200
+--- /tmp/patch.inc.get2.SuUtWq/src/core/ngx_times.h	2013-04-30 00:52:48.338101892 +0200
+*************** extern volatile ngx_time_t  *ngx_cached_
+*** 38,43 ****
+--- 38,44 ----
+  extern volatile ngx_str_t    ngx_cached_err_log_time;
+  extern volatile ngx_str_t    ngx_cached_http_time;
+  extern volatile ngx_str_t    ngx_cached_http_log_time;
++ extern volatile ngx_str_t    ngx_cached_http_log_iso8601;
+  
+  /*
+   * milliseconds elapsed since epoch and truncated to ngx_msec_t,
+diff -p -N --text -r /tmp/patch.inc.get1.xGSSvS/src/http/modules/ngx_http_log_module.c /tmp/patch.inc.get2.SuUtWq/src/http/modules/ngx_http_log_module.c
+*** /tmp/patch.inc.get1.xGSSvS/src/http/modules/ngx_http_log_module.c	2013-04-30 00:52:45.102085848 +0200
+--- /tmp/patch.inc.get2.SuUtWq/src/http/modules/ngx_http_log_module.c	2013-04-30 00:52:48.334101869 +0200
+*************** static u_char *ngx_http_log_pipe(ngx_htt
+*** 83,88 ****
+--- 83,90 ----
+      ngx_http_log_op_t *op);
+  static u_char *ngx_http_log_time(ngx_http_request_t *r, u_char *buf,
+      ngx_http_log_op_t *op);
++ static u_char *ngx_http_log_iso8601(ngx_http_request_t *r, u_char *buf,
++     ngx_http_log_op_t *op);
+  static u_char *ngx_http_log_msec(ngx_http_request_t *r, u_char *buf,
+      ngx_http_log_op_t *op);
+  static u_char *ngx_http_log_request_time(ngx_http_request_t *r, u_char *buf,
+*************** static ngx_http_log_var_t  ngx_http_log_
+*** 193,198 ****
+--- 195,202 ----
+      { ngx_string("pipe"), 1, ngx_http_log_pipe },
+      { ngx_string("time_local"), sizeof("28/Sep/1970:12:00:00 +0600") - 1,
+                            ngx_http_log_time },
++     { ngx_string("time_iso8601"), sizeof("1970-09-28T12:00:00+06:00") - 1,
++                           ngx_http_log_iso8601 },
+      { ngx_string("msec"), NGX_TIME_T_LEN + 4, ngx_http_log_msec },
+      { ngx_string("request_time"), NGX_TIME_T_LEN + 4,
+                            ngx_http_log_request_time },
+*************** ngx_http_log_time(ngx_http_request_t *r,
+*** 510,515 ****
+--- 514,525 ----
+                        ngx_cached_http_log_time.len);
+  }
+  
++ static u_char *
++ ngx_http_log_iso8601(ngx_http_request_t *r, u_char *buf, ngx_http_log_op_t *op)
++ {
++     return ngx_cpymem(buf, ngx_cached_http_log_iso8601.data,
++                       ngx_cached_http_log_iso8601.len);
++ }
+  
+  static u_char *
+  ngx_http_log_msec(ngx_http_request_t *r, u_char *buf, ngx_http_log_op_t *op)
+diff -p -N --text -r /tmp/patch.inc.get1.xGSSvS/src/http/modules/ngx_http_map_module.c /tmp/patch.inc.get2.SuUtWq/src/http/modules/ngx_http_map_module.c
+*** /tmp/patch.inc.get1.xGSSvS/src/http/modules/ngx_http_map_module.c	2013-04-30 00:52:45.102085848 +0200
+--- /tmp/patch.inc.get2.SuUtWq/src/http/modules/ngx_http_map_module.c	2013-04-30 00:52:48.330101858 +0200
+*************** typedef struct {
+*** 20,25 ****
+--- 20,28 ----
+  
+      ngx_array_t                *values_hash;
+      ngx_array_t                 var_values;
++ #if (NGX_PCRE)
++     ngx_array_t                 regexes;
++ #endif
+  
+      ngx_http_variable_value_t  *default_value;
+      ngx_conf_t                 *cf;
+*************** typedef struct {
+*** 28,34 ****
+  
+  
+  typedef struct {
+!     ngx_hash_combined_t         hash;
+      ngx_http_complex_value_t    value;
+      ngx_http_variable_value_t  *default_value;
+      ngx_uint_t                  hostnames;      /* unsigned  hostnames:1 */
+--- 31,37 ----
+  
+  
+  typedef struct {
+!     ngx_http_map_t              map;
+      ngx_http_complex_value_t    value;
+      ngx_http_variable_value_t  *default_value;
+      ngx_uint_t                  hostnames;      /* unsigned  hostnames:1 */
+*************** ngx_http_map_variable(ngx_http_request_t
+*** 126,132 ****
+  
+      key = ngx_hash_strlow(val.data, val.data, len);
+  
+!     value = ngx_hash_find_combined(&map->hash, key, val.data, len);
+  
+      if (value == NULL) {
+          value = map->default_value;
+--- 129,135 ----
+  
+      key = ngx_hash_strlow(val.data, val.data, len);
+  
+!     value = ngx_http_map_find(r, &map->map, key, val.data, len, &val);
+  
+      if (value == NULL) {
+          value = map->default_value;
+*************** ngx_http_map_block(ngx_conf_t *cf, ngx_c
+*** 249,254 ****
+--- 252,266 ----
+          return NGX_CONF_ERROR;
+      }
+  
++ #if (NGX_PCRE)
++     if (ngx_array_init(&ctx.regexes, cf->pool, 2, sizeof(ngx_http_map_regex_t))
++         != NGX_OK)
++     {
++         ngx_destroy_pool(pool);
++         return NGX_CONF_ERROR;
++     }
++ #endif
++ 
+      ctx.default_value = NULL;
+      ctx.cf = &save;
+      ctx.hostnames = 0;
+*************** ngx_http_map_block(ngx_conf_t *cf, ngx_c
+*** 278,284 ****
+      hash.pool = cf->pool;
+  
+      if (ctx.keys.keys.nelts) {
+!         hash.hash = &map->hash.hash;
+          hash.temp_pool = NULL;
+  
+          if (ngx_hash_init(&hash, ctx.keys.keys.elts, ctx.keys.keys.nelts)
+--- 290,296 ----
+      hash.pool = cf->pool;
+  
+      if (ctx.keys.keys.nelts) {
+!         hash.hash = &map->map.hash.hash;
+          hash.temp_pool = NULL;
+  
+          if (ngx_hash_init(&hash, ctx.keys.keys.elts, ctx.keys.keys.nelts)
+*************** ngx_http_map_block(ngx_conf_t *cf, ngx_c
+*** 306,312 ****
+              return NGX_CONF_ERROR;
+          }
+  
+!         map->hash.wc_head = (ngx_hash_wildcard_t *) hash.hash;
+      }
+  
+      if (ctx.keys.dns_wc_tail.nelts) {
+--- 318,324 ----
+              return NGX_CONF_ERROR;
+          }
+  
+!         map->map.hash.wc_head = (ngx_hash_wildcard_t *) hash.hash;
+      }
+  
+      if (ctx.keys.dns_wc_tail.nelts) {
+*************** ngx_http_map_block(ngx_conf_t *cf, ngx_c
+*** 326,334 ****
+              return NGX_CONF_ERROR;
+          }
+  
+!         map->hash.wc_tail = (ngx_hash_wildcard_t *) hash.hash;
+      }
+  
+      ngx_destroy_pool(pool);
+  
+      return rv;
+--- 338,355 ----
+              return NGX_CONF_ERROR;
+          }
+  
+!         map->map.hash.wc_tail = (ngx_hash_wildcard_t *) hash.hash;
+!     }
+! 
+! #if (NGX_PCRE)
+! 
+!     if (ctx.regexes.nelts) {
+!         map->map.regex = ctx.regexes.elts;
+!         map->map.nregex = ctx.regexes.nelts;
+      }
+  
++ #endif
++ 
+      ngx_destroy_pool(pool);
+  
+      return rv;
+*************** found:
+*** 491,496 ****
+--- 512,550 ----
+          return NGX_CONF_OK;
+      }
+  
++ #if (NGX_PCRE)
++ 
++     if (value[0].len && value[0].data[0] == '~') {
++         ngx_regex_compile_t    rc;
++         ngx_http_map_regex_t  *regex;
++         u_char                 errstr[NGX_MAX_CONF_ERRSTR];
++ 
++         regex = ngx_array_push(&ctx->regexes);
++         if (regex == NULL) {
++             return NGX_CONF_ERROR;
++         }
++ 
++         value[0].len--;
++         value[0].data++;
++ 
++         ngx_memzero(&rc, sizeof(ngx_regex_compile_t));
++ 
++         rc.pattern = value[0];
++         rc.err.len = NGX_MAX_CONF_ERRSTR;
++         rc.err.data = errstr;
++ 
++         regex->regex = ngx_http_regex_compile(ctx->cf, &rc);
++         if (regex->regex == NULL) {
++             return NGX_CONF_ERROR;
++         }
++ 
++         regex->value = var;
++ 
++         return NGX_CONF_OK;
++     }
++ 
++ #endif
++ 
+      if (value[0].len && value[0].data[0] == '\\') {
+          value[0].len--;
+          value[0].data++;
+diff -p -N --text -r /tmp/patch.inc.get1.xGSSvS/src/http/ngx_http_variables.c /tmp/patch.inc.get2.SuUtWq/src/http/ngx_http_variables.c
+*** /tmp/patch.inc.get1.xGSSvS/src/http/ngx_http_variables.c	2013-04-30 00:52:45.102085848 +0200
+--- /tmp/patch.inc.get2.SuUtWq/src/http/ngx_http_variables.c	2013-04-30 00:52:48.334101869 +0200
+*************** ngx_http_variable_pid(ngx_http_request_t
+*** 1660,1665 ****
+--- 1660,1709 ----
+  }
+  
+  
++ void *
++ ngx_http_map_find(ngx_http_request_t *r, ngx_http_map_t *map, ngx_uint_t key,
++     u_char *text, size_t len, ngx_str_t *match)
++ {
++     void  *p;
++ 
++     p = ngx_hash_find_combined(&map->hash, key, text, len);
++     if (p) {
++         return p;
++     }
++ 
++ #if (NGX_PCRE)
++ 
++     if (len && map->nregex) {
++         ngx_int_t              n;
++         ngx_uint_t             i;
++         ngx_http_map_regex_t  *reg;
++ 
++         reg = map->regex;
++ 
++         for (i = 0; i < map->nregex; i++) {
++ 
++             n = ngx_http_regex_exec(r, reg[i].regex, match);
++ 
++             if (n == NGX_OK) {
++                 return reg[i].value;
++             }
++ 
++             if (n == NGX_DECLINED) {
++                 continue;
++             }
++ 
++             /* NGX_ERROR */
++ 
++             return NULL;
++         }
++     }
++ 
++ #endif
++ 
++     return NULL;
++ }
++ 
++ 
+  #if (NGX_PCRE)
+  
+  static ngx_int_t
+diff -p -N --text -r /tmp/patch.inc.get1.xGSSvS/src/http/ngx_http_variables.h /tmp/patch.inc.get2.SuUtWq/src/http/ngx_http_variables.h
+*** /tmp/patch.inc.get1.xGSSvS/src/http/ngx_http_variables.h	2013-04-30 00:52:45.098085845 +0200
+--- /tmp/patch.inc.get2.SuUtWq/src/http/ngx_http_variables.h	2013-04-30 00:52:48.330101858 +0200
+*************** typedef struct {
+*** 76,81 ****
+--- 76,87 ----
+  } ngx_http_regex_t;
+  
+  
++ typedef struct {
++     ngx_http_regex_t             *regex;
++     void                         *value;
++ } ngx_http_map_regex_t;
++ 
++ 
+  ngx_http_regex_t *ngx_http_regex_compile(ngx_conf_t *cf,
+      ngx_regex_compile_t *rc);
+  ngx_int_t ngx_http_regex_exec(ngx_http_request_t *r, ngx_http_regex_t *re,
+*************** ngx_int_t ngx_http_regex_exec(ngx_http_r
+*** 84,89 ****
+--- 90,108 ----
+  #endif
+  
+  
++ typedef struct {
++     ngx_hash_combined_t           hash;
++ #if (NGX_PCRE)
++     ngx_http_map_regex_t         *regex;
++     ngx_uint_t                    nregex;
++ #endif
++ } ngx_http_map_t;
++ 
++ 
++ void *ngx_http_map_find(ngx_http_request_t *r, ngx_http_map_t *map,
++     ngx_uint_t key, u_char *text, size_t len, ngx_str_t *match);
++ 
++ 
+  ngx_int_t ngx_http_variables_add_core_vars(ngx_conf_t *cf);
+  ngx_int_t ngx_http_variables_init_vars(ngx_conf_t *cf);
+  

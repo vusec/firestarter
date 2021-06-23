@@ -1,0 +1,14 @@
+[qprof-info-s-]
+qprof-info-s-ll-sitestack-opts=1:src/core/nginx.c|199|main|entry|main|0|0|0:src/os/unix/ngx_process_cycle.c|83|ngx_master_process_cycle|entry|ngx_master_process_cycle|0|0|0:src/os/unix/ngx_process_cycle.c|146|ngx_master_process_cycle|for.cond31|ngx_master_process_cycle|1|0|0:override/unblockify_signal.c|49|__unbl_sigsuspend|entry|__unbl_sigsuspend|0|0|0:override/unblockify_signal.c|69|__unbl_sigsuspend|do.body|__unbl_sigsuspend|1|0|0,2:src/core/nginx.c|199|main|entry|main|0|0|0:src/os/unix/ngx_process_cycle.c|83|ngx_master_process_cycle|entry|ngx_master_process_cycle|0|0|0:src/os/unix/ngx_process_cycle.c|342|ngx_start_worker_processes|entry|ngx_start_worker_processes|0|0|0:src/os/unix/ngx_process_cycle.c|351|ngx_start_worker_processes|for.cond|ngx_start_worker_processes|1|0|0:src/os/unix/ngx_process.c|85|ngx_spawn_process|entry|ngx_spawn_process|0|0|0:src/os/unix/ngx_process_cycle.c|712|ngx_worker_process_cycle|entry|ngx_worker_process_cycle|0|0|0:src/os/unix/ngx_process_cycle.c|771|ngx_worker_process_cycle|for.cond|ngx_worker_process_cycle|1|0|0:src/event/ngx_event.c|199|ngx_process_events_and_timers|entry|ngx_process_events_and_timers|0|0|0:src/event/modules/ngx_epoll_module.c|514|ngx_epoll_process_events|entry|ngx_epoll_process_events|0|0|0:override/unblockify_event.c|50|__unbl_epoll_wait|entry|__unbl_epoll_wait|0|0|0:override/unblockify_event.c|65|__unbl_epoll_wait|while.cond|__unbl_epoll_wait|1|0|0
+qprof-info-s-deepest-ll-loop-opts=1:src/os/unix/ngx_process_cycle.c|146|ngx_master_process_cycle|for.cond31|ngx_master_process_cycle|1|0|0,2:src/os/unix/ngx_process_cycle.c|771|ngx_worker_process_cycle|for.cond|ngx_worker_process_cycle|1|0|0
+qprof-info-s-deepest-ll-lib-opts=1:override/unblockify_signal.c|69|sigtimedwait|do.body|__unbl_sigsuspend|0|1|2,2:override/unblockify_event.c|66|epoll_wait|while.body|__unbl_epoll_wait|0|1|1
+qprof-info-s-task-opts=3,2,1,1,1,1
+qprof-info-s-num-tsss=2
+qprof-info-s-num-tgs=3
+qprof-info-s-num-ll-tgs=2
+qprof-info-s-num-deepest-ll-loop-tgs=2
+qprof-info-s-num-deepest-ll-lib-tgs=2
+qprof-info-s-num-deepest-ll-lib-block-ext-tgs=1
+qprof-info-s-num-deepest-ll-lib-block-int-tgs=1
+qprof-info-s-num-deepest-ll-block-ext-libs=1
+qprof-info-s-num-deepest-ll-block-int-libs=1

@@ -1,0 +1,33 @@
+#!/bin/bash
+
+PROC_NAME="redis-server"
+BIN_PATH=`pwd`/install/bin/redis-server
+
+. ../scripts/include/cmdctl.inc
+
+SERVER_PORT=1080
+SERVER_OPTS="--port $SERVER_PORT"
+
+mode=$1
+shift || mode="no_action"
+
+case "$mode" in
+  'start')
+    echo "***** Starting $PROC_NAME server..."
+    echo `cmdctl_server_check_not_running`
+    cmdctl_server_check_not_running
+    if [ "$LLVM_CMD_IS_GDB" == "1" ]; then
+            eval $SUDO_PREFIX $LLVM_CMD_PREFIX $BIN_PATH $SERVER_OPTS $*
+    else
+            echo $SUDO_PREFIX $LLVM_CMD_PREFIX $BIN_PATH $SERVER_OPTS $* &> __serverctl.tmp &
+            eval $SUDO_PREFIX $LLVM_CMD_PREFIX $BIN_PATH $SERVER_OPTS $* &> __serverctl.tmp &
+            cmdctl_server_wait_for_listen_port $SERVER_PORT
+            cat __serverctl.tmp 1>&2
+            rm -f __serverctl.tmp
+    fi
+    ;;
+  *)
+    cmdctl_server_action $mode $*
+    ;;
+esac
+

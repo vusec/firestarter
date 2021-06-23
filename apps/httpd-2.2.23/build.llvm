@@ -1,0 +1,29 @@
+#!/bin/bash
+
+MYPWD=`pwd`
+ROOT=../..
+
+. $MYPWD/../scripts/include/build.llvm.inc
+
+PROG=httpd
+INPUT=${PROG}
+OUTPUT=install/bin/${PROG}
+LIBS="-lexpat -lcrypt -luuid"
+LINKER="$LLVMGOLD_CC"
+
+# works only for the release version, not for debug
+if echo "$@" | grep -w -q magic && [ ! "$LLVM_NOMEMPOOL " == "1 " ]; then
+    LLVMGOLD_OPTFLAGS="$LLVMGOLD_OPTFLAGS -magic-mpool-enable-reuse -magic-mm-poolfunc apr_palloc/1/2;apr_pcalloc/1/2:apr_pool_create_ex/1;apr_pool_create_unmanaged_ex/1:apr_pool_destroy/1:apr_pvsprintf/1:apr_pool_clear/1"
+fi
+
+build_llvm "$@"
+
+if [ "$TRACE_PROCESS" = 1 ]; then
+	echo "
+		allow recurse read: ${MYPWD}/install
+		allow recurse all: ${MYPWD}/install/logs
+		allow read: ${MYPWD}/myhttpd.conf
+		allow recurse all: ${MYPWD}/.tmp
+	" > "`readlink -f "$OUTPUT"`.rules"
+fi
+

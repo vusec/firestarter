@@ -1,0 +1,25 @@
+#!/bin/bash
+
+MYPWD=`pwd`
+ROOT=$( readlink -f ../../../.. )
+
+. $ROOT/apps/scripts/include/configure.llvm.inc
+
+LLVM_LIBS=`build_llvm_libs $*`
+
+PATH=$PATH:$ROOT/apps/postgresql-9.0.10/install/bin pgconfig=$ROOT/apps/postgresql-9.0.10/install/bin/pg_config ./configure \
+   --with-mysql-libs=$ROOT/apps/mysql-5.1.65/install/lib/mysql/ \
+   --with-mysql-includes=$ROOT/apps/mysql-5.1.65/install/include/mysql/ \
+   --with-pgsql \
+   --prefix=$ROOT/apps/mysql-5.1.65/install \
+   CC="$LLVMGOLD_CC" \
+   CXX="$LLVMGOLD_CXX" \
+   CFLAGS="$LLVMGOLD_CFLAGS" \
+   LDFLAGS="$LLVMGOLD_LDFLAGS" \
+   RANLIB="$LLVMGOLD_RANLIB" \
+   AR_FLAGS="$LLVMGOLD_AR_FLAGS"
+
+if [ -f /usr/bin/libtool ]; then
+    cp /usr/bin/libtool .
+fi
+

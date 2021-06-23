@@ -1,0 +1,4574 @@
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/nginx.c /tmp/patch.inc.get2.NvaVDz/src/core/nginx.c
+*** /tmp/patch.inc.get1.xfzxGB/src/core/nginx.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/nginx.c	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/nginx.h /tmp/patch.inc.get2.NvaVDz/src/core/nginx.h
+*** /tmp/patch.inc.get1.xfzxGB/src/core/nginx.h	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/nginx.h	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+***************
+*** 8,15 ****
+  #define _NGINX_H_INCLUDED_
+  
+  
+! #define nginx_version      1000011
+! #define NGINX_VERSION      "1.0.11"
+  #define NGINX_VER          "nginx/" NGINX_VERSION
+  
+  #define NGINX_VAR          "NGINX"
+--- 9,16 ----
+  #define _NGINX_H_INCLUDED_
+  
+  
+! #define nginx_version      1000012
+! #define NGINX_VERSION      "1.0.12"
+  #define NGINX_VER          "nginx/" NGINX_VERSION
+  
+  #define NGINX_VAR          "NGINX"
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_array.c /tmp/patch.inc.get2.NvaVDz/src/core/ngx_array.c
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_array.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_array.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_array.h /tmp/patch.inc.get2.NvaVDz/src/core/ngx_array.h
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_array.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_array.h	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_buf.c /tmp/patch.inc.get2.NvaVDz/src/core/ngx_buf.c
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_buf.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_buf.c	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_buf.h /tmp/patch.inc.get2.NvaVDz/src/core/ngx_buf.h
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_buf.h	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_buf.h	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_conf_file.c /tmp/patch.inc.get2.NvaVDz/src/core/ngx_conf_file.c
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_conf_file.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_conf_file.c	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_conf_file.h /tmp/patch.inc.get2.NvaVDz/src/core/ngx_conf_file.h
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_conf_file.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_conf_file.h	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_config.h /tmp/patch.inc.get2.NvaVDz/src/core/ngx_config.h
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_config.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_config.h	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_connection.c /tmp/patch.inc.get2.NvaVDz/src/core/ngx_connection.c
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_connection.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_connection.c	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_connection.h /tmp/patch.inc.get2.NvaVDz/src/core/ngx_connection.h
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_connection.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_connection.h	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_core.h /tmp/patch.inc.get2.NvaVDz/src/core/ngx_core.h
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_core.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_core.h	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_cpuinfo.c /tmp/patch.inc.get2.NvaVDz/src/core/ngx_cpuinfo.c
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_cpuinfo.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_cpuinfo.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_crc32.c /tmp/patch.inc.get2.NvaVDz/src/core/ngx_crc32.c
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_crc32.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_crc32.c	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_crc32.h /tmp/patch.inc.get2.NvaVDz/src/core/ngx_crc32.h
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_crc32.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_crc32.h	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_crc.h /tmp/patch.inc.get2.NvaVDz/src/core/ngx_crc.h
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_crc.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_crc.h	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_crypt.h /tmp/patch.inc.get2.NvaVDz/src/core/ngx_crypt.h
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_crypt.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_crypt.h	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_cycle.c /tmp/patch.inc.get2.NvaVDz/src/core/ngx_cycle.c
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_cycle.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_cycle.c	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_cycle.h /tmp/patch.inc.get2.NvaVDz/src/core/ngx_cycle.h
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_cycle.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_cycle.h	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_file.c /tmp/patch.inc.get2.NvaVDz/src/core/ngx_file.c
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_file.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_file.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_file.h /tmp/patch.inc.get2.NvaVDz/src/core/ngx_file.h
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_file.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_file.h	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_hash.c /tmp/patch.inc.get2.NvaVDz/src/core/ngx_hash.c
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_hash.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_hash.c	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+*************** ngx_hash_init(ngx_hash_init_t *hinit, ng
+*** 277,283 ****
+      start = nelts / (bucket_size / (2 * sizeof(void *)));
+      start = start ? start : 1;
+  
+!     if (hinit->max_size > 10000 && hinit->max_size / nelts < 100) {
+          start = hinit->max_size - 1000;
+      }
+  
+--- 278,284 ----
+      start = nelts / (bucket_size / (2 * sizeof(void *)));
+      start = start ? start : 1;
+  
+!     if (hinit->max_size > 10000 && nelts && hinit->max_size / nelts < 100) {
+          start = hinit->max_size - 1000;
+      }
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_hash.h /tmp/patch.inc.get2.NvaVDz/src/core/ngx_hash.h
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_hash.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_hash.h	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_inet.c /tmp/patch.inc.get2.NvaVDz/src/core/ngx_inet.c
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_inet.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_inet.c	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_inet.h /tmp/patch.inc.get2.NvaVDz/src/core/ngx_inet.h
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_inet.h	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_inet.h	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_list.c /tmp/patch.inc.get2.NvaVDz/src/core/ngx_list.c
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_list.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_list.c	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_list.h /tmp/patch.inc.get2.NvaVDz/src/core/ngx_list.h
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_list.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_list.h	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_log.c /tmp/patch.inc.get2.NvaVDz/src/core/ngx_log.c
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_log.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_log.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_log.h /tmp/patch.inc.get2.NvaVDz/src/core/ngx_log.h
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_log.h	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_log.h	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+*************** void ngx_cdecl ngx_log_debug_core(ngx_lo
+*** 121,135 ****
+  
+  #if (NGX_HAVE_VARIADIC_MACROS)
+  
+! #define ngx_log_debug0  ngx_log_debug
+! #define ngx_log_debug1  ngx_log_debug
+! #define ngx_log_debug2  ngx_log_debug
+! #define ngx_log_debug3  ngx_log_debug
+! #define ngx_log_debug4  ngx_log_debug
+! #define ngx_log_debug5  ngx_log_debug
+! #define ngx_log_debug6  ngx_log_debug
+! #define ngx_log_debug7  ngx_log_debug
+! #define ngx_log_debug8  ngx_log_debug
+  
+  
+  #else /* NO VARIADIC MACROS */
+--- 122,159 ----
+  
+  #if (NGX_HAVE_VARIADIC_MACROS)
+  
+! #define ngx_log_debug0(level, log, err, fmt)                                  \
+!         ngx_log_debug(level, log, err, fmt)
+! 
+! #define ngx_log_debug1(level, log, err, fmt, arg1)                            \
+!         ngx_log_debug(level, log, err, fmt, arg1)
+! 
+! #define ngx_log_debug2(level, log, err, fmt, arg1, arg2)                      \
+!         ngx_log_debug(level, log, err, fmt, arg1, arg2)
+! 
+! #define ngx_log_debug3(level, log, err, fmt, arg1, arg2, arg3)                \
+!         ngx_log_debug(level, log, err, fmt, arg1, arg2, arg3)
+! 
+! #define ngx_log_debug4(level, log, err, fmt, arg1, arg2, arg3, arg4)          \
+!         ngx_log_debug(level, log, err, fmt, arg1, arg2, arg3, arg4)
+! 
+! #define ngx_log_debug5(level, log, err, fmt, arg1, arg2, arg3, arg4, arg5)    \
+!         ngx_log_debug(level, log, err, fmt, arg1, arg2, arg3, arg4, arg5)
+! 
+! #define ngx_log_debug6(level, log, err, fmt,                                  \
+!                        arg1, arg2, arg3, arg4, arg5, arg6)                    \
+!         ngx_log_debug(level, log, err, fmt,                                   \
+!                        arg1, arg2, arg3, arg4, arg5, arg6)
+! 
+! #define ngx_log_debug7(level, log, err, fmt,                                  \
+!                        arg1, arg2, arg3, arg4, arg5, arg6, arg7)              \
+!         ngx_log_debug(level, log, err, fmt,                                   \
+!                        arg1, arg2, arg3, arg4, arg5, arg6, arg7)
+! 
+! #define ngx_log_debug8(level, log, err, fmt,                                  \
+!                        arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8)        \
+!         ngx_log_debug(level, log, err, fmt,                                   \
+!                        arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8)
+  
+  
+  #else /* NO VARIADIC MACROS */
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_md5.h /tmp/patch.inc.get2.NvaVDz/src/core/ngx_md5.h
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_md5.h	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_md5.h	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_murmurhash.h /tmp/patch.inc.get2.NvaVDz/src/core/ngx_murmurhash.h
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_murmurhash.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_murmurhash.h	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_open_file_cache.c /tmp/patch.inc.get2.NvaVDz/src/core/ngx_open_file_cache.c
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_open_file_cache.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_open_file_cache.c	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_open_file_cache.h /tmp/patch.inc.get2.NvaVDz/src/core/ngx_open_file_cache.h
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_open_file_cache.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_open_file_cache.h	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_output_chain.c /tmp/patch.inc.get2.NvaVDz/src/core/ngx_output_chain.c
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_output_chain.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_output_chain.c	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_palloc.c /tmp/patch.inc.get2.NvaVDz/src/core/ngx_palloc.c
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_palloc.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_palloc.c	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_palloc.h /tmp/patch.inc.get2.NvaVDz/src/core/ngx_palloc.h
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_palloc.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_palloc.h	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_parse.c /tmp/patch.inc.get2.NvaVDz/src/core/ngx_parse.c
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_parse.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_parse.c	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_parse.h /tmp/patch.inc.get2.NvaVDz/src/core/ngx_parse.h
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_parse.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_parse.h	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_queue.c /tmp/patch.inc.get2.NvaVDz/src/core/ngx_queue.c
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_queue.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_queue.c	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_queue.h /tmp/patch.inc.get2.NvaVDz/src/core/ngx_queue.h
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_queue.h	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_queue.h	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_radix_tree.c /tmp/patch.inc.get2.NvaVDz/src/core/ngx_radix_tree.c
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_radix_tree.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_radix_tree.c	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_radix_tree.h /tmp/patch.inc.get2.NvaVDz/src/core/ngx_radix_tree.h
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_radix_tree.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_radix_tree.h	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_rbtree.c /tmp/patch.inc.get2.NvaVDz/src/core/ngx_rbtree.c
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_rbtree.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_rbtree.c	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_rbtree.h /tmp/patch.inc.get2.NvaVDz/src/core/ngx_rbtree.h
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_rbtree.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_rbtree.h	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_regex.c /tmp/patch.inc.get2.NvaVDz/src/core/ngx_regex.c
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_regex.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_regex.c	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+*************** failed:
+*** 136,158 ****
+  }
+  
+  
+- ngx_int_t
+- ngx_regex_capture_count(ngx_regex_t *re)
+- {
+-     int  rc, n;
+- 
+-     n = 0;
+- 
+-     rc = pcre_fullinfo(re, NULL, PCRE_INFO_CAPTURECOUNT, &n);
+- 
+-     if (rc < 0) {
+-         return (ngx_int_t) rc;
+-     }
+- 
+-     return (ngx_int_t) n;
+- }
+- 
+- 
+  ngx_int_t
+  ngx_regex_exec_array(ngx_array_t *a, ngx_str_t *s, ngx_log_t *log)
+  {
+--- 137,142 ----
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_regex.h /tmp/patch.inc.get2.NvaVDz/src/core/ngx_regex.h
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_regex.h	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_regex.h	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_resolver.c /tmp/patch.inc.get2.NvaVDz/src/core/ngx_resolver.c
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_resolver.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_resolver.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_resolver.h /tmp/patch.inc.get2.NvaVDz/src/core/ngx_resolver.h
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_resolver.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_resolver.h	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_sha1.h /tmp/patch.inc.get2.NvaVDz/src/core/ngx_sha1.h
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_sha1.h	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_sha1.h	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_shmtx.c /tmp/patch.inc.get2.NvaVDz/src/core/ngx_shmtx.c
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_shmtx.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_shmtx.c	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_shmtx.h /tmp/patch.inc.get2.NvaVDz/src/core/ngx_shmtx.h
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_shmtx.h	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_shmtx.h	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_slab.c /tmp/patch.inc.get2.NvaVDz/src/core/ngx_slab.c
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_slab.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_slab.c	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  #include <ngx_config.h>
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_slab.h /tmp/patch.inc.get2.NvaVDz/src/core/ngx_slab.h
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_slab.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_slab.h	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_spinlock.c /tmp/patch.inc.get2.NvaVDz/src/core/ngx_spinlock.c
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_spinlock.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_spinlock.c	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_string.c /tmp/patch.inc.get2.NvaVDz/src/core/ngx_string.c
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_string.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_string.c	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_string.h /tmp/patch.inc.get2.NvaVDz/src/core/ngx_string.h
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_string.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_string.h	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_times.c /tmp/patch.inc.get2.NvaVDz/src/core/ngx_times.c
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_times.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_times.c	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/core/ngx_times.h /tmp/patch.inc.get2.NvaVDz/src/core/ngx_times.h
+*** /tmp/patch.inc.get1.xfzxGB/src/core/ngx_times.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/core/ngx_times.h	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/event/modules/ngx_aio_module.c /tmp/patch.inc.get2.NvaVDz/src/event/modules/ngx_aio_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/event/modules/ngx_aio_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/event/modules/ngx_aio_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/event/modules/ngx_devpoll_module.c /tmp/patch.inc.get2.NvaVDz/src/event/modules/ngx_devpoll_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/event/modules/ngx_devpoll_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/event/modules/ngx_devpoll_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/event/modules/ngx_epoll_module.c /tmp/patch.inc.get2.NvaVDz/src/event/modules/ngx_epoll_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/event/modules/ngx_epoll_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/event/modules/ngx_epoll_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+*************** ngx_epoll_process_events(ngx_cycle_t *cy
+*** 683,688 ****
+--- 684,701 ----
+  
+          if ((revents & EPOLLOUT) && wev->active) {
+  
++             if (c->fd == -1 || wev->instance != instance) {
++ 
++                 /*
++                  * the stale event from a file descriptor
++                  * that was just closed in this iteration
++                  */
++ 
++                 ngx_log_debug1(NGX_LOG_DEBUG_EVENT, cycle->log, 0,
++                                "epoll: stale event %p", c);
++                 continue;
++             }
++ 
+              if (flags & NGX_POST_THREAD_EVENTS) {
+                  wev->posted_ready = 1;
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/event/modules/ngx_eventport_module.c /tmp/patch.inc.get2.NvaVDz/src/event/modules/ngx_eventport_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/event/modules/ngx_eventport_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/event/modules/ngx_eventport_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/event/modules/ngx_kqueue_module.c /tmp/patch.inc.get2.NvaVDz/src/event/modules/ngx_kqueue_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/event/modules/ngx_kqueue_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/event/modules/ngx_kqueue_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/event/modules/ngx_poll_module.c /tmp/patch.inc.get2.NvaVDz/src/event/modules/ngx_poll_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/event/modules/ngx_poll_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/event/modules/ngx_poll_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/event/modules/ngx_rtsig_module.c /tmp/patch.inc.get2.NvaVDz/src/event/modules/ngx_rtsig_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/event/modules/ngx_rtsig_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/event/modules/ngx_rtsig_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/event/modules/ngx_select_module.c /tmp/patch.inc.get2.NvaVDz/src/event/modules/ngx_select_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/event/modules/ngx_select_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/event/modules/ngx_select_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/event/modules/ngx_win32_select_module.c /tmp/patch.inc.get2.NvaVDz/src/event/modules/ngx_win32_select_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/event/modules/ngx_win32_select_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/event/modules/ngx_win32_select_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/event/ngx_event_accept.c /tmp/patch.inc.get2.NvaVDz/src/event/ngx_event_accept.c
+*** /tmp/patch.inc.get1.xfzxGB/src/event/ngx_event_accept.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/event/ngx_event_accept.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/event/ngx_event_busy_lock.c /tmp/patch.inc.get2.NvaVDz/src/event/ngx_event_busy_lock.c
+*** /tmp/patch.inc.get1.xfzxGB/src/event/ngx_event_busy_lock.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/event/ngx_event_busy_lock.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/event/ngx_event_busy_lock.h /tmp/patch.inc.get2.NvaVDz/src/event/ngx_event_busy_lock.h
+*** /tmp/patch.inc.get1.xfzxGB/src/event/ngx_event_busy_lock.h	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/event/ngx_event_busy_lock.h	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/event/ngx_event.c /tmp/patch.inc.get2.NvaVDz/src/event/ngx_event.c
+*** /tmp/patch.inc.get1.xfzxGB/src/event/ngx_event.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/event/ngx_event.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/event/ngx_event_connect.c /tmp/patch.inc.get2.NvaVDz/src/event/ngx_event_connect.c
+*** /tmp/patch.inc.get1.xfzxGB/src/event/ngx_event_connect.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/event/ngx_event_connect.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+*************** ngx_event_connect_peer(ngx_peer_connecti
+*** 159,164 ****
+--- 160,168 ----
+              ngx_log_error(level, c->log, err, "connect() to %V failed",
+                            pc->name);
+  
++             ngx_close_connection(c);
++             pc->connection = NULL;
++ 
+              return NGX_DECLINED;
+          }
+      }
+*************** ngx_event_connect_peer(ngx_peer_connecti
+*** 240,251 ****
+  
+  failed:
+  
+!     ngx_free_connection(c);
+! 
+!     if (ngx_close_socket(s) == -1) {
+!         ngx_log_error(NGX_LOG_ALERT, pc->log, ngx_socket_errno,
+!                       ngx_close_socket_n " failed");
+!     }
+  
+      return NGX_ERROR;
+  }
+--- 244,251 ----
+  
+  failed:
+  
+!     ngx_close_connection(c);
+!     pc->connection = NULL;
+  
+      return NGX_ERROR;
+  }
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/event/ngx_event_connect.h /tmp/patch.inc.get2.NvaVDz/src/event/ngx_event_connect.h
+*** /tmp/patch.inc.get1.xfzxGB/src/event/ngx_event_connect.h	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/event/ngx_event_connect.h	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/event/ngx_event.h /tmp/patch.inc.get2.NvaVDz/src/event/ngx_event.h
+*** /tmp/patch.inc.get1.xfzxGB/src/event/ngx_event.h	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/event/ngx_event.h	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/event/ngx_event_mutex.c /tmp/patch.inc.get2.NvaVDz/src/event/ngx_event_mutex.c
+*** /tmp/patch.inc.get1.xfzxGB/src/event/ngx_event_mutex.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/event/ngx_event_mutex.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/event/ngx_event_openssl.c /tmp/patch.inc.get2.NvaVDz/src/event/ngx_event_openssl.c
+*** /tmp/patch.inc.get1.xfzxGB/src/event/ngx_event_openssl.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/event/ngx_event_openssl.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+*************** ngx_module_t  ngx_openssl_module = {
+*** 78,95 ****
+  };
+  
+  
+- static long  ngx_ssl_protocols[] = {
+-     SSL_OP_NO_SSLv2|SSL_OP_NO_SSLv3|SSL_OP_NO_TLSv1,
+-     SSL_OP_NO_SSLv3|SSL_OP_NO_TLSv1,
+-     SSL_OP_NO_SSLv2|SSL_OP_NO_TLSv1,
+-     SSL_OP_NO_TLSv1,
+-     SSL_OP_NO_SSLv2|SSL_OP_NO_SSLv3,
+-     SSL_OP_NO_SSLv3,
+-     SSL_OP_NO_SSLv2,
+-     0,
+- };
+- 
+- 
+  int  ngx_ssl_connection_index;
+  int  ngx_ssl_server_conf_index;
+  int  ngx_ssl_session_cache_index;
+--- 79,84 ----
+*************** ngx_ssl_init(ngx_log_t *log)
+*** 103,110 ****
+      SSL_library_init();
+      SSL_load_error_strings();
+  
+-     ENGINE_load_builtin_engines();
+- 
+      OpenSSL_add_all_algorithms();
+  
+      ngx_ssl_connection_index = SSL_get_ex_new_index(0, NULL, NULL, NULL, NULL);
+--- 92,97 ----
+*************** ngx_ssl_create(ngx_ssl_t *ssl, ngx_uint_
+*** 171,179 ****
+  
+      SSL_CTX_set_options(ssl->ctx, SSL_OP_SINGLE_DH_USE);
+  
+!     if (ngx_ssl_protocols[protocols >> 1] != 0) {
+!         SSL_CTX_set_options(ssl->ctx, ngx_ssl_protocols[protocols >> 1]);
+      }
+  
+  #ifdef SSL_OP_NO_COMPRESSION
+      SSL_CTX_set_options(ssl->ctx, SSL_OP_NO_COMPRESSION);
+--- 158,182 ----
+  
+      SSL_CTX_set_options(ssl->ctx, SSL_OP_SINGLE_DH_USE);
+  
+!     if (!(protocols & NGX_SSL_SSLv2)) {
+!         SSL_CTX_set_options(ssl->ctx, SSL_OP_NO_SSLv2);
+!     }
+!     if (!(protocols & NGX_SSL_SSLv3)) {
+!         SSL_CTX_set_options(ssl->ctx, SSL_OP_NO_SSLv3);
+!     }
+!     if (!(protocols & NGX_SSL_TLSv1)) {
+!         SSL_CTX_set_options(ssl->ctx, SSL_OP_NO_TLSv1);
+!     }
+! #ifdef SSL_OP_NO_TLSv1_1
+!     if (!(protocols & NGX_SSL_TLSv1_1)) {
+!         SSL_CTX_set_options(ssl->ctx, SSL_OP_NO_TLSv1_1);
+!     }
+! #endif
+! #ifdef SSL_OP_NO_TLSv1_2
+!     if (!(protocols & NGX_SSL_TLSv1_2)) {
+!         SSL_CTX_set_options(ssl->ctx, SSL_OP_NO_TLSv1_2);
+      }
++ #endif
+  
+  #ifdef SSL_OP_NO_COMPRESSION
+      SSL_CTX_set_options(ssl->ctx, SSL_OP_NO_COMPRESSION);
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/event/ngx_event_openssl.h /tmp/patch.inc.get2.NvaVDz/src/event/ngx_event_openssl.h
+*** /tmp/patch.inc.get1.xfzxGB/src/event/ngx_event_openssl.h	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/event/ngx_event_openssl.h	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+*************** typedef struct {
+*** 81,89 ****
+  
+  
+  
+! #define NGX_SSL_SSLv2    2
+! #define NGX_SSL_SSLv3    4
+! #define NGX_SSL_TLSv1    8
+  
+  
+  #define NGX_SSL_BUFFER   1
+--- 82,92 ----
+  
+  
+  
+! #define NGX_SSL_SSLv2    0x0002
+! #define NGX_SSL_SSLv3    0x0004
+! #define NGX_SSL_TLSv1    0x0008
+! #define NGX_SSL_TLSv1_1  0x0010
+! #define NGX_SSL_TLSv1_2  0x0020
+  
+  
+  #define NGX_SSL_BUFFER   1
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/event/ngx_event_pipe.c /tmp/patch.inc.get2.NvaVDz/src/event/ngx_event_pipe.c
+*** /tmp/patch.inc.get1.xfzxGB/src/event/ngx_event_pipe.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/event/ngx_event_pipe.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/event/ngx_event_pipe.h /tmp/patch.inc.get2.NvaVDz/src/event/ngx_event_pipe.h
+*** /tmp/patch.inc.get1.xfzxGB/src/event/ngx_event_pipe.h	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/event/ngx_event_pipe.h	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/event/ngx_event_posted.c /tmp/patch.inc.get2.NvaVDz/src/event/ngx_event_posted.c
+*** /tmp/patch.inc.get1.xfzxGB/src/event/ngx_event_posted.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/event/ngx_event_posted.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/event/ngx_event_posted.h /tmp/patch.inc.get2.NvaVDz/src/event/ngx_event_posted.h
+*** /tmp/patch.inc.get1.xfzxGB/src/event/ngx_event_posted.h	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/event/ngx_event_posted.h	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/event/ngx_event_timer.c /tmp/patch.inc.get2.NvaVDz/src/event/ngx_event_timer.c
+*** /tmp/patch.inc.get1.xfzxGB/src/event/ngx_event_timer.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/event/ngx_event_timer.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/event/ngx_event_timer.h /tmp/patch.inc.get2.NvaVDz/src/event/ngx_event_timer.h
+*** /tmp/patch.inc.get1.xfzxGB/src/event/ngx_event_timer.h	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/event/ngx_event_timer.h	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_access_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_access_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_access_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_access_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_addition_filter_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_addition_filter_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_addition_filter_module.c	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_addition_filter_module.c	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_auth_basic_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_auth_basic_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_auth_basic_module.c	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_auth_basic_module.c	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_autoindex_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_autoindex_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_autoindex_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_autoindex_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_browser_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_browser_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_browser_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_browser_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_charset_filter_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_charset_filter_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_charset_filter_module.c	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_charset_filter_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_chunked_filter_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_chunked_filter_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_chunked_filter_module.c	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_chunked_filter_module.c	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_dav_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_dav_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_dav_module.c	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_dav_module.c	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_degradation_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_degradation_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_degradation_module.c	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_degradation_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_empty_gif_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_empty_gif_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_empty_gif_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_empty_gif_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  #include <ngx_config.h>
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_fastcgi_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_fastcgi_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_fastcgi_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_fastcgi_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+*************** ngx_http_fastcgi_merge_loc_conf(ngx_conf
+*** 2214,2219 ****
+--- 2215,2224 ----
+                                           |NGX_HTTP_UPSTREAM_FT_OFF;
+      }
+  
++     if (conf->upstream.cache_use_stale & NGX_HTTP_UPSTREAM_FT_ERROR) {
++         conf->upstream.cache_use_stale |= NGX_HTTP_UPSTREAM_FT_NOLIVE;
++     }
++ 
+      if (conf->upstream.cache_methods == 0) {
+          conf->upstream.cache_methods = prev->upstream.cache_methods;
+      }
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_flv_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_flv_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_flv_module.c	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_flv_module.c	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  #include <ngx_config.h>
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_geoip_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_geoip_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_geoip_module.c	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_geoip_module.c	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_geo_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_geo_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_geo_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_geo_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_gzip_filter_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_gzip_filter_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_gzip_filter_module.c	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_gzip_filter_module.c	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_gzip_static_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_gzip_static_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_gzip_static_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_gzip_static_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_headers_filter_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_headers_filter_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_headers_filter_module.c	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_headers_filter_module.c	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_image_filter_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_image_filter_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_image_filter_module.c	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_image_filter_module.c	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_index_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_index_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_index_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_index_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_limit_req_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_limit_req_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_limit_req_module.c	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_limit_req_module.c	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+*************** ngx_http_limit_req_merge_conf(ngx_conf_t
+*** 569,575 ****
+      ngx_http_limit_req_conf_t *conf = child;
+  
+      if (conf->shm_zone == NULL) {
+!         *conf = *prev;
+      }
+  
+      ngx_conf_merge_uint_value(conf->limit_log_level, prev->limit_log_level,
+--- 570,578 ----
+      ngx_http_limit_req_conf_t *conf = child;
+  
+      if (conf->shm_zone == NULL) {
+!         conf->shm_zone = prev->shm_zone;
+!         conf->burst = prev->burst;
+!         conf->nodelay = prev->nodelay;
+      }
+  
+      ngx_conf_merge_uint_value(conf->limit_log_level, prev->limit_log_level,
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_limit_zone_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_limit_zone_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_limit_zone_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_limit_zone_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+*************** ngx_http_limit_zone_merge_conf(ngx_conf_
+*** 421,427 ****
+      ngx_http_limit_zone_conf_t *conf = child;
+  
+      if (conf->shm_zone == NULL) {
+!         *conf = *prev;
+      }
+  
+      ngx_conf_merge_uint_value(conf->log_level, prev->log_level, NGX_LOG_ERR);
+--- 422,429 ----
+      ngx_http_limit_zone_conf_t *conf = child;
+  
+      if (conf->shm_zone == NULL) {
+!         conf->shm_zone = prev->shm_zone;
+!         conf->conn = prev->conn;
+      }
+  
+      ngx_conf_merge_uint_value(conf->log_level, prev->log_level, NGX_LOG_ERR);
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_log_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_log_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_log_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_log_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_map_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_map_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_map_module.c	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_map_module.c	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_memcached_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_memcached_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_memcached_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_memcached_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_mp4_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_mp4_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_mp4_module.c	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_mp4_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  #include <ngx_config.h>
+*************** typedef struct {
+*** 165,174 ****
+      ((u_char *) (p))[7] = n4
+  
+  #define ngx_mp4_get_32value(p)                                                \
+!     ( (((u_char *) (p))[0] << 24)                                             \
+!     + (((u_char *) (p))[1] << 16)                                             \
+!     + (((u_char *) (p))[2] << 8)                                              \
+!     + (((u_char *) (p))[3]) )
+  
+  #define ngx_mp4_set_32value(p, n)                                             \
+      ((u_char *) (p))[0] = (u_char) ((n) >> 24);                               \
+--- 166,175 ----
+      ((u_char *) (p))[7] = n4
+  
+  #define ngx_mp4_get_32value(p)                                                \
+!     ( ((uint32_t) ((u_char *) (p))[0] << 24)                                  \
+!     + (           ((u_char *) (p))[1] << 16)                                  \
+!     + (           ((u_char *) (p))[2] << 8)                                   \
+!     + (           ((u_char *) (p))[3]) )
+  
+  #define ngx_mp4_set_32value(p, n)                                             \
+      ((u_char *) (p))[0] = (u_char) ((n) >> 24);                               \
+*************** found:
+*** 2382,2387 ****
+--- 2383,2390 ----
+      data->pos = (u_char *) entry;
+      atom_size = sizeof(ngx_mp4_stsc_atom_t) + (data->last - data->pos);
+  
++     ngx_mp4_set_32value(entry->chunk, 1);
++ 
+      if (trak->chunk_samples) {
+  
+          first = &trak->stsc_chunk_entry;
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_not_modified_filter_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_not_modified_filter_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_not_modified_filter_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_not_modified_filter_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_proxy_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_proxy_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_proxy_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_proxy_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+*************** ngx_http_proxy_merge_loc_conf(ngx_conf_t
+*** 1903,1919 ****
+                                (NGX_CONF_BITMASK_SET
+                                 |NGX_HTTP_UPSTREAM_FT_OFF));
+  
+      if (conf->upstream.cache_methods == 0) {
+          conf->upstream.cache_methods = prev->upstream.cache_methods;
+      }
+  
+      conf->upstream.cache_methods |= NGX_HTTP_GET|NGX_HTTP_HEAD;
+  
+-     if (conf->upstream.cache_use_stale & NGX_HTTP_UPSTREAM_FT_OFF) {
+-         conf->upstream.cache_use_stale = NGX_CONF_BITMASK_SET
+-                                          |NGX_HTTP_UPSTREAM_FT_OFF;
+-     }
+- 
+      ngx_conf_merge_ptr_value(conf->upstream.cache_bypass,
+                               prev->upstream.cache_bypass, NULL);
+  
+--- 1904,1924 ----
+                                (NGX_CONF_BITMASK_SET
+                                 |NGX_HTTP_UPSTREAM_FT_OFF));
+  
++     if (conf->upstream.cache_use_stale & NGX_HTTP_UPSTREAM_FT_OFF) {
++         conf->upstream.cache_use_stale = NGX_CONF_BITMASK_SET
++                                          |NGX_HTTP_UPSTREAM_FT_OFF;
++     }
++ 
++     if (conf->upstream.cache_use_stale & NGX_HTTP_UPSTREAM_FT_ERROR) {
++         conf->upstream.cache_use_stale |= NGX_HTTP_UPSTREAM_FT_NOLIVE;
++     }
++ 
+      if (conf->upstream.cache_methods == 0) {
+          conf->upstream.cache_methods = prev->upstream.cache_methods;
+      }
+  
+      conf->upstream.cache_methods |= NGX_HTTP_GET|NGX_HTTP_HEAD;
+  
+      ngx_conf_merge_ptr_value(conf->upstream.cache_bypass,
+                               prev->upstream.cache_bypass, NULL);
+  
+*************** ngx_http_proxy_set_ssl(ngx_conf_t *cf, n
+*** 2766,2772 ****
+      plcf->upstream.ssl->log = cf->log;
+  
+      if (ngx_ssl_create(plcf->upstream.ssl,
+!                        NGX_SSL_SSLv2|NGX_SSL_SSLv3|NGX_SSL_TLSv1, NULL)
+          != NGX_OK)
+      {
+          return NGX_ERROR;
+--- 2771,2779 ----
+      plcf->upstream.ssl->log = cf->log;
+  
+      if (ngx_ssl_create(plcf->upstream.ssl,
+!                        NGX_SSL_SSLv2|NGX_SSL_SSLv3|NGX_SSL_TLSv1
+!                                     |NGX_SSL_TLSv1_1|NGX_SSL_TLSv1_2,
+!                        NULL)
+          != NGX_OK)
+      {
+          return NGX_ERROR;
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_random_index_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_random_index_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_random_index_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_random_index_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_range_filter_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_range_filter_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_range_filter_module.c	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_range_filter_module.c	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_realip_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_realip_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_realip_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_realip_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_referer_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_referer_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_referer_module.c	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_referer_module.c	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_rewrite_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_rewrite_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_rewrite_module.c	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_rewrite_module.c	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_scgi_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_scgi_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_scgi_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_scgi_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   * Copyright (C) Manlio Perillo (manlio.perillo@gmail.com)
+   */
+  
+*************** static ngx_int_t ngx_http_scgi_create_re
+*** 36,42 ****
+  static ngx_int_t ngx_http_scgi_reinit_request(ngx_http_request_t *r);
+  static ngx_int_t ngx_http_scgi_process_status_line(ngx_http_request_t *r);
+  static ngx_int_t ngx_http_scgi_process_header(ngx_http_request_t *r);
+- static ngx_int_t ngx_http_scgi_process_header(ngx_http_request_t *r);
+  static void ngx_http_scgi_abort_request(ngx_http_request_t *r);
+  static void ngx_http_scgi_finalize_request(ngx_http_request_t *r, ngx_int_t rc);
+  
+--- 37,42 ----
+*************** ngx_http_scgi_process_status_line(ngx_ht
+*** 824,834 ****
+      }
+  
+      if (rc == NGX_ERROR) {
+- 
+-         r->http_version = NGX_HTTP_VERSION_9;
+- 
+          u->process_header = ngx_http_scgi_process_header;
+- 
+          return ngx_http_scgi_process_header(r);
+      }
+  
+--- 824,830 ----
+*************** ngx_http_scgi_process_header(ngx_http_re
+*** 928,939 ****
+              ngx_log_debug0(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
+                             "http scgi header done");
+  
+!             if (r->http_version > NGX_HTTP_VERSION_9) {
+                  return NGX_OK;
+              }
+  
+-             u = r->upstream;
+- 
+              if (u->headers_in.status) {
+                  status_line = &u->headers_in.status->value;
+  
+--- 924,935 ----
+              ngx_log_debug0(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
+                             "http scgi header done");
+  
+!             u = r->upstream;
+! 
+!             if (u->headers_in.status_n) {
+                  return NGX_OK;
+              }
+  
+              if (u->headers_in.status) {
+                  status_line = &u->headers_in.status->value;
+  
+*************** ngx_http_scgi_process_header(ngx_http_re
+*** 945,964 ****
+                      return NGX_HTTP_UPSTREAM_INVALID_HEADER;
+                  }
+  
+-                 r->http_version = NGX_HTTP_VERSION_10;
+                  u->headers_in.status_n = status;
+                  u->headers_in.status_line = *status_line;
+  
+              } else if (u->headers_in.location) {
+-                 r->http_version = NGX_HTTP_VERSION_10;
+                  u->headers_in.status_n = 302;
+                  ngx_str_set(&u->headers_in.status_line,
+                              "302 Moved Temporarily");
+  
+              } else {
+-                 ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
+-                               "upstream sent neither valid HTTP/1.0 header "
+-                               "nor \"Status\" header line");
+                  u->headers_in.status_n = 200;
+                  ngx_str_set(&u->headers_in.status_line, "200 OK");
+              }
+--- 941,955 ----
+*************** ngx_http_scgi_merge_loc_conf(ngx_conf_t
+*** 1247,1252 ****
+--- 1238,1247 ----
+                                           |NGX_HTTP_UPSTREAM_FT_OFF;
+      }
+  
++     if (conf->upstream.cache_use_stale & NGX_HTTP_UPSTREAM_FT_ERROR) {
++         conf->upstream.cache_use_stale |= NGX_HTTP_UPSTREAM_FT_NOLIVE;
++     }
++ 
+      if (conf->upstream.cache_methods == 0) {
+          conf->upstream.cache_methods = prev->upstream.cache_methods;
+      }
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_secure_link_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_secure_link_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_secure_link_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_secure_link_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_split_clients_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_split_clients_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_split_clients_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_split_clients_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_ssi_filter_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_ssi_filter_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_ssi_filter_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_ssi_filter_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+*************** static ngx_str_t *ngx_http_ssi_get_varia
+*** 78,83 ****
+--- 79,86 ----
+      ngx_str_t *name, ngx_uint_t key);
+  static ngx_int_t ngx_http_ssi_evaluate_string(ngx_http_request_t *r,
+      ngx_http_ssi_ctx_t *ctx, ngx_str_t *text, ngx_uint_t flags);
++ static ngx_int_t ngx_http_ssi_regex_match(ngx_http_request_t *r,
++     ngx_str_t *pattern, ngx_str_t *str);
+  
+  static ngx_int_t ngx_http_ssi_include(ngx_http_request_t *r,
+      ngx_http_ssi_ctx_t *ctx, ngx_str_t **params);
+*************** ngx_http_ssi_body_filter(ngx_http_reques
+*** 624,639 ****
+                      continue;
+                  }
+  
+-                 if (cmd->conditional
+-                     && (ctx->conditional == 0
+-                         || ctx->conditional > cmd->conditional))
+-                 {
+-                     ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
+-                                   "invalid context of SSI command: \"%V\"",
+-                                   &ctx->command);
+-                     goto ssi_error;
+-                 }
+- 
+                  if (!ctx->output && !cmd->block) {
+  
+                      if (ctx->block) {
+--- 627,632 ----
+*************** ngx_http_ssi_body_filter(ngx_http_reques
+*** 709,714 ****
+--- 702,717 ----
+                      }
+                  }
+  
++                 if (cmd->conditional
++                     && (ctx->conditional == 0
++                         || ctx->conditional > cmd->conditional))
++                 {
++                     ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
++                                   "invalid context of SSI command: \"%V\"",
++                                   &ctx->command);
++                     goto ssi_error;
++                 }
++ 
+                  if (ctx->params.nelts > NGX_HTTP_SSI_MAX_PARAMS) {
+                      ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
+                                    "too many SSI command paramters: \"%V\"",
+*************** ngx_http_ssi_get_variable(ngx_http_reque
+*** 1531,1536 ****
+--- 1534,1563 ----
+  
+      ctx = ngx_http_get_module_ctx(r->main, ngx_http_ssi_filter_module);
+  
++ #if (NGX_PCRE)
++     {
++     ngx_str_t  *value;
++ 
++     if (key >= '0' && key <= '9') {
++         i = key - '0';
++ 
++         if (i < ctx->ncaptures) {
++             value = ngx_palloc(r->pool, sizeof(ngx_str_t));
++             if (value == NULL) {
++                 return NULL;
++             }
++ 
++             i *= 2;
++ 
++             value->data = ctx->captures_data + ctx->captures[i];
++             value->len = ctx->captures[i + 1] - ctx->captures[i];
++ 
++             return value;
++         }
++     }
++     }
++ #endif
++ 
+      if (ctx->variables == NULL) {
+          return NULL;
+      }
+*************** invalid_variable:
+*** 1820,1825 ****
+--- 1847,1961 ----
+  
+  
+  static ngx_int_t
++ ngx_http_ssi_regex_match(ngx_http_request_t *r, ngx_str_t *pattern,
++     ngx_str_t *str)
++ {
++ #if (NGX_PCRE)
++     int                   rc, *captures;
++     u_char               *p, errstr[NGX_MAX_CONF_ERRSTR];
++     size_t                size;
++     ngx_int_t             key;
++     ngx_str_t            *vv, name, value;
++     ngx_uint_t            i, n;
++     ngx_http_ssi_ctx_t   *ctx;
++     ngx_http_ssi_var_t   *var;
++     ngx_regex_compile_t   rgc;
++ 
++     ngx_memzero(&rgc, sizeof(ngx_regex_compile_t));
++ 
++     rgc.pattern = *pattern;
++     rgc.pool = r->pool;
++     rgc.err.len = NGX_MAX_CONF_ERRSTR;
++     rgc.err.data = errstr;
++ 
++     if (ngx_regex_compile(&rgc) != NGX_OK) {
++         ngx_log_error(NGX_LOG_ERR, r->connection->log, 0, "%V", &rgc.err);
++         return NGX_HTTP_SSI_ERROR;
++     }
++ 
++     n = (rgc.captures + 1) * 3;
++ 
++     captures = ngx_palloc(r->pool, n * sizeof(int));
++     if (captures == NULL) {
++         return NGX_ERROR;
++     }
++ 
++     rc = ngx_regex_exec(rgc.regex, str, captures, n);
++ 
++     if (rc < NGX_REGEX_NO_MATCHED) {
++         ngx_log_error(NGX_LOG_ALERT, r->connection->log, 0,
++                       ngx_regex_exec_n " failed: %i on \"%V\" using \"%V\"",
++                       rc, str, pattern);
++         return NGX_HTTP_SSI_ERROR;
++     }
++ 
++     if (rc == NGX_REGEX_NO_MATCHED) {
++         return NGX_DECLINED;
++     }
++ 
++     ctx = ngx_http_get_module_ctx(r->main, ngx_http_ssi_filter_module);
++ 
++     ctx->ncaptures = rc;
++     ctx->captures = captures;
++     ctx->captures_data = str->data;
++ 
++     if (rgc.named_captures > 0) {
++ 
++         if (ctx->variables == NULL) {
++             ctx->variables = ngx_list_create(r->pool, 4,
++                                              sizeof(ngx_http_ssi_var_t));
++             if (ctx->variables == NULL) {
++                 return NGX_ERROR;
++             }
++         }
++ 
++         size = rgc.name_size;
++         p = rgc.names;
++ 
++         for (i = 0; i < (ngx_uint_t) rgc.named_captures; i++, p += size) {
++ 
++             name.data = &p[2];
++             name.len = ngx_strlen(name.data);
++ 
++             n = 2 * ((p[0] << 8) + p[1]);
++ 
++             value.data = &str->data[captures[n]];
++             value.len = captures[n + 1] - captures[n];
++ 
++             key = ngx_hash_strlow(name.data, name.data, name.len);
++ 
++             vv = ngx_http_ssi_get_variable(r, &name, key);
++ 
++             if (vv) {
++                 *vv = value;
++                 continue;
++             }
++ 
++             var = ngx_list_push(ctx->variables);
++             if (var == NULL) {
++                 return NGX_ERROR;
++             }
++ 
++             var->name = name;
++             var->key = key;
++             var->value = value;
++         }
++     }
++ 
++     return NGX_OK;
++ 
++ #else
++ 
++     ngx_log_error(NGX_LOG_ALERT, r->connection->log, 0,
++                   "the using of the regex \"%V\" in SSI requires PCRE library",
++                   pattern);
++     return NGX_HTTP_SSI_ERROR;
++ 
++ #endif
++ }
++ 
++ 
++ static ngx_int_t
+  ngx_http_ssi_include(ngx_http_request_t *r, ngx_http_ssi_ctx_t *ctx,
+      ngx_str_t **params)
+  {
+*************** ngx_http_ssi_if(ngx_http_request_t *r, n
+*** 2451,2489 ****
+          }
+  
+      } else {
+- #if (NGX_PCRE)
+-         ngx_regex_compile_t  rgc;
+-         u_char               errstr[NGX_MAX_CONF_ERRSTR];
+- 
+          right.data[right.len] = '\0';
+  
+!         ngx_memzero(&rgc, sizeof(ngx_regex_compile_t));
+! 
+!         rgc.pattern = right;
+!         rgc.pool = r->pool;
+!         rgc.err.len = NGX_MAX_CONF_ERRSTR;
+!         rgc.err.data = errstr;
+  
+!         if (ngx_regex_compile(&rgc) != NGX_OK) {
+!             ngx_log_error(NGX_LOG_ERR, r->connection->log, 0, "%V", &rgc.err);
+!             return NGX_HTTP_SSI_ERROR;
+!         }
+! 
+!         rc = ngx_regex_exec(rgc.regex, &left, NULL, 0);
+! 
+!         if (rc < NGX_REGEX_NO_MATCHED) {
+!             ngx_log_error(NGX_LOG_ALERT, r->connection->log, 0,
+!                           ngx_regex_exec_n " failed: %i on \"%V\" using \"%V\"",
+!                           rc, &left, &right);
+!             return NGX_HTTP_SSI_ERROR;
+          }
+- #else
+-         ngx_log_error(NGX_LOG_ALERT, r->connection->log, 0,
+-                       "the using of the regex \"%V\" in SSI "
+-                       "requires PCRE library", &right);
+- 
+-         return NGX_HTTP_SSI_ERROR;
+- #endif
+      }
+  
+      if ((rc == 0 && !negative) || (rc != 0 && negative)) {
+--- 2587,2603 ----
+          }
+  
+      } else {
+          right.data[right.len] = '\0';
+  
+!         rc = ngx_http_ssi_regex_match(r, &right, &left);
+  
+!         if (rc == NGX_OK) {
+!             rc = 0;
+!         } else if (rc == NGX_DECLINED) {
+!             rc = -1;
+!         } else {
+!             return rc;
+          }
+      }
+  
+      if ((rc == 0 && !negative) || (rc != 0 && negative)) {
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_ssi_filter_module.h /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_ssi_filter_module.h
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_ssi_filter_module.h	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_ssi_filter_module.h	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+*************** typedef struct {
+*** 64,69 ****
+--- 65,76 ----
+      ngx_list_t               *variables;
+      ngx_array_t              *blocks;
+  
++ #if (NGX_PCRE)
++     ngx_uint_t                ncaptures;
++     int                      *captures;
++     u_char                   *captures_data;
++ #endif
++ 
+      unsigned                  conditional:2;
+      unsigned                  encoding:2;
+      unsigned                  block:1;
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_ssl_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_ssl_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_ssl_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_ssl_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+*************** static ngx_conf_bitmask_t  ngx_http_ssl_
+*** 37,42 ****
+--- 38,45 ----
+      { ngx_string("SSLv2"), NGX_SSL_SSLv2 },
+      { ngx_string("SSLv3"), NGX_SSL_SSLv3 },
+      { ngx_string("TLSv1"), NGX_SSL_TLSv1 },
++     { ngx_string("TLSv1.1"), NGX_SSL_TLSv1_1 },
++     { ngx_string("TLSv1.2"), NGX_SSL_TLSv1_2 },
+      { ngx_null_string, 0 }
+  };
+  
+*************** ngx_http_ssl_merge_srv_conf(ngx_conf_t *
+*** 364,370 ****
+                           prev->prefer_server_ciphers, 0);
+  
+      ngx_conf_merge_bitmask_value(conf->protocols, prev->protocols,
+!                          (NGX_CONF_BITMASK_SET|NGX_SSL_SSLv3|NGX_SSL_TLSv1));
+  
+      ngx_conf_merge_uint_value(conf->verify, prev->verify, 0);
+      ngx_conf_merge_uint_value(conf->verify_depth, prev->verify_depth, 1);
+--- 367,374 ----
+                           prev->prefer_server_ciphers, 0);
+  
+      ngx_conf_merge_bitmask_value(conf->protocols, prev->protocols,
+!                          (NGX_CONF_BITMASK_SET|NGX_SSL_SSLv3|NGX_SSL_TLSv1
+!                           |NGX_SSL_TLSv1_1|NGX_SSL_TLSv1_2));
+  
+      ngx_conf_merge_uint_value(conf->verify, prev->verify, 0);
+      ngx_conf_merge_uint_value(conf->verify_depth, prev->verify_depth, 1);
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_ssl_module.h /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_ssl_module.h
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_ssl_module.h	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_ssl_module.h	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_static_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_static_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_static_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_static_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_stub_status_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_stub_status_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_stub_status_module.c	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_stub_status_module.c	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_sub_filter_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_sub_filter_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_sub_filter_module.c	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_sub_filter_module.c	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_upstream_ip_hash_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_upstream_ip_hash_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_upstream_ip_hash_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_upstream_ip_hash_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_userid_filter_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_userid_filter_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_userid_filter_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_userid_filter_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_uwsgi_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_uwsgi_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_uwsgi_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_uwsgi_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 3,8 ****
+--- 3,9 ----
+   * Copyright (C) Unbit S.a.s. 2009-2010
+   * Copyright (C) 2008 Manlio Perillo (manlio.perillo@gmail.com)
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+*************** ngx_http_uwsgi_merge_loc_conf(ngx_conf_t
+*** 1298,1303 ****
+--- 1299,1308 ----
+                                           |NGX_HTTP_UPSTREAM_FT_OFF;
+      }
+  
++     if (conf->upstream.cache_use_stale & NGX_HTTP_UPSTREAM_FT_ERROR) {
++         conf->upstream.cache_use_stale |= NGX_HTTP_UPSTREAM_FT_NOLIVE;
++     }
++ 
+      if (conf->upstream.cache_methods == 0) {
+          conf->upstream.cache_methods = prev->upstream.cache_methods;
+      }
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_xslt_filter_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_xslt_filter_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/ngx_http_xslt_filter_module.c	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/ngx_http_xslt_filter_module.c	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/perl/ngx_http_perl_module.c /tmp/patch.inc.get2.NvaVDz/src/http/modules/perl/ngx_http_perl_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/perl/ngx_http_perl_module.c	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/perl/ngx_http_perl_module.c	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/modules/perl/ngx_http_perl_module.h /tmp/patch.inc.get2.NvaVDz/src/http/modules/perl/ngx_http_perl_module.h
+*** /tmp/patch.inc.get1.xfzxGB/src/http/modules/perl/ngx_http_perl_module.h	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/modules/perl/ngx_http_perl_module.h	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_busy_lock.c /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_busy_lock.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_busy_lock.c	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_busy_lock.c	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_busy_lock.h /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_busy_lock.h
+*** /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_busy_lock.h	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_busy_lock.h	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http.c /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http.c	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http.c	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_cache.h /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_cache.h
+*** /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_cache.h	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_cache.h	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_config.h /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_config.h
+*** /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_config.h	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_config.h	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_copy_filter_module.c /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_copy_filter_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_copy_filter_module.c	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_copy_filter_module.c	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+*************** ngx_http_copy_filter(ngx_http_request_t
+*** 189,195 ****
+  
+              rc = n;
+  
+!             if (file->aio) {
+                  file->aio->data = r;
+                  file->aio->handler = ngx_http_copy_aio_sendfile_event_handler;
+  
+--- 190,196 ----
+  
+              rc = n;
+  
+!             if (rc == NGX_AGAIN) {
+                  file->aio->data = r;
+                  file->aio->handler = ngx_http_copy_aio_sendfile_event_handler;
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_core_module.c /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_core_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_core_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_core_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+*************** ngx_http_core_try_files_phase(ngx_http_r
+*** 1289,1294 ****
+--- 1290,1296 ----
+  
+          ngx_memzero(&of, sizeof(ngx_open_file_info_t));
+  
++         of.read_ahead = clcf->read_ahead;
+          of.directio = clcf->directio;
+          of.valid = clcf->open_file_cache_valid;
+          of.min_uses = clcf->open_file_cache_min_uses;
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_core_module.h /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_core_module.h
+*** /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_core_module.h	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_core_module.h	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_file_cache.c /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_file_cache.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_file_cache.c	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_file_cache.c	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+*************** ngx_http_file_cache_read(ngx_http_reques
+*** 387,392 ****
+--- 388,400 ----
+          return NGX_DECLINED;
+      }
+  
++     if (h->body_start > c->body_start) {
++         ngx_log_error(NGX_LOG_CRIT, r->connection->log, 0,
++                       "cache file \"%s\" has too long header",
++                       c->file.name.data);
++         return NGX_DECLINED;
++     }
++ 
+      c->buf->last += n;
+  
+      c->valid_sec = h->valid_sec;
+*************** ngx_http_file_cache_expire(ngx_http_file
+*** 1107,1118 ****
+          /*
+           * abnormally exited workers may leave locked cache entries,
+           * and although it may be safe to remove them completely,
+!          * we prefer to remove them from inactive queue and rbtree
+!          * only, and to allow other leaks
+           */
+  
+          ngx_queue_remove(q);
+!         ngx_rbtree_delete(&cache->sh->rbtree, &fcn->node);
+  
+          ngx_log_error(NGX_LOG_ALERT, ngx_cycle->log, 0,
+                        "ignore long locked inactive cache entry %*s, count:%d",
+--- 1115,1126 ----
+          /*
+           * abnormally exited workers may leave locked cache entries,
+           * and although it may be safe to remove them completely,
+!          * we prefer to just move them to the top of the inactive queue
+           */
+  
+          ngx_queue_remove(q);
+!         fcn->expire = ngx_time() + cache->inactive;
+!         ngx_queue_insert_head(&cache->sh->queue, &fcn->queue);
+  
+          ngx_log_error(NGX_LOG_ALERT, ngx_cycle->log, 0,
+                        "ignore long locked inactive cache entry %*s, count:%d",
+*************** ngx_http_file_cache_valid_set_slot(ngx_c
+*** 1709,1778 ****
+      }
+  
+      return NGX_CONF_OK;
+- }
+- 
+- 
+- ngx_int_t
+- ngx_http_cache(ngx_http_request_t *r, ngx_array_t *no_cache)
+- {
+-     ngx_str_t                  val;
+-     ngx_uint_t                 i;
+-     ngx_http_complex_value_t  *cv;
+- 
+-     cv = no_cache->elts;
+- 
+-     for (i = 0; i < no_cache->nelts; i++) {
+-         if (ngx_http_complex_value(r, &cv[i], &val) != NGX_OK) {
+-             return NGX_ERROR;
+-         }
+- 
+-         if (val.len && val.data[0] != '0') {
+-             return NGX_DECLINED;
+-         }
+-     }
+- 
+-     return NGX_OK;
+- }
+- 
+- 
+- char *
+- ngx_http_no_cache_set_slot(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
+- {
+-     char  *p = conf;
+- 
+-     ngx_str_t                          *value;
+-     ngx_uint_t                          i;
+-     ngx_array_t                       **a;
+-     ngx_http_complex_value_t           *cv;
+-     ngx_http_compile_complex_value_t    ccv;
+- 
+-     a = (ngx_array_t **) (p + cmd->offset);
+- 
+-     if (*a == NGX_CONF_UNSET_PTR) {
+-         *a = ngx_array_create(cf->pool, 1, sizeof(ngx_http_complex_value_t));
+-         if (*a == NULL) {
+-             return NGX_CONF_ERROR;
+-         }
+-     }
+- 
+-     value = cf->args->elts;
+- 
+-     for (i = 1; i < cf->args->nelts; i++) {
+-         cv = ngx_array_push(*a);
+-         if (cv == NULL) {
+-             return NGX_CONF_ERROR;
+-         }
+- 
+-         ngx_memzero(&ccv, sizeof(ngx_http_compile_complex_value_t));
+- 
+-         ccv.cf = cf;
+-         ccv.value = &value[i];
+-         ccv.complex_value = cv;
+- 
+-         if (ngx_http_compile_complex_value(&ccv) != NGX_OK) {
+-             return NGX_CONF_ERROR;
+-         }
+-     }
+- 
+-     return NGX_CONF_OK;
+  }
+--- 1717,1720 ----
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http.h /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http.h
+*** /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http.h	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http.h	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_header_filter_module.c /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_header_filter_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_header_filter_module.c	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_header_filter_module.c	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+*************** static ngx_str_t ngx_http_status_lines[]
+*** 61,68 ****
+  
+      /* ngx_null_string, */  /* "207 Multi-Status" */
+  
+! #define NGX_HTTP_LAST_LEVEL_200  207
+! #define NGX_HTTP_LEVEL_200       (NGX_HTTP_LAST_LEVEL_200 - 200)
+  
+      /* ngx_null_string, */  /* "300 Multiple Choices" */
+  
+--- 62,69 ----
+  
+      /* ngx_null_string, */  /* "207 Multi-Status" */
+  
+! #define NGX_HTTP_LAST_2XX  207
+! #define NGX_HTTP_OFF_3XX   (NGX_HTTP_LAST_2XX - 200)
+  
+      /* ngx_null_string, */  /* "300 Multiple Choices" */
+  
+*************** static ngx_str_t ngx_http_status_lines[]
+*** 75,82 ****
+      /* ngx_null_string, */  /* "306 unused" */
+      /* ngx_null_string, */  /* "307 Temporary Redirect" */
+  
+! #define NGX_HTTP_LAST_LEVEL_300  305
+! #define NGX_HTTP_LEVEL_300       (NGX_HTTP_LAST_LEVEL_300 - 301)
+  
+      ngx_string("400 Bad Request"),
+      ngx_string("401 Unauthorized"),
+--- 76,83 ----
+      /* ngx_null_string, */  /* "306 unused" */
+      /* ngx_null_string, */  /* "307 Temporary Redirect" */
+  
+! #define NGX_HTTP_LAST_3XX  305
+! #define NGX_HTTP_OFF_4XX   (NGX_HTTP_LAST_3XX - 301 + NGX_HTTP_OFF_3XX)
+  
+      ngx_string("400 Bad Request"),
+      ngx_string("401 Unauthorized"),
+*************** static ngx_str_t ngx_http_status_lines[]
+*** 108,115 ****
+      /* ngx_null_string, */  /* "423 Locked" */
+      /* ngx_null_string, */  /* "424 Failed Dependency" */
+  
+! #define NGX_HTTP_LAST_LEVEL_400  417
+! #define NGX_HTTP_LEVEL_400       (NGX_HTTP_LAST_LEVEL_400 - 400)
+  
+      ngx_string("500 Internal Server Error"),
+      ngx_string("501 Method Not Implemented"),
+--- 109,116 ----
+      /* ngx_null_string, */  /* "423 Locked" */
+      /* ngx_null_string, */  /* "424 Failed Dependency" */
+  
+! #define NGX_HTTP_LAST_4XX  417
+! #define NGX_HTTP_OFF_5XX   (NGX_HTTP_LAST_4XX - 400 + NGX_HTTP_OFF_4XX)
+  
+      ngx_string("500 Internal Server Error"),
+      ngx_string("501 Method Not Implemented"),
+*************** static ngx_str_t ngx_http_status_lines[]
+*** 124,130 ****
+      /* ngx_null_string, */  /* "509 unused" */
+      /* ngx_null_string, */  /* "510 Not Extended" */
+  
+! #define NGX_HTTP_LAST_LEVEL_500  508
+  
+  };
+  
+--- 125,131 ----
+      /* ngx_null_string, */  /* "509 unused" */
+      /* ngx_null_string, */  /* "510 Not Extended" */
+  
+! #define NGX_HTTP_LAST_5XX  508
+  
+  };
+  
+*************** ngx_http_header_filter(ngx_http_request_
+*** 216,222 ****
+          status = r->headers_out.status;
+  
+          if (status >= NGX_HTTP_OK
+!             && status < NGX_HTTP_LAST_LEVEL_200)
+          {
+              /* 2XX */
+  
+--- 217,223 ----
+          status = r->headers_out.status;
+  
+          if (status >= NGX_HTTP_OK
+!             && status < NGX_HTTP_LAST_2XX)
+          {
+              /* 2XX */
+  
+*************** ngx_http_header_filter(ngx_http_request_
+*** 234,240 ****
+              len += ngx_http_status_lines[status].len;
+  
+          } else if (status >= NGX_HTTP_MOVED_PERMANENTLY
+!                    && status < NGX_HTTP_LAST_LEVEL_300)
+          {
+              /* 3XX */
+  
+--- 235,241 ----
+              len += ngx_http_status_lines[status].len;
+  
+          } else if (status >= NGX_HTTP_MOVED_PERMANENTLY
+!                    && status < NGX_HTTP_LAST_3XX)
+          {
+              /* 3XX */
+  
+*************** ngx_http_header_filter(ngx_http_request_
+*** 242,270 ****
+                  r->header_only = 1;
+              }
+  
+!             status = status - NGX_HTTP_MOVED_PERMANENTLY + NGX_HTTP_LEVEL_200;
+              status_line = &ngx_http_status_lines[status];
+              len += ngx_http_status_lines[status].len;
+  
+          } else if (status >= NGX_HTTP_BAD_REQUEST
+!                    && status < NGX_HTTP_LAST_LEVEL_400)
+          {
+              /* 4XX */
+              status = status - NGX_HTTP_BAD_REQUEST
+!                             + NGX_HTTP_LEVEL_200
+!                             + NGX_HTTP_LEVEL_300;
+  
+              status_line = &ngx_http_status_lines[status];
+              len += ngx_http_status_lines[status].len;
+  
+          } else if (status >= NGX_HTTP_INTERNAL_SERVER_ERROR
+!                    && status < NGX_HTTP_LAST_LEVEL_500)
+          {
+              /* 5XX */
+              status = status - NGX_HTTP_INTERNAL_SERVER_ERROR
+!                             + NGX_HTTP_LEVEL_200
+!                             + NGX_HTTP_LEVEL_300
+!                             + NGX_HTTP_LEVEL_400;
+  
+              status_line = &ngx_http_status_lines[status];
+              len += ngx_http_status_lines[status].len;
+--- 243,268 ----
+                  r->header_only = 1;
+              }
+  
+!             status = status - NGX_HTTP_MOVED_PERMANENTLY + NGX_HTTP_OFF_3XX;
+              status_line = &ngx_http_status_lines[status];
+              len += ngx_http_status_lines[status].len;
+  
+          } else if (status >= NGX_HTTP_BAD_REQUEST
+!                    && status < NGX_HTTP_LAST_4XX)
+          {
+              /* 4XX */
+              status = status - NGX_HTTP_BAD_REQUEST
+!                             + NGX_HTTP_OFF_4XX;
+  
+              status_line = &ngx_http_status_lines[status];
+              len += ngx_http_status_lines[status].len;
+  
+          } else if (status >= NGX_HTTP_INTERNAL_SERVER_ERROR
+!                    && status < NGX_HTTP_LAST_5XX)
+          {
+              /* 5XX */
+              status = status - NGX_HTTP_INTERNAL_SERVER_ERROR
+!                             + NGX_HTTP_OFF_5XX;
+  
+              status_line = &ngx_http_status_lines[status];
+              len += ngx_http_status_lines[status].len;
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_parse.c /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_parse.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_parse.c	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_parse.c	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_parse_time.c /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_parse_time.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_parse_time.c	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_parse_time.c	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_postpone_filter_module.c /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_postpone_filter_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_postpone_filter_module.c	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_postpone_filter_module.c	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_request_body.c /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_request_body.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_request_body.c	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_request_body.c	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_request.c /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_request.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_request.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_request.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_request.h /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_request.h
+*** /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_request.h	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_request.h	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_script.c /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_script.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_script.c	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_script.c	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_script.h /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_script.h
+*** /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_script.h	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_script.h	2013-04-30 11:28:25.715214937 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_special_response.c /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_special_response.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_special_response.c	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_special_response.c	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_upstream.c /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_upstream.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_upstream.c	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_upstream.c	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_upstream.h /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_upstream.h
+*** /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_upstream.h	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_upstream.h	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_upstream_round_robin.c /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_upstream_round_robin.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_upstream_round_robin.c	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_upstream_round_robin.c	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_upstream_round_robin.h /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_upstream_round_robin.h
+*** /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_upstream_round_robin.h	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_upstream_round_robin.h	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_variables.c /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_variables.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_variables.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_variables.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+*************** static ngx_int_t
+*** 640,647 ****
+  ngx_http_variable_headers(ngx_http_request_t *r, ngx_http_variable_value_t *v,
+      uintptr_t data)
+  {
+!     ssize_t            len;
+!     u_char            *p;
+      ngx_uint_t         i, n;
+      ngx_array_t       *a;
+      ngx_table_elt_t  **h;
+--- 641,648 ----
+  ngx_http_variable_headers(ngx_http_request_t *r, ngx_http_variable_value_t *v,
+      uintptr_t data)
+  {
+!     size_t             len;
+!     u_char            *p, *end;
+      ngx_uint_t         i, n;
+      ngx_array_t       *a;
+      ngx_table_elt_t  **h;
+*************** ngx_http_variable_headers(ngx_http_reque
+*** 649,666 ****
+      a = (ngx_array_t *) ((char *) r + data);
+  
+      n = a->nelts;
+  
+!     if (n == 0) {
+          v->not_found = 1;
+          return NGX_OK;
+      }
+  
+      v->valid = 1;
+      v->no_cacheable = 0;
+      v->not_found = 0;
+  
+-     h = a->elts;
+- 
+      if (n == 1) {
+          v->len = (*h)->value.len;
+          v->data = (*h)->value.data;
+--- 650,679 ----
+      a = (ngx_array_t *) ((char *) r + data);
+  
+      n = a->nelts;
++     h = a->elts;
++ 
++     len = 0;
++ 
++     for (i = 0; i < n; i++) {
++ 
++         if (h[i]->hash == 0) {
++             continue;
++         }
+  
+!         len += h[i]->value.len + sizeof("; ") - 1;
+!     }
+! 
+!     if (len == 0) {
+          v->not_found = 1;
+          return NGX_OK;
+      }
+  
++     len -= sizeof("; ") - 1;
++ 
+      v->valid = 1;
+      v->no_cacheable = 0;
+      v->not_found = 0;
+  
+      if (n == 1) {
+          v->len = (*h)->value.len;
+          v->data = (*h)->value.data;
+*************** ngx_http_variable_headers(ngx_http_reque
+*** 668,679 ****
+          return NGX_OK;
+      }
+  
+-     len = - (ssize_t) (sizeof("; ") - 1);
+- 
+-     for (i = 0; i < n; i++) {
+-         len += h[i]->value.len + sizeof("; ") - 1;
+-     }
+- 
+      p = ngx_pnalloc(r->pool, len);
+      if (p == NULL) {
+          return NGX_ERROR;
+--- 681,686 ----
+*************** ngx_http_variable_headers(ngx_http_reque
+*** 682,691 ****
+      v->len = len;
+      v->data = p;
+  
+      for (i = 0; /* void */ ; i++) {
+          p = ngx_copy(p, h[i]->value.data, h[i]->value.len);
+  
+!         if (i == n - 1) {
+              break;
+          }
+  
+--- 689,705 ----
+      v->len = len;
+      v->data = p;
+  
++     end = p + len;
++ 
+      for (i = 0; /* void */ ; i++) {
++ 
++         if (h[i]->hash == 0) {
++             continue;
++         }
++ 
+          p = ngx_copy(p, h[i]->value.data, h[i]->value.len);
+  
+!         if (p == end) {
+              break;
+          }
+  
+*************** ngx_http_variable_unknown_header(ngx_htt
+*** 738,743 ****
+--- 752,761 ----
+              i = 0;
+          }
+  
++         if (header[i].hash == 0) {
++             continue;
++         }
++ 
+          for (n = 0; n + prefix < var->len && n < header[i].key.len; n++) {
+              ch = header[i].key.data[n];
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_variables.h /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_variables.h
+*** /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_variables.h	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_variables.h	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_write_filter_module.c /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_write_filter_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/http/ngx_http_write_filter_module.c	2013-04-30 11:28:22.523199103 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/http/ngx_http_write_filter_module.c	2013-04-30 11:28:25.719214965 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+*************** ngx_http_write_filter(ngx_http_request_t
+*** 223,233 ****
+              return NGX_AGAIN;
+          }
+  
+!     } else if (clcf->sendfile_max_chunk) {
+!         limit = clcf->sendfile_max_chunk;
+  
+      } else {
+!         limit = 0;
+      }
+  
+      sent = c->sent;
+--- 224,237 ----
+              return NGX_AGAIN;
+          }
+  
+!         if (clcf->sendfile_max_chunk
+!             && (off_t) clcf->sendfile_max_chunk < limit)
+!         {
+!             limit = clcf->sendfile_max_chunk;
+!         }
+  
+      } else {
+!         limit = clcf->sendfile_max_chunk;
+      }
+  
+      sent = c->sent;
+*************** ngx_http_write_filter(ngx_http_request_t
+*** 262,278 ****
+              }
+          }
+  
+!         delay = (ngx_msec_t) ((nsent - sent) * 1000 / r->limit_rate + 1);
+  
+          if (delay > 0) {
+              c->write->delayed = 1;
+              ngx_add_timer(c->write, delay);
+          }
+  
+!     } else if (c->write->ready
+!                && clcf->sendfile_max_chunk
+!                && (size_t) (c->sent - sent)
+!                       >= clcf->sendfile_max_chunk - 2 * ngx_pagesize)
+      {
+          c->write->delayed = 1;
+          ngx_add_timer(c->write, 1);
+--- 266,283 ----
+              }
+          }
+  
+!         delay = (ngx_msec_t) ((nsent - sent) * 1000 / r->limit_rate);
+  
+          if (delay > 0) {
++             limit = 0;
+              c->write->delayed = 1;
+              ngx_add_timer(c->write, delay);
+          }
++     }
+  
+!     if (limit
+!         && c->write->ready
+!         && c->sent - sent >= limit - (off_t) (2 * ngx_pagesize))
+      {
+          c->write->delayed = 1;
+          ngx_add_timer(c->write, 1);
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/mail/ngx_mail_auth_http_module.c /tmp/patch.inc.get2.NvaVDz/src/mail/ngx_mail_auth_http_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/mail/ngx_mail_auth_http_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/mail/ngx_mail_auth_http_module.c	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/mail/ngx_mail.c /tmp/patch.inc.get2.NvaVDz/src/mail/ngx_mail.c
+*** /tmp/patch.inc.get1.xfzxGB/src/mail/ngx_mail.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/mail/ngx_mail.c	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/mail/ngx_mail_core_module.c /tmp/patch.inc.get2.NvaVDz/src/mail/ngx_mail_core_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/mail/ngx_mail_core_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/mail/ngx_mail_core_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/mail/ngx_mail.h /tmp/patch.inc.get2.NvaVDz/src/mail/ngx_mail.h
+*** /tmp/patch.inc.get1.xfzxGB/src/mail/ngx_mail.h	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/mail/ngx_mail.h	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/mail/ngx_mail_handler.c /tmp/patch.inc.get2.NvaVDz/src/mail/ngx_mail_handler.c
+*** /tmp/patch.inc.get1.xfzxGB/src/mail/ngx_mail_handler.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/mail/ngx_mail_handler.c	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/mail/ngx_mail_imap_handler.c /tmp/patch.inc.get2.NvaVDz/src/mail/ngx_mail_imap_handler.c
+*** /tmp/patch.inc.get1.xfzxGB/src/mail/ngx_mail_imap_handler.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/mail/ngx_mail_imap_handler.c	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/mail/ngx_mail_imap_module.c /tmp/patch.inc.get2.NvaVDz/src/mail/ngx_mail_imap_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/mail/ngx_mail_imap_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/mail/ngx_mail_imap_module.c	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/mail/ngx_mail_imap_module.h /tmp/patch.inc.get2.NvaVDz/src/mail/ngx_mail_imap_module.h
+*** /tmp/patch.inc.get1.xfzxGB/src/mail/ngx_mail_imap_module.h	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/mail/ngx_mail_imap_module.h	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/mail/ngx_mail_parse.c /tmp/patch.inc.get2.NvaVDz/src/mail/ngx_mail_parse.c
+*** /tmp/patch.inc.get1.xfzxGB/src/mail/ngx_mail_parse.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/mail/ngx_mail_parse.c	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/mail/ngx_mail_pop3_handler.c /tmp/patch.inc.get2.NvaVDz/src/mail/ngx_mail_pop3_handler.c
+*** /tmp/patch.inc.get1.xfzxGB/src/mail/ngx_mail_pop3_handler.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/mail/ngx_mail_pop3_handler.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/mail/ngx_mail_pop3_module.c /tmp/patch.inc.get2.NvaVDz/src/mail/ngx_mail_pop3_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/mail/ngx_mail_pop3_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/mail/ngx_mail_pop3_module.c	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/mail/ngx_mail_pop3_module.h /tmp/patch.inc.get2.NvaVDz/src/mail/ngx_mail_pop3_module.h
+*** /tmp/patch.inc.get1.xfzxGB/src/mail/ngx_mail_pop3_module.h	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/mail/ngx_mail_pop3_module.h	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/mail/ngx_mail_proxy_module.c /tmp/patch.inc.get2.NvaVDz/src/mail/ngx_mail_proxy_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/mail/ngx_mail_proxy_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/mail/ngx_mail_proxy_module.c	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/mail/ngx_mail_smtp_handler.c /tmp/patch.inc.get2.NvaVDz/src/mail/ngx_mail_smtp_handler.c
+*** /tmp/patch.inc.get1.xfzxGB/src/mail/ngx_mail_smtp_handler.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/mail/ngx_mail_smtp_handler.c	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/mail/ngx_mail_smtp_module.c /tmp/patch.inc.get2.NvaVDz/src/mail/ngx_mail_smtp_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/mail/ngx_mail_smtp_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/mail/ngx_mail_smtp_module.c	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/mail/ngx_mail_smtp_module.h /tmp/patch.inc.get2.NvaVDz/src/mail/ngx_mail_smtp_module.h
+*** /tmp/patch.inc.get1.xfzxGB/src/mail/ngx_mail_smtp_module.h	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/mail/ngx_mail_smtp_module.h	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/mail/ngx_mail_ssl_module.c /tmp/patch.inc.get2.NvaVDz/src/mail/ngx_mail_ssl_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/mail/ngx_mail_ssl_module.c	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/mail/ngx_mail_ssl_module.c	2013-04-30 11:28:25.723214979 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+*************** static ngx_conf_bitmask_t  ngx_mail_ssl_
+*** 37,42 ****
+--- 38,45 ----
+      { ngx_string("SSLv2"), NGX_SSL_SSLv2 },
+      { ngx_string("SSLv3"), NGX_SSL_SSLv3 },
+      { ngx_string("TLSv1"), NGX_SSL_TLSv1 },
++     { ngx_string("TLSv1.1"), NGX_SSL_TLSv1_1 },
++     { ngx_string("TLSv1.2"), NGX_SSL_TLSv1_2 },
+      { ngx_null_string, 0 }
+  };
+  
+*************** ngx_mail_ssl_merge_conf(ngx_conf_t *cf,
+*** 206,212 ****
+                           prev->prefer_server_ciphers, 0);
+  
+      ngx_conf_merge_bitmask_value(conf->protocols, prev->protocols,
+!                          (NGX_CONF_BITMASK_SET|NGX_SSL_SSLv3|NGX_SSL_TLSv1));
+  
+      ngx_conf_merge_str_value(conf->certificate, prev->certificate, "");
+      ngx_conf_merge_str_value(conf->certificate_key, prev->certificate_key, "");
+--- 209,216 ----
+                           prev->prefer_server_ciphers, 0);
+  
+      ngx_conf_merge_bitmask_value(conf->protocols, prev->protocols,
+!                          (NGX_CONF_BITMASK_SET|NGX_SSL_SSLv3|NGX_SSL_TLSv1
+!                           |NGX_SSL_TLSv1_1|NGX_SSL_TLSv1_2));
+  
+      ngx_conf_merge_str_value(conf->certificate, prev->certificate, "");
+      ngx_conf_merge_str_value(conf->certificate_key, prev->certificate_key, "");
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/mail/ngx_mail_ssl_module.h /tmp/patch.inc.get2.NvaVDz/src/mail/ngx_mail_ssl_module.h
+*** /tmp/patch.inc.get1.xfzxGB/src/mail/ngx_mail_ssl_module.h	2013-04-30 11:28:22.527199128 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/mail/ngx_mail_ssl_module.h	2013-04-30 11:28:25.727214997 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/misc/ngx_google_perftools_module.c /tmp/patch.inc.get2.NvaVDz/src/misc/ngx_google_perftools_module.c
+*** /tmp/patch.inc.get1.xfzxGB/src/misc/ngx_google_perftools_module.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/misc/ngx_google_perftools_module.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_aio_read.c /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_aio_read.c
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_aio_read.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_aio_read.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_aio_read_chain.c /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_aio_read_chain.c
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_aio_read_chain.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_aio_read_chain.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_aio_write.c /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_aio_write.c
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_aio_write.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_aio_write.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_aio_write_chain.c /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_aio_write_chain.c
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_aio_write_chain.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_aio_write_chain.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_alloc.c /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_alloc.c
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_alloc.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_alloc.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_alloc.h /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_alloc.h
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_alloc.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_alloc.h	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_atomic.h /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_atomic.h
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_atomic.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_atomic.h	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_channel.c /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_channel.c
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_channel.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_channel.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_channel.h /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_channel.h
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_channel.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_channel.h	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_daemon.c /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_daemon.c
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_daemon.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_daemon.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_darwin_config.h /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_darwin_config.h
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_darwin_config.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_darwin_config.h	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_darwin.h /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_darwin.h
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_darwin.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_darwin.h	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_darwin_init.c /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_darwin_init.c
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_darwin_init.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_darwin_init.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_darwin_sendfile_chain.c /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_darwin_sendfile_chain.c
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_darwin_sendfile_chain.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_darwin_sendfile_chain.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_errno.c /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_errno.c
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_errno.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_errno.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_errno.h /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_errno.h
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_errno.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_errno.h	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_file_aio_read.c /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_file_aio_read.c
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_file_aio_read.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_file_aio_read.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+*************** ngx_file_aio_result(ngx_file_t *file, ng
+*** 156,179 ****
+          return NGX_ERROR;
+      }
+  
+!     if (n != 0) {
+!         if (n == NGX_EINPROGRESS) {
+!             if (ev->ready) {
+!                 ev->ready = 0;
+!                 ngx_log_error(NGX_LOG_ALERT, file->log, n,
+!                               "aio_read(\"%V\") still in progress",
+!                               &file->name);
+!             }
+! 
+!             return NGX_AGAIN;
+          }
+  
+!         aio->err = n;
+!         ev->ready = 0;
+! 
+!         ngx_log_error(NGX_LOG_CRIT, file->log, n,
+!                       "aio_read(\"%V\") failed", &file->name);
+!         return NGX_ERROR;
+      }
+  
+      n = aio_return(&aio->aiocb);
+--- 157,171 ----
+          return NGX_ERROR;
+      }
+  
+!     if (n == NGX_EINPROGRESS) {
+!         if (ev->ready) {
+!             ev->ready = 0;
+!             ngx_log_error(NGX_LOG_ALERT, file->log, n,
+!                           "aio_read(\"%V\") still in progress",
+!                           &file->name);
+          }
+  
+!         return NGX_AGAIN;
+      }
+  
+      n = aio_return(&aio->aiocb);
+*************** ngx_file_aio_result(ngx_file_t *file, ng
+*** 181,189 ****
+      if (n == -1) {
+          err = ngx_errno;
+          aio->err = err;
+!         ev->ready = 0;
+  
+!         ngx_log_error(NGX_LOG_ALERT, file->log, err,
+                        "aio_return(\"%V\") failed", &file->name);
+          return NGX_ERROR;
+      }
+--- 173,181 ----
+      if (n == -1) {
+          err = ngx_errno;
+          aio->err = err;
+!         ev->ready = 1;
+  
+!         ngx_log_error(NGX_LOG_CRIT, file->log, err,
+                        "aio_return(\"%V\") failed", &file->name);
+          return NGX_ERROR;
+      }
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_files.c /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_files.c
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_files.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_files.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_files.h /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_files.h
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_files.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_files.h	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_freebsd_config.h /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_freebsd_config.h
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_freebsd_config.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_freebsd_config.h	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_freebsd.h /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_freebsd.h
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_freebsd.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_freebsd.h	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_freebsd_init.c /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_freebsd_init.c
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_freebsd_init.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_freebsd_init.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_freebsd_rfork_thread.c /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_freebsd_rfork_thread.c
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_freebsd_rfork_thread.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_freebsd_rfork_thread.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_freebsd_rfork_thread.h /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_freebsd_rfork_thread.h
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_freebsd_rfork_thread.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_freebsd_rfork_thread.h	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_freebsd_sendfile_chain.c /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_freebsd_sendfile_chain.c
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_freebsd_sendfile_chain.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_freebsd_sendfile_chain.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+*************** ngx_freebsd_sendfile_chain(ngx_connectio
+*** 246,254 ****
+                  }
+              }
+  
+!             hdtr.headers = (struct iovec *) header.elts;
+              hdtr.hdr_cnt = header.nelts;
+!             hdtr.trailers = (struct iovec *) trailer.elts;
+              hdtr.trl_cnt = trailer.nelts;
+  
+              /*
+--- 247,260 ----
+                  }
+              }
+  
+!             /*
+!              * sendfile() does unneeded work if sf_hdtr's count is 0,
+!              * but corresponding pointer is not NULL
+!              */
+! 
+!             hdtr.headers = header.nelts ? (struct iovec *) header.elts: NULL;
+              hdtr.hdr_cnt = header.nelts;
+!             hdtr.trailers = trailer.nelts ? (struct iovec *) trailer.elts: NULL;
+              hdtr.trl_cnt = trailer.nelts;
+  
+              /*
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_gcc_atomic_amd64.h /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_gcc_atomic_amd64.h
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_gcc_atomic_amd64.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_gcc_atomic_amd64.h	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_gcc_atomic_ppc.h /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_gcc_atomic_ppc.h
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_gcc_atomic_ppc.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_gcc_atomic_ppc.h	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_gcc_atomic_sparc64.h /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_gcc_atomic_sparc64.h
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_gcc_atomic_sparc64.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_gcc_atomic_sparc64.h	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_gcc_atomic_x86.h /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_gcc_atomic_x86.h
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_gcc_atomic_x86.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_gcc_atomic_x86.h	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_linux_aio_read.c /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_linux_aio_read.c
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_linux_aio_read.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_linux_aio_read.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_linux_config.h /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_linux_config.h
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_linux_config.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_linux_config.h	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_linux.h /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_linux.h
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_linux.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_linux.h	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_linux_init.c /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_linux_init.c
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_linux_init.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_linux_init.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_linux_sendfile_chain.c /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_linux_sendfile_chain.c
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_linux_sendfile_chain.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_linux_sendfile_chain.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_os.h /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_os.h
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_os.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_os.h	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_posix_config.h /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_posix_config.h
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_posix_config.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_posix_config.h	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_posix_init.c /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_posix_init.c
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_posix_init.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_posix_init.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_process.c /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_process.c
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_process.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_process.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_process_cycle.c /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_process_cycle.c
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_process_cycle.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_process_cycle.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+*************** ngx_worker_process_init(ngx_cycle_t *cyc
+*** 914,920 ****
+          ngx_log_error(NGX_LOG_NOTICE, cycle->log, 0,
+                        "sched_setaffinity(0x%08Xl)", cpu_affinity);
+  
+!         if (sched_setaffinity(0, 32, (cpu_set_t *) &cpu_affinity) == -1) {
+              ngx_log_error(NGX_LOG_ALERT, cycle->log, ngx_errno,
+                            "sched_setaffinity(0x%08Xl) failed", cpu_affinity);
+          }
+--- 915,924 ----
+          ngx_log_error(NGX_LOG_NOTICE, cycle->log, 0,
+                        "sched_setaffinity(0x%08Xl)", cpu_affinity);
+  
+!         if (sched_setaffinity(0, sizeof(cpu_affinity),
+!                               (cpu_set_t *) &cpu_affinity)
+!             == -1)
+!         {
+              ngx_log_error(NGX_LOG_ALERT, cycle->log, ngx_errno,
+                            "sched_setaffinity(0x%08Xl) failed", cpu_affinity);
+          }
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_process_cycle.h /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_process_cycle.h
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_process_cycle.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_process_cycle.h	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_process.h /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_process.h
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_process.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_process.h	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_pthread_thread.c /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_pthread_thread.c
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_pthread_thread.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_pthread_thread.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_readv_chain.c /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_readv_chain.c
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_readv_chain.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_readv_chain.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_recv.c /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_recv.c
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_recv.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_recv.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_send.c /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_send.c
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_send.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_send.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_setproctitle.c /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_setproctitle.c
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_setproctitle.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_setproctitle.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_setproctitle.h /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_setproctitle.h
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_setproctitle.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_setproctitle.h	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_shmem.c /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_shmem.c
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_shmem.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_shmem.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_shmem.h /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_shmem.h
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_shmem.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_shmem.h	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_socket.c /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_socket.c
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_socket.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_socket.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_socket.h /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_socket.h
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_socket.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_socket.h	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_solaris_config.h /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_solaris_config.h
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_solaris_config.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_solaris_config.h	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_solaris.h /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_solaris.h
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_solaris.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_solaris.h	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_solaris_init.c /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_solaris_init.c
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_solaris_init.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_solaris_init.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_solaris_sendfilev_chain.c /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_solaris_sendfilev_chain.c
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_solaris_sendfilev_chain.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_solaris_sendfilev_chain.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_sunpro_atomic_sparc64.h /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_sunpro_atomic_sparc64.h
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_sunpro_atomic_sparc64.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_sunpro_atomic_sparc64.h	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_thread.h /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_thread.h
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_thread.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_thread.h	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_time.c /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_time.c
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_time.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_time.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_time.h /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_time.h
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_time.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_time.h	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_udp_recv.c /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_udp_recv.c
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_udp_recv.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_udp_recv.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_user.c /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_user.c
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_user.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_user.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_user.h /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_user.h
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_user.h	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_user.h	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_writev_chain.c /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_writev_chain.c
+*** /tmp/patch.inc.get1.xfzxGB/src/os/unix/ngx_writev_chain.c	2013-04-30 11:28:22.531199163 +0200
+--- /tmp/patch.inc.get2.NvaVDz/src/os/unix/ngx_writev_chain.c	2013-04-30 11:28:25.731215018 +0200
+***************
+*** 1,6 ****
+--- 1,7 ----
+  
+  /*
+   * Copyright (C) Igor Sysoev
++  * Copyright (C) Nginx, Inc.
+   */
+  
+  

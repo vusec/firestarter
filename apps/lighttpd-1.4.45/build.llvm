@@ -1,0 +1,14 @@
+#!/bin/bash
+
+MYPWD=`pwd`
+ROOT=../..
+
+. $MYPWD/../scripts/include/build.llvm.inc
+
+PROG=lighttpd
+INPUT=src/lighttpd
+OUTPUT=install/sbin/${PROG}
+LIBS="-lpcre  -lcrypt"
+LINKER="$LLVMGOLD_CC"
+
+build_llvm "$@"

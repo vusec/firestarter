@@ -1,0 +1,33 @@
+#!/bin/bash
+
+PROC_NAME="lighttpd"
+BIN_PATH=`pwd`/install/sbin/lighttpd
+
+. ../scripts/include/cmdctl.inc
+
+PATCH_URL="http://download.lighttpd.net/lighttpd/releases-1.4.x"
+PATCH_BASE_VERSION="1.4.28"
+PATCH_PROG_PREFIX="lighttpd-"
+PATCH_PROG_SUFFIX=".tar.gz"
+function patch_list {
+    wget -O index.html -q ${PATCH_URL}/
+    cat index.html | grep ${PATCH_PROG_PREFIX}.*${PATCH_PROG_SUFFIX} | \
+        sed "s/.*${PATCH_PROG_PREFIX}\(.*\)${PATCH_PROG_SUFFIX}.*/\1/g" | \
+        grep -v deps | patch_list_sort | uniq
+    rm -f index.html
+}
+
+mode=$1
+shift || mode="no_action"
+
+case "$mode" in
+  'start')
+    echo "***** Starting $PROC_NAME server..."
+    cmdctl_server_check_not_running
+    eval $LLVM_CMD_PREFIX $BIN_PATH -f install/etc/lighttpd.conf $*
+    ;;
+  *)
+    cmdctl_server_action $mode $*
+    ;;
+esac
+

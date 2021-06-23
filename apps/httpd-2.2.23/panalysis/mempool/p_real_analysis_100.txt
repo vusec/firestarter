@@ -1,0 +1,26 @@
+               DATA           CONST          STRING         TEXT           HEAP           MAP            SHMEM          STACK          LIB            
+DATA           143            5              0              0              254            0              0              1              0              
+CONST          1229           105            0              0              1459           0              0              2              0              
+STRING         124            543            0              0              122            0              0              1              0              
+TEXT           0              0              0              0              0              0              0              0              0              
+HEAP           107            0              0              0              12476          0              0              3              0              
+MAP            0              0              0              0              0              0              0              0              0              
+SHMEM          0              0              0              0              3              0              0              0              0              
+STACK          5              0              0              0              8              0              0              3              0              
+LIB            3              0              0              0              4              0              0              0              0              
+
+# Total Number of Pointers
+# Rows: Target Objects
+# Columns: Source Objects
+
+
+Total # of target objects: 10120
+Total # of pointers: 16600
+# of data (.data, heap, map, etc.) objects: 8778
+# of pointers to data objects: 14054
+# of function objects: 1342
+# of pointers to function objects: 2546
+
+
+TOTAL_PTR      STATIC_SRC     STATIC_TRG     DYN_SRC        DYN_TRG        LIB_TRG        
+16600 &        2264 &         3988 &         14336 &        12605 &        7               \\

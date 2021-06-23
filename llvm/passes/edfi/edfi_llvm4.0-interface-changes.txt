@@ -1,0 +1,23 @@
+Changes in EDFI usage interface due to porting to LLVM 4.0 from LLVM 3.x
+------------------------------------------------------------------------
+
+1. Random_BB_FIF_Parser
+   used for random_BB_FIF
+
+   converted to cl::list<std::string> in the same format
+
+2. Name_FIF_Parser
+   used for functions_FIF, functioncallers_FIF, modules_FIF
+
+   all converted to cl::list<std::string>
+
+3. struct prob_opt
+   used for global_FIF, prob_default
+
+   remains as it is right now.
+
+4. Fault_Selector_Parser
+   used for fault_selector
+
+   converted to cl::list<std::string>
+

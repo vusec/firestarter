@@ -1,0 +1,43 @@
+diff -p -N --text -r /tmp/patch.inc.get1.BpLXTb/src/core/nginx.h /tmp/patch.inc.get2.vnxrZX/src/core/nginx.h
+*** /tmp/patch.inc.get1.BpLXTb/src/core/nginx.h	2013-04-29 23:58:03.185811703 +0200
+--- /tmp/patch.inc.get2.vnxrZX/src/core/nginx.h	2013-04-29 23:58:06.401827653 +0200
+***************
+*** 8,15 ****
+  #define _NGINX_H_INCLUDED_
+  
+  
+! #define nginx_version         8054
+! #define NGINX_VERSION      "0.8.54"
+  #define NGINX_VER          "nginx/" NGINX_VERSION
+  
+  #define NGINX_VAR          "NGINX"
+--- 8,15 ----
+  #define _NGINX_H_INCLUDED_
+  
+  
+! #define nginx_version         8055
+! #define NGINX_VERSION      "0.8.55"
+  #define NGINX_VER          "nginx/" NGINX_VERSION
+  
+  #define NGINX_VAR          "NGINX"
+diff -p -N --text -r /tmp/patch.inc.get1.BpLXTb/src/http/ngx_http_upstream.c /tmp/patch.inc.get2.vnxrZX/src/http/ngx_http_upstream.c
+*** /tmp/patch.inc.get1.BpLXTb/src/http/ngx_http_upstream.c	2013-04-29 23:58:03.181811688 +0200
+--- /tmp/patch.inc.get2.vnxrZX/src/http/ngx_http_upstream.c	2013-04-29 23:58:06.393827618 +0200
+*************** ngx_http_upstream_cache(ngx_http_request
+*** 666,671 ****
+--- 666,680 ----
+  
+          ngx_http_file_cache_create_key(r);
+  
++         if (r->cache->header_start >= u->conf->buffer_size) {
++             ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
++                 "cache key too large, increase upstream buffer size %uz",
++                 u->conf->buffer_size);
++ 
++             r->cache = NULL;
++             return NGX_DECLINED;
++         }
++ 
+          u->cacheable = 1;
+  
+          c = r->cache;

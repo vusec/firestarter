@@ -1,0 +1,15 @@
+#!/bin/bash
+
+MYPWD=`pwd`
+ROOT=../..
+
+. $MYPWD/../scripts/include/build.llvm.inc
+
+if [ "$#" -ne 0 ]; then
+    MAKEFILES="Makefile src/Makefile tests/Makefile"
+    build_llvm_clean_libs_from_files $MAKEFILES
+    build_llvm_add_libs_to_files "$*" "^LDFLAGS.=" $MAKEFILES
+fi
+
+rm -f src/lighttpd
+make install

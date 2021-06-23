@@ -1,0 +1,68 @@
+#!/bin/bash
+
+BENCH_TYPE=${BENCH_TYPE:-1}
+EDFI_WARMUP=${EDFI_WARMUP:-0}
+
+. ../scripts/include/cmdctl.inc
+
+TESTLIST="autoindex.t gzip.t http_expect_100_continue.t http_location.t http_server_name.t limit_req.t memcached_fake.t not_modified.t proxy_chunked.t proxy_noclose.t proxy_store.t proxy.t proxy_xar.t range.t rewrite.t rewrite_unescape.t ssi_include_big.t ssi_waited.t"
+
+: ${TEST_IDX=""}
+
+if [ ${BENCH_TYPE} -eq 3 ]; then
+    echo ${TESTLIST} | wc -w
+    exit 0;
+fi
+
+if [ $BENCH_TYPE -eq 2 ]; then
+    #RUNBENCH_CMD=${RUNBENCH_CMD:-prove autoindex.t gzip.t http_expect_100_continue.t http_location.t http_server_name.t limit_req.t memcached_fake.t not_modified.t proxy_chunked.t proxy_noclose.t proxy_store.t proxy.t proxy_xar.t range.t rewrite.t rewrite_unescape.t ssi_include_big.t ssi_waited.t}
+        RUNBENCH_CMD="prove"
+    if [ "${TEST_IDX}" != "" ]; then
+	echo "Total tests: `echo ${TESTLIST} | wc -w`, picked: ${TEST_IDX}"
+	RUNBENCH_CMD="${RUNBENCH_CMD} `echo ${TESTLIST} | cut -d' ' -f ${TEST_IDX}`"
+    else
+	RUNBENCH_CMD="${RUNBENCH_CMD} ${TESTLIST}"
+    fi
+    BENCH_PERSISTENT=${BENCH_PERSISTENT:-0}
+    NGINX_BIN=$( ./serverctl bin )
+
+    rm -rf /tmp/nginx-tests*
+    TESTDIR=$(mktemp -d --tmpdir nginx-testsXXXXXX)
+    if [ $BENCH_PERSISTENT -eq 1 ]; then
+        cat tests/nginx-tests/all.nginx.conf | sed "s|%%ROOTDIR%%|$TESTDIR|g" > $TESTDIR/all.nginx.conf
+        ./serverctl cleanup 
+        ./serverctl start -c $TESTDIR/all.nginx.conf &
+        while ! lsof -ti tcp:8080 &> /dev/null; do sleep 0.2; done
+	if [ "${EDFI_BBTRACING}" == "1" ]; then
+	    if [ "${EDFI_WARMUP}" == "1" ]; then
+    		(cd tests/nginx-tests 			\
+		    && echo "EDFI_WARMUP... Press any key" \
+		    && \
+		    TEST_NGINX_PREFIXED=1 TEST_NGINX_TESTDIR=$TESTDIR \
+		    TEST_NGINX_PERSISTENT=$BENCH_PERSISTENT TEST_NGINX_BINARY=$NGINX_BIN \
+	            TEST_NGINX_UNSAFE=1 \
+        	    RUNBENCH_CMD="prove autoindex.t " cmdctl_runbench )
+	    fi
+
+	    kill -s TTOU `cat $TESTDIR/nginx.pid`
+	fi
+	if [ "${GDB_ATTACH}" == "1" ]; then
+	    echo "Nginx PIDs:"
+	    pgrep nginx
+	    echo "Attach gdb and press any key to continue..."
+	    read x
+	 fi
+    fi
+
+    cd tests/nginx-tests
+    TEST_NGINX_PREFIXED=1 TEST_NGINX_TESTDIR=$TESTDIR TEST_NGINX_PERSISTENT=$BENCH_PERSISTENT TEST_NGINX_BINARY=$NGINX_BIN TEST_NGINX_UNSAFE=1 \
+        RUNBENCH_CMD="$RUNBENCH_CMD" cmdctl_runbench
+
+    if [ "${EDFI_BBTRACING}" == "1" ]; then
+        kill -s TTIN `cat $TESTDIR/nginx.pid`
+    fi
+    exit 0
+fi
+
+../httpd*/runbench
+

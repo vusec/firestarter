@@ -1,0 +1,15 @@
+#!/bin/bash
+
+MYPWD=`pwd`
+ROOT=${LLVMAPPS_ROOT-../../}
+
+. ${ROOT}/apps/scripts/include/build.llvm.inc
+
+if [ "$#" -ne 0 ]; then
+    MAKEFILES="objs.configure/Makefile objs/Makefile"
+    build_llvm_clean_libs_from_files $MAKEFILES
+    build_llvm_add_libs_to_files "$*" "\$(LINK)" $MAKEFILES
+fi
+
+rm -f nginx.bcl nginx.bc objs/nginx
+make -j `grep -c ^processor /proc/cpuinfo` install

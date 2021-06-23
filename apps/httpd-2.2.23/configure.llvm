@@ -1,0 +1,28 @@
+#!/bin/bash
+
+MYPWD=`pwd`
+ROOT=../..
+
+. $MYPWD/../scripts/include/configure.llvm.inc
+
+LLVM_LIBS=`build_llvm_libs $*`
+
+#possible values of MPMODULE: prefork, worker 
+if [[ -z $MPMODULE ]]; then
+MPMODULE=worker
+fi
+
+: ${RCVRY_BUG_54779=0}
+if [ ${RCVRY_BUG_54779} -ne 0 ]; then
+    LLVMGOLD_CFLAGS+=" -DRCVRY_BUG_54779 "
+fi
+
+./configure --disable-shared --enable-mods-static=reallyall --enable-headers=static --enable-so --with-mpm=$MPMODULE --with-port=1080 --with-sslport=10443 --enable-proxy-balancer --enable-proxy --enable-static-support \
+   --enable-static-htpasswd --with-included-apr --prefix=$MYPWD/install \
+   CC="$LLVMGOLD_CC" \
+   CXX="$LLVMGOLD_CXX" \
+   CFLAGS="$LLVMGOLD_CFLAGS" \
+   LDFLAGS="$LLVM_LIBS $LLVMGOLD_LDFLAGS" \
+   RANLIB="$LLVMGOLD_RANLIB" \
+   AR_FLAGS="$LLVMGOLD_AR_FLAGS"
+

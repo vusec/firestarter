@@ -1,0 +1,33 @@
+#!/bin/bash
+
+BENCH_TYPE=${BENCH_TYPE:-1}
+ONE_PROCESS=${ONE_PROCESS:-0}
+
+. ../scripts/include/cmdctl.inc
+
+if [ $BENCH_TYPE -eq 2 ]; then
+    if [ ! -d tests/perl-framework ]; then
+        APACHE_BIN_DIR=$( pwd )/install/bin
+        echo "**** Configuring Apache test suite..."
+        mkdir -p tests/
+        svn co http://svn.apache.org/repos/asf//httpd/test/framework/trunk tests/perl-framework
+        echo "**** Configuring required perl modules (say [no] to tests requiring network connectivity)..."
+        perl -MCPAN -e 'install Bundle::ApacheTest'
+        echo "**** Building Apache test suite..."
+        (cd tests/perl-framework && perl Makefile.PL -apxs $APACHE_BIN_DIR/apxs )
+    fi
+    cd tests/perl-framework
+    if [ $ONE_PROCESS -eq 1 ]; then
+        RUNBENCH_CMD="t/TEST -one-process" cmdctl_runbench
+    else
+        RUNBENCH_CMD="t/TEST" cmdctl_runbench
+    fi
+    exit 0
+fi
+
+RUNBENCH_CMD="../httpd*/runabench" cmdctl_runbench  \
+    "^Concurrency.Level:\s*\([0-9]*\).*$::::num_threads=\1" \
+    "^Complete.requests:\s*\([0-9]*\).*$::::num_requests=\1" \
+    "^Failed.requests:\s*\([0-9]*\).*$::::num_failed_requests=\1" \
+    "^Requests.per.second:\s*\([0-9.]*\).*$::::requests_per_sec=\1" \
+    "^Time.taken.for.tests:\s*\([0-9.]*\).*$::::bench_secs=\1"

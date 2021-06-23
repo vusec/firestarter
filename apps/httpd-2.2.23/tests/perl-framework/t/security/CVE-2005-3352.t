@@ -1,0 +1,23 @@
+use strict;
+use warnings FATAL => 'all';
+
+use Apache::Test;
+use Apache::TestUtil;
+use Apache::TestRequest;
+
+my $vars = Apache::Test::vars();
+
+plan tests => 2, need_imagemap;
+
+my $url = "/security/CVE-2005-3352.map";
+
+my $r = GET $url, Referer => '">http://fish/';
+
+ok t_cmp($r->code, 200, "response code is OK");
+
+if ((!have_min_apache_version('2.3') && have_min_apache_version('2.2.24')) ||
+    have_min_apache_version('2.4.4')) {
+    ok t_cmp($r->content, qr/%22%3e/, "referer was escaped");
+} else {
+    ok t_cmp($r->content, qr/\&quot/, "referer was escaped");
+}

@@ -1,0 +1,56 @@
+diff -p -N --text -r /tmp/patch.inc.get1.gfFC2q/src/core/nginx.h /tmp/patch.inc.get2.lfrK3d/src/core/nginx.h
+*** /tmp/patch.inc.get1.gfFC2q/src/core/nginx.h	2013-04-29 23:58:16.145875972 +0200
+--- /tmp/patch.inc.get2.lfrK3d/src/core/nginx.h	2013-04-29 23:58:19.453892375 +0200
+***************
+*** 8,15 ****
+  #define _NGINX_H_INCLUDED_
+  
+  
+! #define nginx_version         9000
+! #define NGINX_VERSION      "0.9.0"
+  #define NGINX_VER          "nginx/" NGINX_VERSION
+  
+  #define NGINX_VAR          "NGINX"
+--- 8,15 ----
+  #define _NGINX_H_INCLUDED_
+  
+  
+! #define nginx_version         9001
+! #define NGINX_VERSION      "0.9.1"
+  #define NGINX_VER          "nginx/" NGINX_VERSION
+  
+  #define NGINX_VAR          "NGINX"
+diff -p -N --text -r /tmp/patch.inc.get1.gfFC2q/src/http/ngx_http_core_module.c /tmp/patch.inc.get2.lfrK3d/src/http/ngx_http_core_module.c
+*** /tmp/patch.inc.get1.gfFC2q/src/http/ngx_http_core_module.c	2013-04-29 23:58:16.141875956 +0200
+--- /tmp/patch.inc.get2.lfrK3d/src/http/ngx_http_core_module.c	2013-04-29 23:58:19.449892353 +0200
+*************** ngx_http_core_rewrite_phase(ngx_http_req
+*** 900,910 ****
+  
+      rc = ph->handler(r);
+  
+-     if (rc == NGX_OK) {
+-         r->phase_handler = ph->next;
+-         return NGX_AGAIN;
+-     }
+- 
+      if (rc == NGX_DECLINED) {
+          r->phase_handler++;
+          return NGX_AGAIN;
+--- 900,905 ----
+*************** ngx_http_core_rewrite_phase(ngx_http_req
+*** 914,920 ****
+          return NGX_OK;
+      }
+  
+!     /* NGX_AGAIN || rc == NGX_ERROR || rc == NGX_HTTP_...  */
+  
+      ngx_http_finalize_request(r, rc);
+  
+--- 909,915 ----
+          return NGX_OK;
+      }
+  
+!     /* NGX_OK, NGX_AGAIN, NGX_ERROR, NGX_HTTP_...  */
+  
+      ngx_http_finalize_request(r, rc);
+  

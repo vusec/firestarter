@@ -1,0 +1,35 @@
+#!/bin/bash
+
+MYPWD=`pwd`
+ROOT=../..
+
+. $ROOT/apps/scripts/include/configure.llvm.inc
+
+: ${LIGHTTPD_STATIC=0}
+
+LLVM_LIBS=`build_llvm_libs $*`
+CONFIGURE_EXTRA=
+
+if [ 0 != ${LIGHTTPD_STATIC} ]; then
+	CONFIGURE_EXTRA="   \
+        --enable-static=yes \
+	LIGHTTPD_STATIC=yes"
+fi
+#        --without-zlib      \
+#	--without-pcre	    \
+#
+
+./configure \
+        --without-bzip2 \
+	--without-zlib \
+	--disable-ipv6 \
+        --prefix=$MYPWD/install \
+	${CONFIGURE_EXTRA} \
+        CC="$LLVMGOLD_CC" \
+        CFLAGS="$CFLAGS $LLVMGOLD_CFLAGS" \
+        LDFLAGS="$LLVM_LIBS $LLVMGOLD_LDFLAGS"
+
+mkdir -p install/etc
+SEDPWD=`echo $MYPWD | sed "s/\//\\\\\\\\\//g"`
+cat lighttpd.conf | sed "s/DOCUMENT_ROOT/\"$SEDPWD\/htdocs\"/g" > install/etc/lighttpd.conf
+

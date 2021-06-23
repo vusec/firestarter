@@ -1,0 +1,29 @@
+************************************************************************
+ How to build/instrument/install/run sysbench
+************************************************************************
+
+0. Build workaround
+make distclean && libtoolize --force --copy && ./autogen.sh
+
+1. First build (llvm_lib_list is optional, for instrumentation libraries):
+./configure.llvm [llvm_lib_list] #e.g. llvm_lib_list=edfi
+make
+make install
+
+2. Run mysqld
+
+3. Connect to mysql and create sbtest database
+./../mysql-5.1.65/install/bin/mysql --port 3307 --socket ./../mysql-5.1.65/install/mysql.sock -uroot -proot
+> create database sbtest
+> quit
+
+4. Run sysbench 
+
+# Prepare the db
+./install/bin/sysbench --db-driver=mysql --test=oltp --mysql-port=3307 --mysql-table-engine=innodb --oltp-table-size=1000000 --mysql-socket=./../mysql-5.1.65/install/mysql.sock --mysql-user=root --mysql-password=root prepare
+
+# Read-only
+./install/bin/sysbench --db-driver=mysql --oltp-read-only --num-threads=16 --max-requests=100000 --test=oltp --mysql-port=3307 --mysql-table-engine=innodb --oltp-table-size=1000000 --mysql-socket=./../mysql-5.1.65/install/mysql.sock --mysql-user=root --mysql-password=root run 
+
+# Read-write
+./install/bin/sysbench --db-driver=mysql --oltp-test-mode=complex --num-threads=16 --max-requests=100000 --test=oltp --mysql-port=3307 --mysql-table-engine=innodb --oltp-table-size=1000000 --mysql-socket=./../mysql-5.1.65/install/mysql.sock --mysql-user=root --mysql-password=root run 

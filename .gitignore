@@ -1,0 +1,12 @@
+.tmp/
+bin/
+*.o
+*.bcc
+*.bc
+*.bcl
+*.ll
+*.resolution.txt
+autosetup-log.txt
+apps/autosetup-paths.inc
+*.log
+autosetup.dir/

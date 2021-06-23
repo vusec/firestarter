@@ -1,0 +1,14 @@
+#!/bin/bash
+
+: ${MAKECHECK=0}
+
+if [ ${MAKECHECK} -eq 1 ]; then
+	make installcheck
+	exit 0
+fi
+
+#
+# RUNBENCH_WORKLOAD="read_write" won't work for postgres
+#
+RUNBENCH_WORKLOAD="read" DBMS_OPTIONS="--db-driver=pgsql --pgsql-port=1080 --pgsql-db=test --pgsql-user=$USER" ../mysql*/runbench
+

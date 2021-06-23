@@ -1,0 +1,4230 @@
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/include/ap_mmn.h /tmp/patch.inc.get2.dIah1X/include/ap_mmn.h
+*** /tmp/patch.inc.get1.f0Yx3d/include/ap_mmn.h	2013-04-28 19:22:19.287340477 +0200
+--- /tmp/patch.inc.get2.dIah1X/include/ap_mmn.h	2013-04-28 19:22:38.595436226 +0200
+***************
+*** 212,226 ****
+   *                         to proxy_ftp_dir_conf(mod_proxy_ftp)
+   * 20091230.1 (2.3.5-dev)  add util_ldap_state_t.opTimeout
+   * 20091230.2 (2.3.5-dev)  add ap_get_server_name_for_url()
+!  *
+   */
+  
+  #define MODULE_MAGIC_COOKIE 0x41503234UL /* "AP24" */
+  
+  #ifndef MODULE_MAGIC_NUMBER_MAJOR
+! #define MODULE_MAGIC_NUMBER_MAJOR 20091230
+  #endif
+! #define MODULE_MAGIC_NUMBER_MINOR 2                     /* 0...n */
+  
+  /**
+   * Determine if the server's current MODULE_MAGIC_NUMBER is at least a
+--- 212,241 ----
+   *                         to proxy_ftp_dir_conf(mod_proxy_ftp)
+   * 20091230.1 (2.3.5-dev)  add util_ldap_state_t.opTimeout
+   * 20091230.2 (2.3.5-dev)  add ap_get_server_name_for_url()
+!  * 20091230.3 (2.3.6-dev)  add ap_parse_log_level()
+!  * 20091230.4 (2.3.6-dev)  export ap_process_request_after_handler() for mod_serf
+!  * 20100208.0 (2.3.6-dev)  ap_socache_provider_t API changes to store and iterate
+!  * 20100208.1 (2.3.6-dev)  Added forward member to proxy_conn_rec
+!  * 20100208.2 (2.3.6-dev)  Added ap_log_command_line().
+!  * 20100223.0 (2.3.6-dev)  LDAP client_certs per-server moved to per-dir
+!  * 20100223.1 (2.3.6-dev)  Added ap_process_fnmatch_configs().
+!  * 20100504.0 (2.3.6-dev)  Added name arg to ap_{proc,global}_mutex_create().
+!  * 20100604.0 (2.3.6-dev)  Remove unused core_dir_config::loglevel
+!  * 20100606.0 (2.3.6-dev)  Make ap_log_*error macro wrappers around
+!  *                         ap_log_*error_ to save argument preparation and
+!  *                         function call overhead.
+!  *                         Introduce per-module loglevels
+!  * 20100606.1 (2.3.6-dev)  Added extended timestamp formatting via
+!  *                         ap_recent_ctime_ex().
+!  * 20100609.0 (2.3.6-dev)  Dropped ap_args_to_table due to missing constraints.
+   */
+  
+  #define MODULE_MAGIC_COOKIE 0x41503234UL /* "AP24" */
+  
+  #ifndef MODULE_MAGIC_NUMBER_MAJOR
+! #define MODULE_MAGIC_NUMBER_MAJOR 20100609
+  #endif
+! #define MODULE_MAGIC_NUMBER_MINOR 0                     /* 0...n */
+  
+  /**
+   * Determine if the server's current MODULE_MAGIC_NUMBER is at least a
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/include/ap_mpm.h /tmp/patch.inc.get2.dIah1X/include/ap_mpm.h
+*** /tmp/patch.inc.get1.f0Yx3d/include/ap_mpm.h	2013-04-28 19:22:19.287340477 +0200
+--- /tmp/patch.inc.get2.dIah1X/include/ap_mpm.h	2013-04-28 19:22:38.595436226 +0200
+*************** AP_DECLARE(apr_status_t) ap_os_create_pr
+*** 113,127 ****
+      apr_pool_t *p);
+  
+  /* Subtypes/Values for AP_MPMQ_IS_THREADED and AP_MPMQ_IS_FORKED        */
+! #define AP_MPMQ_NOT_SUPPORTED      0  /* This value specifies whether */
+!                                       /* an MPM is capable of         */
+                                        /* threading or forking.        */
+! #define AP_MPMQ_STATIC             1  /* This value specifies whether */
+!                                       /* an MPM is using a static #   */
+!                                       /* threads or daemons.          */
+! #define AP_MPMQ_DYNAMIC            2  /* This value specifies whether */
+!                                       /* an MPM is using a dynamic #  */
+!                                       /* threads or daemons.          */
+  
+  /* Values returned for AP_MPMQ_MPM_STATE */
+  #define AP_MPMQ_STARTING              0
+--- 113,127 ----
+      apr_pool_t *p);
+  
+  /* Subtypes/Values for AP_MPMQ_IS_THREADED and AP_MPMQ_IS_FORKED        */
+! #define AP_MPMQ_NOT_SUPPORTED      0  /* This value specifies that an */
+!                                       /* MPM is not capable of        */
+                                        /* threading or forking.        */
+! #define AP_MPMQ_STATIC             1  /* This value specifies that    */
+!                                       /* an MPM is using a static     */
+!                                       /* number of threads or daemons */
+! #define AP_MPMQ_DYNAMIC            2  /* This value specifies that    */
+!                                       /* an MPM is using a dynamic    */
+!                                       /* number of threads or daemons */
+  
+  /* Values returned for AP_MPMQ_MPM_STATE */
+  #define AP_MPMQ_STARTING              0
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/include/ap_release.h /tmp/patch.inc.get2.dIah1X/include/ap_release.h
+*** /tmp/patch.inc.get1.f0Yx3d/include/ap_release.h	2013-04-28 19:22:19.287340477 +0200
+--- /tmp/patch.inc.get2.dIah1X/include/ap_release.h	2013-04-28 19:22:38.595436226 +0200
+***************
+*** 45,51 ****
+  
+  #define AP_SERVER_MAJORVERSION_NUMBER 2
+  #define AP_SERVER_MINORVERSION_NUMBER 3
+! #define AP_SERVER_PATCHLEVEL_NUMBER   5
+  #define AP_SERVER_DEVBUILD_BOOLEAN    0
+  
+  #if AP_SERVER_DEVBUILD_BOOLEAN
+--- 45,51 ----
+  
+  #define AP_SERVER_MAJORVERSION_NUMBER 2
+  #define AP_SERVER_MINORVERSION_NUMBER 3
+! #define AP_SERVER_PATCHLEVEL_NUMBER   6
+  #define AP_SERVER_DEVBUILD_BOOLEAN    0
+  
+  #if AP_SERVER_DEVBUILD_BOOLEAN
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/include/ap_socache.h /tmp/patch.inc.get2.dIah1X/include/ap_socache.h
+*** /tmp/patch.inc.get1.f0Yx3d/include/ap_socache.h	2013-04-28 19:22:19.295340518 +0200
+--- /tmp/patch.inc.get2.dIah1X/include/ap_socache.h	2013-04-28 19:22:38.595436226 +0200
+***************
+*** 29,34 ****
+--- 29,35 ----
+  #include "httpd.h"
+  #include "ap_provider.h"
+  #include "apr_pools.h"
++ #include "apr_time.h"
+  
+  #ifdef __cplusplus
+  extern "C" {
+*************** extern "C" {
+*** 37,43 ****
+  /** If this flag is set, the store/retrieve/remove/status interfaces
+   * of the provider are NOT safe to be called concurrently from
+   * multiple processes or threads, and an external global mutex must be
+!  * used to serialize access to the provider. */
+  #define AP_SOCACHE_FLAG_NOTMPSAFE (0x0001)
+  
+  /** A cache instance. */
+--- 38,48 ----
+  /** If this flag is set, the store/retrieve/remove/status interfaces
+   * of the provider are NOT safe to be called concurrently from
+   * multiple processes or threads, and an external global mutex must be
+!  * used to serialize access to the provider.
+!  */
+! /* XXX: Even if store/retrieve/remove is atomic, isn't it useful to note
+!  * independently that status and iterate may or may not be?
+!  */
+  #define AP_SOCACHE_FLAG_NOTMPSAFE (0x0001)
+  
+  /** A cache instance. */
+*************** struct ap_socache_hints {
+*** 50,60 ****
+      apr_size_t avg_id_len;
+      /** Approximate average size of objects: */
+      apr_size_t avg_obj_size;
+!     /** Interval (in seconds) after which an expiry run is
+!      * necessary. */
+!     time_t expiry_interval;
+  };
+  
+  /** A socache provider structure.  socache providers are registered
+   * with the ap_provider.h interface using the AP_SOCACHE_PROVIDER_*
+   * constants. */
+--- 55,86 ----
+      apr_size_t avg_id_len;
+      /** Approximate average size of objects: */
+      apr_size_t avg_obj_size;
+!     /** Suggested interval between expiry cleanup runs; */
+!     apr_interval_time_t expiry_interval;
+  };
+  
++ /**
++  * Iterator callback prototype for the ap_socache_provider_t->iterate() method
++  * @param instance The cache instance (passed through)
++  * @param s Associated server structure (passed through)
++  * @param id Unique ID for the object (binary blob)
++  * with a trailing null char for convenience
++  * @param idlen Length of id blob
++  * @param data Output buffer to place retrieved data (binary blob)
++  * with a trailing null char for convenience
++  * @param datalen Length of data buffer
++  * @param pool Pool for temporary allocations (passed through)
++  * @return APR status value; return APR_SUCCESS or the iteration will halt;
++  * this value is returned to the ap_socache_provider_t->iterate() caller
++  */
++ typedef apr_status_t (*ap_socache_iterator_t)(ap_socache_instance_t *instance,
++                                               server_rec *s,
++                                               const unsigned char *id,
++                                               unsigned int idlen,
++                                               const unsigned char *data,
++                                               unsigned int datalen,
++                                               apr_pool_t *pool);
++ 
+  /** A socache provider structure.  socache providers are registered
+   * with the ap_provider.h interface using the AP_SOCACHE_PROVIDER_*
+   * constants. */
+*************** typedef struct ap_socache_provider_t {
+*** 121,127 ****
+       */
+      apr_status_t (*store)(ap_socache_instance_t *instance, server_rec *s, 
+                            const unsigned char *id, unsigned int idlen, 
+!                           time_t expiry, 
+                            unsigned char *data, unsigned int datalen,
+                            apr_pool_t *pool);
+  
+--- 147,153 ----
+       */
+      apr_status_t (*store)(ap_socache_instance_t *instance, server_rec *s, 
+                            const unsigned char *id, unsigned int idlen, 
+!                           apr_time_t expiry, 
+                            unsigned char *data, unsigned int datalen,
+                            apr_pool_t *pool);
+  
+*************** typedef struct ap_socache_provider_t {
+*** 156,167 ****
+--- 182,209 ----
+  
+      /** Dump the status of a cache instance for mod_status.  Will use
+       * the ap_r* interfaces to produce appropriate status output.
++      * XXX: ap_r* are deprecated, bad dogfood
+       *
+       * @param instance The cache instance
+       * @param r The request structure
+       * @param flags The AP_STATUS_* constants used (see mod_status.h)
+       */
+      void (*status)(ap_socache_instance_t *instance, request_rec *r, int flags);
++ 
++     /**
++      * Dump all cached objects through an iterator callback.
++      * @param instance The cache instance
++      * @param s Associated server structure (for logging purposes)
++      * @param iterator The user provided callback which will receive
++      * individual calls for each unexpired id/data pair
++      * @param pool Pool for temporary allocations.
++      * @return APR status value; APR_NOTFOUND if the object was not
++      * found
++      */
++     apr_status_t (*iterate)(ap_socache_instance_t *instance, server_rec *s,
++                             ap_socache_iterator_t *iterator,
++                             apr_pool_t *pool);
++ 
+  } ap_socache_provider_t;
+  
+  /** The provider group used to register socache providers. */
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/include/http_config.h /tmp/patch.inc.get2.dIah1X/include/http_config.h
+*** /tmp/patch.inc.get1.f0Yx3d/include/http_config.h	2013-04-28 19:22:19.295340518 +0200
+--- /tmp/patch.inc.get2.dIah1X/include/http_config.h	2013-04-28 19:22:38.595436226 +0200
+***************
+*** 28,33 ****
+--- 28,34 ----
+  
+  #include "apr_hooks.h"
+  #include "util_cfgtree.h"
++ #include "ap_config.h"
+  
+  #ifdef __cplusplus
+  extern "C" {
+*************** enum cmd_how {
+*** 64,69 ****
+--- 65,71 ----
+      TAKE13,			/**< one or three arguments */
+      TAKE_ARGV			/**< an argc and argv are passed */
+  };
++ 
+  /**
+   * This structure is passed to a command which is being invoked,
+   * to carry a large variety of miscellaneous data which is all of
+*************** struct module_struct {
+*** 393,398 ****
+--- 395,411 ----
+      void (*register_hooks) (apr_pool_t *p);
+  };
+  
++ /*
++  * Macro to choose which module a file belongs to, for logging.
++  */
++ #define APLOG_USE_MODULE(foo) \
++     extern module AP_MODULE_DECLARE_DATA foo##_module;                  \
++     static int * const aplog_module_index = &(foo##_module.module_index)
++ 
++ #define AP_DECLARE_MODULE(foo) \
++     APLOG_USE_MODULE(foo);                         \
++     module AP_MODULE_DECLARE_DATA foo##_module
++ 
+  /**
+   * @defgroup ModuleInit Module structure initializers
+   *
+*************** AP_DECLARE(void) ap_set_module_config(ap
+*** 469,474 ****
+--- 482,555 ----
+  
+  
+  /**
++  * Generic accessor for modules to get the module-specific loglevel
++  * @param s The server from which to get the loglevel.
++  * @param index The module_index of the module to get the loglevel for.
++  * @return The module-specific loglevel
++  */
++ AP_DECLARE(int) ap_get_server_module_loglevel(const server_rec *s, int index);
++ 
++ /**
++  * Generic accessor for modules the module-specific loglevel
++  * @param c The connection from which to get the loglevel.
++  * @param index The module_index of the module to get the loglevel for.
++  * @return The module-specific loglevel
++  */
++ AP_DECLARE(int) ap_get_conn_module_loglevel(const conn_rec *c, int index);
++ 
++ /**
++  * Generic accessor for modules to get the module-specific loglevel
++  * @param r The request from which to get the loglevel.
++  * @param index The module_index of the module to get the loglevel for.
++  * @return The module-specific loglevel
++  */
++ AP_DECLARE(int) ap_get_request_module_loglevel(const request_rec *r, int index);
++ 
++ /**
++  * Accessor to set module-specific loglevel
++  * @param p A pool
++  * @param s The server for which to set the loglevel.
++  * @param index The module_index of the module to set the loglevel for.
++  * @param level The new log level
++  */
++ AP_DECLARE(void) ap_set_module_loglevel(apr_pool_t *p, struct ap_logconf *l,
++                                         int index, int level);
++ 
++ #if !defined(AP_DEBUG)
++ 
++ #define ap_get_conn_logconf(c)                     \
++     ((c)->log             ? (c)->log             : \
++      &(c)->base_server->log)
++ 
++ #define ap_get_request_logconf(r)                  \
++     ((r)->log             ? (r)->log             : \
++      (r)->connection->log ? (r)->connection->log : \
++      &(r)->server->log)
++ 
++ #define ap_get_module_loglevel(l,i)                                     \
++     (((i) < 0 || (l)->module_levels == NULL || (l)->module_levels[i] < 0) ?  \
++      (l)->level :                                                         \
++      (l)->module_levels[i])
++ 
++ #define ap_get_server_module_loglevel(s,i)  \
++     (ap_get_module_loglevel(&(s)->log,i))
++ 
++ #define ap_get_conn_module_loglevel(c,i)  \
++     (ap_get_module_loglevel(ap_get_conn_logconf(c),i))
++ 
++ #define ap_get_request_module_loglevel(r,i)  \
++     (ap_get_module_loglevel(ap_get_request_logconf(r),i))
++ 
++ #endif /* AP_DEBUG */
++ 
++ /**
++  * Set all module-specific loglevels to val
++  * @param l The log config for which to set the loglevels.
++  * @param val the value to set all loglevels to
++  */
++ AP_DECLARE(void) ap_reset_module_loglevels(struct ap_logconf *l, int val);
++ 
++ /**
+   * Generic command handling function for strings
+   * @param cmd The command parameters for this directive
+   * @param struct_ptr pointer into a given type
+*************** AP_DECLARE_NONSTD(const char *) ap_set_i
+*** 491,496 ****
+--- 572,585 ----
+                                                  const char *arg);
+  
+  /**
++  * Parsing function for log level
++  * @param str The string to parse
++  * @param val The parsed log level
++  * @return An error string or NULL on success
++  */
++ AP_DECLARE(const char *) ap_parse_log_level(const char *str, int *val);
++ 
++ /**
+   * Return true if the specified method is limited by being listed in
+   * a &lt;Limit&gt; container, or by *not* being listed in a &lt;LimitExcept&gt;
+   * container.
+*************** AP_CORE_DECLARE(ap_conf_vector_t*) ap_me
+*** 851,856 ****
+--- 940,963 ----
+                                             ap_conf_vector_t *base,
+                                             ap_conf_vector_t *new_conf);
+  
++ /**
++  * Allocate new ap_logconf and make (deep) copy of old ap_logconf
++  * @param p The pool to alloc from
++  * @param old The ap_logconf to copy (may be NULL)
++  * @return The new ap_logconf struct
++  */
++ AP_DECLARE(struct ap_logconf *) ap_new_log_config(apr_pool_t *p,
++                                                   const struct ap_logconf *old);
++ 
++ /**
++  * Merge old ap_logconf into new ap_logconf.
++  * old and new must have the same life time.
++  * @param old The ap_logconf to merge from
++  * @param new The ap_logconf to merge into
++  */
++ AP_DECLARE(void) ap_merge_log_config(const struct ap_logconf *old,
++                                      struct ap_logconf *new);
++ 
+  /* For http_connection.c... */
+  /**
+   * Setup the config vector for a connection_rec
+*************** AP_CORE_DECLARE(const char *) ap_init_vi
+*** 892,898 ****
+                                                     server_rec **ps);
+  
+  /**
+!  * Process the config file for Apache
+   * @param s The server rec to use for the command parms
+   * @param fname The name of the config file
+   * @param conftree The root node of the created config tree
+--- 999,1005 ----
+                                                     server_rec **ps);
+  
+  /**
+!  * Process a config file for Apache
+   * @param s The server rec to use for the command parms
+   * @param fname The name of the config file
+   * @param conftree The root node of the created config tree
+*************** AP_DECLARE(const char *) ap_process_reso
+*** 906,911 ****
+--- 1013,1035 ----
+                                                      apr_pool_t *ptemp);
+  
+  /**
++  * Process all matching files as Apache configs
++  * @param s The server rec to use for the command parms
++  * @param fname The filename pattern of the config file
++  * @param conftree The root node of the created config tree
++  * @param p Pool for general allocation
++  * @param ptemp Pool for temporary allocation
++  * @param optional Whether a no-match wildcard is allowed
++  * @see apr_fnmatch for pattern handling
++  */
++ AP_DECLARE(const char *) ap_process_fnmatch_configs(server_rec *s,
++                                                     const char *fname,
++                                                     ap_directive_t **conftree,
++                                                     apr_pool_t *p,
++                                                     apr_pool_t *ptemp,
++                                                     int optional);
++ 
++ /**
+   * Process all directives in the config tree
+   * @param s The server rec to use in the command parms
+   * @param conftree The config tree to process
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/include/http_core.h /tmp/patch.inc.get2.dIah1X/include/http_core.h
+*** /tmp/patch.inc.get1.f0Yx3d/include/http_core.h	2013-04-28 19:22:19.287340477 +0200
+--- /tmp/patch.inc.get2.dIah1X/include/http_core.h	2013-04-28 19:22:38.595436226 +0200
+*************** typedef struct {
+*** 496,503 ****
+  
+      server_signature_e server_signature;
+  
+-     int loglevel;
+-     
+      /* Access control */
+      apr_array_header_t *sec_file;
+      ap_regex_t *r;
+--- 496,501 ----
+*************** typedef struct {
+*** 538,543 ****
+--- 536,544 ----
+      unsigned use_canonical_phys_port : 2;
+  
+      ap_parse_node_t *condition;   /* Conditionally merge <If> sections */
++ 
++     /** per-dir log config */
++     struct ap_logconf *log;
+  } core_dir_config;
+  
+  /* Per-server core configuration */
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/include/httpd.h /tmp/patch.inc.get2.dIah1X/include/httpd.h
+*** /tmp/patch.inc.get1.f0Yx3d/include/httpd.h	2013-04-28 19:22:19.295340518 +0200
+--- /tmp/patch.inc.get2.dIah1X/include/httpd.h	2013-04-28 19:22:38.595436226 +0200
+*************** struct request_rec {
+*** 977,982 ****
+--- 977,987 ----
+       *  request */
+      struct ap_filter_t *proto_input_filters;
+  
++     /** Optional request log level configuration. Will usually point
++      *  to a server or per_dir config, i.e. must be copied before
++      *  modifying */
++     const struct ap_logconf *log;
++  
+      /** A flag to determine if the eos bucket has been sent yet */
+      int eos_sent;
+  
+*************** struct conn_rec {
+*** 1094,1099 ****
+--- 1099,1108 ----
+       */
+      int clogging_input_filters;
+      
++     /** Optional connection log level configuration. May point to a server or
++      *  per_dir config, i.e. must be copied before modifying */
++     const struct ap_logconf *log;
++ 
+      /** This points to the current thread being used to process this request,
+       * over the lifetime of a request, the value may change. Users of the connection
+       * record should not rely upon it staying the same between calls that invole
+*************** struct server_addr_rec {
+*** 1161,1166 ****
+--- 1170,1182 ----
+      char *virthost;
+  };
+  
++ struct ap_logconf {
++     /** The per-module log levels */
++     int *module_levels;
++ 
++     /** The log level for this server */
++     int level;
++ };
+  /** 
+   * @brief A structure to store information for each virtual server 
+   */
+*************** struct server_rec {
+*** 1190,1197 ****
+      char *error_fname;
+      /** A file descriptor that references the error log */
+      apr_file_t *error_log;
+!     /** The log level for this server */
+!     int loglevel;
+  
+      /* Module-specific configuration for server, and defaults... */
+  
+--- 1206,1213 ----
+      char *error_fname;
+      /** A file descriptor that references the error log */
+      apr_file_t *error_log;
+!     /** The log level configuration */
+!     struct ap_logconf log;
+  
+      /* Module-specific configuration for server, and defaults... */
+  
+*************** AP_DECLARE(void) ap_pregfree(apr_pool_t
+*** 1705,1710 ****
+--- 1721,1727 ----
+   * @param source The string that was originally matched to the regex
+   * @param nmatch the nmatch returned from ap_pregex
+   * @param pmatch the pmatch array returned from ap_pregex
++  * @return The substituted string, or NULL on error
+   */
+  AP_DECLARE(char *) ap_pregsub(apr_pool_t *p, const char *input, const char *source,
+                                size_t nmatch, ap_regmatch_t pmatch[]);
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/include/http_log.h /tmp/patch.inc.get2.dIah1X/include/http_log.h
+*** /tmp/patch.inc.get1.f0Yx3d/include/http_log.h	2013-04-28 19:22:19.295340518 +0200
+--- /tmp/patch.inc.get2.dIah1X/include/http_log.h	2013-04-28 19:22:38.595436226 +0200
+*************** extern "C" {
+*** 35,67 ****
+  #ifdef HAVE_SYSLOG
+  #include <syslog.h>
+  
+  #ifndef LOG_PRIMASK
+  #define LOG_PRIMASK 7
+  #endif
+  
+! #define APLOG_EMERG     LOG_EMERG     /* system is unusable */
+! #define APLOG_ALERT     LOG_ALERT     /* action must be taken immediately */
+! #define APLOG_CRIT      LOG_CRIT      /* critical conditions */
+! #define APLOG_ERR       LOG_ERR       /* error conditions */
+! #define APLOG_WARNING   LOG_WARNING   /* warning conditions */
+! #define APLOG_NOTICE    LOG_NOTICE    /* normal but significant condition */
+! #define APLOG_INFO      LOG_INFO      /* informational */
+! #define APLOG_DEBUG     LOG_DEBUG     /* debug-level messages */
+  
+! #define APLOG_LEVELMASK LOG_PRIMASK   /* mask off the level value */
+  
+  #else
+  
+! #define	APLOG_EMERG	0	/* system is unusable */
+! #define	APLOG_ALERT	1	/* action must be taken immediately */
+! #define	APLOG_CRIT	2	/* critical conditions */
+! #define	APLOG_ERR	3	/* error conditions */
+! #define	APLOG_WARNING	4	/* warning conditions */
+! #define	APLOG_NOTICE	5	/* normal but significant condition */
+! #define	APLOG_INFO	6	/* informational */
+! #define	APLOG_DEBUG	7	/* debug-level messages */
+  
+! #define	APLOG_LEVELMASK	7	/* mask off the level value */
+  
+  #endif
+  
+--- 35,85 ----
+  #ifdef HAVE_SYSLOG
+  #include <syslog.h>
+  
++ #include "http_config.h"
++ 
+  #ifndef LOG_PRIMASK
+  #define LOG_PRIMASK 7
+  #endif
+  
+! #define APLOG_EMERG     LOG_EMERG       /* system is unusable */
+! #define APLOG_ALERT     LOG_ALERT       /* action must be taken immediately */
+! #define APLOG_CRIT      LOG_CRIT        /* critical conditions */
+! #define APLOG_ERR       LOG_ERR         /* error conditions */
+! #define APLOG_WARNING   LOG_WARNING     /* warning conditions */
+! #define APLOG_NOTICE    LOG_NOTICE      /* normal but significant condition */
+! #define APLOG_INFO      LOG_INFO        /* informational */
+! #define APLOG_DEBUG     LOG_DEBUG       /* debug-level messages */
+! #define APLOG_TRACE1   (LOG_DEBUG + 1)  /* trace-level 1 messages */
+! #define APLOG_TRACE2   (LOG_DEBUG + 2)  /* trace-level 2 messages */
+! #define APLOG_TRACE3   (LOG_DEBUG + 3)  /* trace-level 3 messages */
+! #define APLOG_TRACE4   (LOG_DEBUG + 4)  /* trace-level 4 messages */
+! #define APLOG_TRACE5   (LOG_DEBUG + 5)  /* trace-level 5 messages */
+! #define APLOG_TRACE6   (LOG_DEBUG + 6)  /* trace-level 6 messages */
+! #define APLOG_TRACE7   (LOG_DEBUG + 7)  /* trace-level 7 messages */
+! #define APLOG_TRACE8   (LOG_DEBUG + 8)  /* trace-level 8 messages */
+  
+! #define APLOG_LEVELMASK 15     /* mask off the level value */
+  
+  #else
+  
+! #define APLOG_EMERG      0     /* system is unusable */
+! #define APLOG_ALERT      1     /* action must be taken immediately */
+! #define APLOG_CRIT       2     /* critical conditions */
+! #define APLOG_ERR        3     /* error conditions */
+! #define APLOG_WARNING    4     /* warning conditions */
+! #define APLOG_NOTICE     5     /* normal but significant condition */
+! #define APLOG_INFO       6     /* informational */
+! #define APLOG_DEBUG      7     /* debug-level messages */
+! #define APLOG_TRACE1     8     /* trace-level 1 messages */
+! #define APLOG_TRACE2     9     /* trace-level 2 messages */
+! #define APLOG_TRACE3    10     /* trace-level 3 messages */
+! #define APLOG_TRACE4    11     /* trace-level 4 messages */
+! #define APLOG_TRACE5    12     /* trace-level 5 messages */
+! #define APLOG_TRACE6    13     /* trace-level 6 messages */
+! #define APLOG_TRACE7    14     /* trace-level 7 messages */
+! #define APLOG_TRACE8    15     /* trace-level 8 messages */
+  
+! #define APLOG_LEVELMASK 15     /* mask off the level value */
+  
+  #endif
+  
+*************** extern "C" {
+*** 91,99 ****
+  #define DEFAULT_LOGLEVEL	APLOG_WARNING
+  #endif
+  
+  extern int AP_DECLARE_DATA ap_default_loglevel;
+  
+! #define APLOG_MARK	__FILE__,__LINE__
+  
+  /**
+   * Set up for logging to stderr.
+--- 109,208 ----
+  #define DEFAULT_LOGLEVEL	APLOG_WARNING
+  #endif
+  
++ #define APLOG_NO_MODULE         -1
++ 
++ /*
++  * Objects with static storage duration are set to NULL if not
++  * initialized explicitly. This means if aplog_module_index
++  * is not initalized using the APLOG_USE_MODULE or the
++  * AP_DECLARE_MODULE macro, we can safely fall back to
++  * use APLOG_NO_MODULE.
++  */
++ static int * const aplog_module_index;
++ #define APLOG_MODULE_INDEX  \
++     (aplog_module_index ? *aplog_module_index : APLOG_NO_MODULE)
++ 
++ /*
++  * APLOG_MAX_LOGLEVEL can be used to remove logging above some
++  * specified level at compile time.
++  */
++ #ifndef APLOG_MAX_LOGLEVEL
++ #define APLOG_MODULE_IS_LEVEL(s,module_index,level)              \
++           ( (((level)&APLOG_LEVELMASK) <= APLOG_NOTICE) ||       \
++             (s == NULL) ||                                       \
++             (ap_get_server_module_loglevel(s, module_index)      \
++              >= ((level)&APLOG_LEVELMASK) ) )
++ #define APLOG_C_MODULE_IS_LEVEL(c,module_index,level)            \
++           ( (((level)&APLOG_LEVELMASK) <= APLOG_NOTICE) ||       \
++             (ap_get_conn_module_loglevel(c, module_index)        \
++              >= ((level)&APLOG_LEVELMASK) ) )
++ #define APLOG_R_MODULE_IS_LEVEL(r,module_index,level)            \
++           ( (((level)&APLOG_LEVELMASK) <= APLOG_NOTICE) ||       \
++             (ap_get_request_module_loglevel(r, module_index)     \
++              >= ((level)&APLOG_LEVELMASK) ) )
++ #else
++ #define APLOG_MODULE_IS_LEVEL(s,module_index,level)              \
++         ( (((level)&APLOG_LEVELMASK) <= APLOG_MAX_LOGLEVEL) &&   \
++           ( (((level)&APLOG_LEVELMASK) <= APLOG_NOTICE) ||       \
++             (s == NULL) ||                                       \
++             (ap_get_server_module_loglevel(s, module_index)      \
++              >= ((level)&APLOG_LEVELMASK) ) ) )
++ #define APLOG_C_MODULE_IS_LEVEL(c,module_index,level)            \
++         ( (((level)&APLOG_LEVELMASK) <= APLOG_MAX_LOGLEVEL) &&   \
++           ( (((level)&APLOG_LEVELMASK) <= APLOG_NOTICE) ||       \
++             (ap_get_conn_module_loglevel(c, module_index)        \
++              >= ((level)&APLOG_LEVELMASK) ) ) )
++ #define APLOG_R_MODULE_IS_LEVEL(r,module_index,level)            \
++         ( (((level)&APLOG_LEVELMASK) <= APLOG_MAX_LOGLEVEL) &&   \
++           ( (((level)&APLOG_LEVELMASK) <= APLOG_NOTICE) ||       \
++             (ap_get_request_module_loglevel(r, module_index)     \
++              >= ((level)&APLOG_LEVELMASK) ) ) )
++ #endif
++ 
++ #define APLOG_IS_LEVEL(s,level)     \
++     APLOG_MODULE_IS_LEVEL(s,APLOG_MODULE_INDEX,level)
++ #define APLOG_C_IS_LEVEL(c,level)   \
++     APLOG_C_MODULE_IS_LEVEL(c,APLOG_MODULE_INDEX,level)
++ #define APLOG_R_IS_LEVEL(r,level)   \
++     APLOG_R_MODULE_IS_LEVEL(r,APLOG_MODULE_INDEX,level)
++ 
++ 
++ #define APLOGinfo(s)                APLOG_IS_LEVEL(s,APLOG_INFO)
++ #define APLOGdebug(s)               APLOG_IS_LEVEL(s,APLOG_DEBUG)
++ #define APLOGtrace1(s)              APLOG_IS_LEVEL(s,APLOG_TRACE1)
++ #define APLOGtrace2(s)              APLOG_IS_LEVEL(s,APLOG_TRACE2)
++ #define APLOGtrace3(s)              APLOG_IS_LEVEL(s,APLOG_TRACE3)
++ #define APLOGtrace4(s)              APLOG_IS_LEVEL(s,APLOG_TRACE4)
++ #define APLOGtrace5(s)              APLOG_IS_LEVEL(s,APLOG_TRACE5)
++ #define APLOGtrace6(s)              APLOG_IS_LEVEL(s,APLOG_TRACE6)
++ #define APLOGtrace7(s)              APLOG_IS_LEVEL(s,APLOG_TRACE7)
++ #define APLOGtrace8(s)              APLOG_IS_LEVEL(s,APLOG_TRACE8)
++ 
++ #define APLOGrinfo(r)               APLOG_R_IS_LEVEL(r,APLOG_INFO)
++ #define APLOGrdebug(r)              APLOG_R_IS_LEVEL(r,APLOG_DEBUG)
++ #define APLOGrtrace1(r)             APLOG_R_IS_LEVEL(r,APLOG_TRACE1)
++ #define APLOGrtrace2(r)             APLOG_R_IS_LEVEL(r,APLOG_TRACE2)
++ #define APLOGrtrace3(r)             APLOG_R_IS_LEVEL(r,APLOG_TRACE3)
++ #define APLOGrtrace4(r)             APLOG_R_IS_LEVEL(r,APLOG_TRACE4)
++ #define APLOGrtrace5(r)             APLOG_R_IS_LEVEL(r,APLOG_TRACE5)
++ #define APLOGrtrace6(r)             APLOG_R_IS_LEVEL(r,APLOG_TRACE6)
++ #define APLOGrtrace7(r)             APLOG_R_IS_LEVEL(r,APLOG_TRACE7)
++ #define APLOGrtrace8(r)             APLOG_R_IS_LEVEL(r,APLOG_TRACE8)
++ 
++ #define APLOGcinfo(c)               APLOG_C_IS_LEVEL(c,APLOG_INFO)
++ #define APLOGcdebug(c)              APLOG_C_IS_LEVEL(c,APLOG_DEBUG)
++ #define APLOGctrace1(c)             APLOG_C_IS_LEVEL(c,APLOG_TRACE1)
++ #define APLOGctrace2(c)             APLOG_C_IS_LEVEL(c,APLOG_TRACE2)
++ #define APLOGctrace3(c)             APLOG_C_IS_LEVEL(c,APLOG_TRACE3)
++ #define APLOGctrace4(c)             APLOG_C_IS_LEVEL(c,APLOG_TRACE4)
++ #define APLOGctrace5(c)             APLOG_C_IS_LEVEL(c,APLOG_TRACE5)
++ #define APLOGctrace6(c)             APLOG_C_IS_LEVEL(c,APLOG_TRACE6)
++ #define APLOGctrace7(c)             APLOG_C_IS_LEVEL(c,APLOG_TRACE7)
++ #define APLOGctrace8(c)             APLOG_C_IS_LEVEL(c,APLOG_TRACE8)
++ 
+  extern int AP_DECLARE_DATA ap_default_loglevel;
+  
+! #define APLOG_MARK     __FILE__,__LINE__,APLOG_MODULE_INDEX
+  
+  /**
+   * Set up for logging to stderr.
+*************** void ap_logs_child_init(apr_pool_t *p, s
+*** 147,152 ****
+--- 256,262 ----
+   * to the error_log.
+   * @param file The file in which this function is called
+   * @param line The line number on which this function is called
++  * @param module_index The module_index of the module generating this message
+   * @param level The level of this error message
+   * @param status The status code from the previous command
+   * @param s The server on which we are logging
+*************** void ap_logs_child_init(apr_pool_t *p, s
+*** 164,173 ****
+   * simple format string like "%s", followed by the string containing the 
+   * untrusted data.
+   */
+! AP_DECLARE(void) ap_log_error(const char *file, int line, int level, 
+!                              apr_status_t status, const server_rec *s, 
+!                              const char *fmt, ...)
+! 			    __attribute__((format(printf,6,7)));
+  
+  /**
+   * ap_log_perror() - log messages which are not related to a particular
+--- 274,294 ----
+   * simple format string like "%s", followed by the string containing the 
+   * untrusted data.
+   */
+! #if __STDC_VERSION__ >= 199901L
+! /* need additional step to expand APLOG_MARK first */
+! #define ap_log_error(...) ap_log_error__(__VA_ARGS__)
+! /* need server_rec *sr = ... for the case if s is verbatim NULL */
+! #define ap_log_error__(file, line, mi, level, status, s, ...)           \
+!     do { server_rec *sr = s; if (APLOG_MODULE_IS_LEVEL(sr, mi, level))      \
+!              ap_log_error_(file, line, mi, level, status, sr, __VA_ARGS__); \
+!     } while(0)
+! #else
+! #define ap_log_error ap_log_error_
+! #endif
+! AP_DECLARE(void) ap_log_error_(const char *file, int line, int module_index,
+!                                int level, apr_status_t status,
+!                                const server_rec *s, const char *fmt, ...)
+!                               __attribute__((format(printf,7,8)));
+  
+  /**
+   * ap_log_perror() - log messages which are not related to a particular
+*************** AP_DECLARE(void) ap_log_error(const char
+*** 175,180 ****
+--- 296,302 ----
+   * format to log messages to the error_log.
+   * @param file The file in which this function is called
+   * @param line The line number on which this function is called
++  * @param module_index ignored dummy value for use by APLOG_MARK
+   * @param level The level of this error message
+   * @param status The status code from the previous command
+   * @param p The pool which we are logging for
+*************** AP_DECLARE(void) ap_log_error(const char
+*** 188,197 ****
+   * simple format string like "%s", followed by the string containing the 
+   * untrusted data.
+   */
+! AP_DECLARE(void) ap_log_perror(const char *file, int line, int level, 
+!                              apr_status_t status, apr_pool_t *p, 
+!                              const char *fmt, ...)
+! 			    __attribute__((format(printf,6,7)));
+  
+  /**
+   * ap_log_rerror() - log messages which are related to a particular
+--- 310,329 ----
+   * simple format string like "%s", followed by the string containing the 
+   * untrusted data.
+   */
+! #if __STDC_VERSION__ >= 199901L && defined(APLOG_MAX_LOGLEVEL)
+! /* need additional step to expand APLOG_MARK first */
+! #define ap_log_perror(...) ap_log_perror__(__VA_ARGS__)
+! #define ap_log_perror__(file, line, mi, level, status, p, ...)            \
+!     do { if ((level) <= APLOG_MAX_LOGLEVEL )                              \
+!              ap_log_perror_(file, line, mi, level, status, p,             \
+!                             __VA_ARGS__); } while(0)
+! #else
+! #define ap_log_perror ap_log_perror_
+! #endif
+! AP_DECLARE(void) ap_log_perror_(const char *file, int line, int module_index,
+!                                 int level, apr_status_t status, apr_pool_t *p,
+!                                 const char *fmt, ...)
+!                                __attribute__((format(printf,7,8)));
+  
+  /**
+   * ap_log_rerror() - log messages which are related to a particular
+*************** AP_DECLARE(void) ap_log_perror(const cha
+*** 199,204 ****
+--- 331,337 ----
+   * error_log.
+   * @param file The file in which this function is called
+   * @param line The line number on which this function is called
++  * @param module_index The module_index of the module generating this message
+   * @param level The level of this error message
+   * @param status The status code from the previous command
+   * @param r The request which we are logging for
+*************** AP_DECLARE(void) ap_log_perror(const cha
+*** 212,221 ****
+   * simple format string like "%s", followed by the string containing the 
+   * untrusted data.
+   */
+! AP_DECLARE(void) ap_log_rerror(const char *file, int line, int level, 
+!                                apr_status_t status, const request_rec *r, 
+!                                const char *fmt, ...)
+! 			    __attribute__((format(printf,6,7)));
+  
+  /**
+   * ap_log_cerror() - log messages which are related to a particular
+--- 345,364 ----
+   * simple format string like "%s", followed by the string containing the 
+   * untrusted data.
+   */
+! #if __STDC_VERSION__ >= 199901L
+! /* need additional step to expand APLOG_MARK first */
+! #define ap_log_rerror(...) ap_log_rerror__(__VA_ARGS__)
+! #define ap_log_rerror__(file, line, mi, level, status, r, ...)              \
+!     do { if (APLOG_MODULE_IS_LEVEL(r->server, mi, level))                   \
+!              ap_log_rerror_(file, line, mi, level, status, r, __VA_ARGS__); \
+!     } while(0)
+! #else
+! #define ap_log_rerror ap_log_rerror_
+! #endif
+! AP_DECLARE(void) ap_log_rerror_(const char *file, int line, int module_index,
+!                                 int level, apr_status_t status,
+!                                 const request_rec *r, const char *fmt, ...)
+! 			    __attribute__((format(printf,7,8)));
+  
+  /**
+   * ap_log_cerror() - log messages which are related to a particular
+*************** AP_DECLARE(void) ap_log_rerror(const cha
+*** 224,229 ****
+--- 367,373 ----
+   * @param file The file in which this function is called
+   * @param line The line number on which this function is called
+   * @param level The level of this error message
++  * @param module_index The module_index of the module generating this message
+   * @param status The status code from the previous command
+   * @param c The connection which we are logging for
+   * @param fmt The format string
+*************** AP_DECLARE(void) ap_log_rerror(const cha
+*** 238,247 ****
+   * simple format string like "%s", followed by the string containing the 
+   * untrusted data.
+   */
+! AP_DECLARE(void) ap_log_cerror(const char *file, int line, int level, 
+!                                apr_status_t status, const conn_rec *c, 
+!                                const char *fmt, ...)
+! 			    __attribute__((format(printf,6,7)));
+  
+  /**
+   * Convert stderr to the error log
+--- 382,401 ----
+   * simple format string like "%s", followed by the string containing the 
+   * untrusted data.
+   */
+! #if __STDC_VERSION__ >= 199901L
+! /* need additional step to expand APLOG_MARK first */
+! #define ap_log_cerror(...) ap_log_cerror__(__VA_ARGS__)
+! #define ap_log_cerror__(file, line, mi, level, status, c, ...)              \
+!     do { if (APLOG_MODULE_IS_LEVEL(c->base_server, mi, level))              \
+!              ap_log_cerror_(file, line, mi, level, status, c, __VA_ARGS__); \
+!     } while(0)
+! #else
+! #define ap_log_cerror ap_log_cerror_
+! #endif
+! AP_DECLARE(void) ap_log_cerror_(const char *file, int line, int module_level,
+!                                 int level, apr_status_t status,
+!                                 const conn_rec *c, const char *fmt, ...)
+! 			    __attribute__((format(printf,7,8)));
+  
+  /**
+   * Convert stderr to the error log
+*************** AP_DECLARE(void) ap_log_cerror(const cha
+*** 250,255 ****
+--- 404,417 ----
+  AP_DECLARE(void) ap_error_log2stderr(server_rec *s);
+  
+  /**
++  * Log the command line used to start the server.
++  * @param p The pool to use for logging
++  * @param s The server_rec whose process's command line we want to log.
++  * The command line is logged to that server's error log.
++  */
++ AP_DECLARE(void) ap_log_command_line(apr_pool_t *p, server_rec *s);
++ 
++ /**
+   * Log the current pid of the parent process
+   * @param p The pool to use for logging
+   * @param fname The name of the file to log to
+*************** AP_DECLARE(apr_file_t *) ap_piped_log_wr
+*** 313,318 ****
+--- 475,481 ----
+   * @ingroup hooks
+   * @param file The file in which this function is called
+   * @param line The line number on which this function is called
++  * @param module_index The module_index of the module generating this message
+   * @param level The level of this error message
+   * @param status The status code from the previous command
+   * @param s The server which we are logging for
+*************** AP_DECLARE(apr_file_t *) ap_piped_log_wr
+*** 320,326 ****
+   * @param pool Memory pool to allocate from
+   * @param errstr message to log 
+   */
+! AP_DECLARE_HOOK(void, error_log, (const char *file, int line, int level,
+                         apr_status_t status, const server_rec *s,
+                         const request_rec *r, apr_pool_t *pool,
+                         const char *errstr))
+--- 483,490 ----
+   * @param pool Memory pool to allocate from
+   * @param errstr message to log 
+   */
+! AP_DECLARE_HOOK(void, error_log, (const char *file, int line,
+!                        int module_index, int level,
+                         apr_status_t status, const server_rec *s,
+                         const request_rec *r, apr_pool_t *pool,
+                         const char *errstr))
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/include/http_request.h /tmp/patch.inc.get2.dIah1X/include/http_request.h
+*** /tmp/patch.inc.get1.f0Yx3d/include/http_request.h	2013-04-28 19:22:19.295340518 +0200
+--- /tmp/patch.inc.get2.dIah1X/include/http_request.h	2013-04-28 19:22:38.595436226 +0200
+*************** AP_DECLARE(void) ap_allow_standard_metho
+*** 315,322 ****
+   */
+  void ap_process_request(request_rec *r);
+  
+! /* For post-processing after a handler has finished with a request. (Commonly used after it was suspended) */
+! void ap_process_request_after_handler(request_rec *r);
+  
+  /**
+   * Process a top-level request from a client, allowing some or all of
+--- 315,324 ----
+   */
+  void ap_process_request(request_rec *r);
+  
+! /* For post-processing after a handler has finished with a request. 
+!  * (Commonly used after it was suspended)
+!  */
+! AP_DECLARE(void) ap_process_request_after_handler(request_rec *r);
+  
+  /**
+   * Process a top-level request from a client, allowing some or all of
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/include/mod_auth.h /tmp/patch.inc.get2.dIah1X/include/mod_auth.h
+*** /tmp/patch.inc.get1.f0Yx3d/include/mod_auth.h	2013-04-28 19:22:19.295340518 +0200
+--- /tmp/patch.inc.get2.dIah1X/include/mod_auth.h	2013-04-28 19:22:38.595436226 +0200
+*************** extern "C" {
+*** 46,51 ****
+--- 46,52 ----
+  #define AUTHZ_PROVIDER_NAME_NOTE "authz_provider_name"
+  
+  #define AUTHN_PREFIX "AUTHENTICATE_"
++ #define AUTHZ_PREFIX "AUTHORIZE_"
+  
+  /** all of the requirements must be met */
+  #ifndef SATISFY_ALL
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/include/mpm_common.h /tmp/patch.inc.get2.dIah1X/include/mpm_common.h
+*** /tmp/patch.inc.get1.f0Yx3d/include/mpm_common.h	2013-04-28 19:22:19.287340477 +0200
+--- /tmp/patch.inc.get2.dIah1X/include/mpm_common.h	2013-04-28 19:22:38.595436226 +0200
+*************** const char *ap_mpm_set_pidfile(cmd_parms
+*** 265,276 ****
+                                 const char *arg);
+  
+  /*
+-  * Set the scorboard file.
+-  */
+- const char *ap_mpm_set_scoreboard(cmd_parms *cmd, void *dummy,
+-                                   const char *arg);
+- 
+- /*
+   * The directory that the server changes directory to dump core.
+   */
+  extern char ap_coredump_dir[MAX_STRING_LEN];
+--- 265,270 ----
+*************** AP_DECLARE_HOOK(const char *,mpm_get_nam
+*** 336,342 ****
+  /* mutex type string for accept mutex, if any; MPMs should use the
+   * same mutex type for ease of configuration
+   */
+! #define ap_accept_mutex_type "mpm-accept"
+  
+  #ifdef __cplusplus
+  }
+--- 330,336 ----
+  /* mutex type string for accept mutex, if any; MPMs should use the
+   * same mutex type for ease of configuration
+   */
+! #define AP_ACCEPT_MUTEX_TYPE "mpm-accept"
+  
+  #ifdef __cplusplus
+  }
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/include/scoreboard.h /tmp/patch.inc.get2.dIah1X/include/scoreboard.h
+*** /tmp/patch.inc.get1.f0Yx3d/include/scoreboard.h	2013-04-28 19:22:19.295340518 +0200
+--- /tmp/patch.inc.get2.dIah1X/include/scoreboard.h	2013-04-28 19:22:38.595436226 +0200
+*************** extern "C" {
+*** 32,37 ****
+--- 32,38 ----
+  #endif
+  
+  #include "ap_config.h"
++ #include "http_config.h"
+  #include "apr_hooks.h"
+  #include "apr_thread_proc.h"
+  #include "apr_portable.h"
+*************** AP_DECLARE_DATA extern const char *ap_sc
+*** 188,193 ****
+--- 189,201 ----
+  AP_DECLARE_DATA extern int ap_extended_status;
+  AP_DECLARE_DATA extern int ap_mod_status_reqtail;
+  
++ /*
++  * Command handlers [internal]
++  */
++ const char *ap_set_scoreboard(cmd_parms *cmd, void *dummy, const char *arg);
++ const char *ap_set_extended_status(cmd_parms *cmd, void *dummy, int arg);
++ const char *ap_set_reqtail(cmd_parms *cmd, void *dummy, int arg);
++ 
+  /* Hooks */
+  /**
+    * Hook for post scoreboard creation, pre mpm.
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/include/util_filter.h /tmp/patch.inc.get2.dIah1X/include/util_filter.h
+*** /tmp/patch.inc.get1.f0Yx3d/include/util_filter.h	2013-04-28 19:22:19.287340477 +0200
+--- /tmp/patch.inc.get2.dIah1X/include/util_filter.h	2013-04-28 19:22:38.591436210 +0200
+*************** struct ap_filter_rec_t {
+*** 217,226 ****
+      /** The function to call when this filter is invoked. */
+      ap_filter_func filter_func;
+  
+!     /** The function to call before the handlers are invoked. Notice
+!      * that this function is called only for filters participating in
+!      * the http protocol. Filters for other protocols are to be
+!      * initialized by the protocols themselves.
+       */
+      ap_init_filter_func filter_init_func;
+  
+--- 217,229 ----
+      /** The function to call when this filter is invoked. */
+      ap_filter_func filter_func;
+  
+!     /** The function to call directly before the handlers are invoked
+!      * for a request.  The init function is called once directly
+!      * before running the handlers for a request or subrequest.  The
+!      * init function is never called for a connection filter (with
+!      * ftype >= AP_FTYPE_CONNECTION).  Any use of this function for
+!      * filters for protocols other than HTTP is specified by the
+!      * module supported that protocol.
+       */
+      ap_init_filter_func filter_init_func;
+  
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/include/util_ldap.h /tmp/patch.inc.get2.dIah1X/include/util_ldap.h
+*** /tmp/patch.inc.get1.f0Yx3d/include/util_ldap.h	2013-04-28 19:22:19.287340477 +0200
+--- /tmp/patch.inc.get2.dIah1X/include/util_ldap.h	2013-04-28 19:22:38.595436226 +0200
+*************** typedef struct util_ldap_connection_t {
+*** 125,130 ****
+--- 125,131 ----
+  typedef struct util_ldap_config_t {
+      int ChaseReferrals;
+      int ReferralHopLimit;
++     apr_array_header_t *client_certs;  /* Client certificates */
+  } util_ldap_config_t;
+  
+  /* LDAP cache state information */ 
+*************** typedef struct util_ldap_state_t {
+*** 145,151 ****
+      struct util_ldap_connection_t *connections;
+      int   ssl_supported;
+      apr_array_header_t *global_certs;  /* Global CA certificates */
+-     apr_array_header_t *client_certs;  /* Client certificates */
+      int   secure;
+      int   secure_set;
+  
+--- 146,151 ----
+*************** APR_DECLARE_OPTIONAL_FN(int,uldap_ssl_su
+*** 360,366 ****
+  /**
+   * Init the LDAP cache
+   * @param pool The pool to use to initialise the cache
+!  * @param reqsize The size of the shared memory segement to request. A size
+   *                of zero requests the max size possible from
+   *                apr_shmem_init()
+   * @fn void util_ldap_cache_init(apr_pool_t *p, util_ldap_state_t *st)
+--- 360,366 ----
+  /**
+   * Init the LDAP cache
+   * @param pool The pool to use to initialise the cache
+!  * @param reqsize The size of the shared memory segment to request. A size
+   *                of zero requests the max size possible from
+   *                apr_shmem_init()
+   * @fn void util_ldap_cache_init(apr_pool_t *p, util_ldap_state_t *st)
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/include/util_mutex.h /tmp/patch.inc.get2.dIah1X/include/util_mutex.h
+*** /tmp/patch.inc.get1.f0Yx3d/include/util_mutex.h	2013-04-28 19:22:19.295340518 +0200
+--- /tmp/patch.inc.get2.dIah1X/include/util_mutex.h	2013-04-28 19:22:38.595436226 +0200
+*************** AP_DECLARE(apr_status_t) ap_parse_mutex(
+*** 103,108 ****
+--- 103,111 ----
+  AP_DECLARE_NONSTD(const char *) ap_set_mutex(cmd_parms *cmd, void *dummy,
+                                               const char *arg);
+  
++ /* private function to initialize Mutex infrastructure */
++ AP_DECLARE_NONSTD(void) ap_mutex_init(apr_pool_t *p);
++ 
+  /**
+   * option flags for ap_mutex_register(), ap_global_mutex_create(), and
+   * ap_proc_mutex_create()
+*************** AP_DECLARE(apr_status_t) ap_mutex_regist
+*** 164,183 ****
+   * stored.  If this mutex is disabled, mutex will be set to NULL on
+   * output.  (That is allowed only if the AP_MUTEX_ALLOW_NONE flag is
+   * passed to ap_mutex_register().)
+   * @param type The type name of the mutex, matching the type name passed
+   * to ap_mutex_register().
+   * @param instance_id A unique string to be used in the lock filename IFF
+   * this mutex type is multi-instance, NULL otherwise.
+!  * @param s server_rec of main server
+!  * @param pconf pool
+   * @param options combination of AP_MUTEX_* constants, or 0 for defaults
+   * (currently none are defined for this function)
+   */
+  AP_DECLARE(apr_status_t) ap_global_mutex_create(apr_global_mutex_t **mutex,
+                                                  const char *type,
+                                                  const char *instance_id,
+!                                                 server_rec *s,
+!                                                 apr_pool_t *pconf,
+                                                  apr_int32_t options);
+  
+  /**
+--- 167,189 ----
+   * stored.  If this mutex is disabled, mutex will be set to NULL on
+   * output.  (That is allowed only if the AP_MUTEX_ALLOW_NONE flag is
+   * passed to ap_mutex_register().)
++  * @param name The generated filename of the created mutex, or NULL if 
++  * no file was created.  Pass NULL if this result is not needed.
+   * @param type The type name of the mutex, matching the type name passed
+   * to ap_mutex_register().
+   * @param instance_id A unique string to be used in the lock filename IFF
+   * this mutex type is multi-instance, NULL otherwise.
+!  * @param server server_rec of main server
+!  * @param pool pool lifetime of the mutex
+   * @param options combination of AP_MUTEX_* constants, or 0 for defaults
+   * (currently none are defined for this function)
+   */
+  AP_DECLARE(apr_status_t) ap_global_mutex_create(apr_global_mutex_t **mutex,
++                                                 const char **name,
+                                                  const char *type,
+                                                  const char *instance_id,
+!                                                 server_rec *server,
+!                                                 apr_pool_t *pool,
+                                                  apr_int32_t options);
+  
+  /**
+*************** AP_DECLARE(apr_status_t) ap_global_mutex
+*** 188,206 ****
+   * stored.  If this mutex is disabled, mutex will be set to NULL on
+   * output.  (That is allowed only if the AP_MUTEX_ALLOW_NONE flag is
+   * passed to ap_mutex_register().)
+   * @param type The type name of the mutex, matching the type name passed
+   * to ap_mutex_register().
+   * @param instance_id A unique string to be used in the lock filename IFF
+   * this mutex type is multi-instance, NULL otherwise.
+!  * @param s server_rec of main server
+!  * @param pconf pool
+   * @param options combination of AP_MUTEX_* constants, or 0 for defaults
+   * (currently none are defined for this function)
+   */
+  AP_DECLARE(apr_status_t) ap_proc_mutex_create(apr_proc_mutex_t **mutex,
+                                                const char *type,
+                                                const char *instance_id,
+!                                               server_rec *s, apr_pool_t *p,
+                                                apr_int32_t options);
+  
+  #ifdef __cplusplus
+--- 194,216 ----
+   * stored.  If this mutex is disabled, mutex will be set to NULL on
+   * output.  (That is allowed only if the AP_MUTEX_ALLOW_NONE flag is
+   * passed to ap_mutex_register().)
++  * @param name The generated filename of the created mutex, or NULL if 
++  * no file was created.  Pass NULL if this result is not needed.
+   * @param type The type name of the mutex, matching the type name passed
+   * to ap_mutex_register().
+   * @param instance_id A unique string to be used in the lock filename IFF
+   * this mutex type is multi-instance, NULL otherwise.
+!  * @param server server_rec of main server
+!  * @param pool pool lifetime of the mutex
+   * @param options combination of AP_MUTEX_* constants, or 0 for defaults
+   * (currently none are defined for this function)
+   */
+  AP_DECLARE(apr_status_t) ap_proc_mutex_create(apr_proc_mutex_t **mutex,
++                                               const char **name,
+                                                const char *type,
+                                                const char *instance_id,
+!                                               server_rec *server,
+!                                               apr_pool_t *pool,
+                                                apr_int32_t options);
+  
+  #ifdef __cplusplus
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/include/util_script.h /tmp/patch.inc.get2.dIah1X/include/util_script.h
+*** /tmp/patch.inc.get1.f0Yx3d/include/util_script.h	2013-04-28 19:22:19.287340477 +0200
+--- /tmp/patch.inc.get2.dIah1X/include/util_script.h	2013-04-28 19:22:38.595436226 +0200
+*************** AP_DECLARE(int) ap_scan_script_header_er
+*** 142,149 ****
+  
+  AP_DECLARE(void) ap_args_to_table(request_rec *r, apr_table_t **table);
+  
+- AP_DECLARE(apr_status_t) ap_body_to_table(request_rec *r, apr_table_t **table);
+-     
+  #ifdef __cplusplus
+  }
+  #endif
+--- 142,147 ----
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/include/util_time.h /tmp/patch.inc.get2.dIah1X/include/util_time.h
+*** /tmp/patch.inc.get1.f0Yx3d/include/util_time.h	2013-04-28 19:22:19.287340477 +0200
+--- /tmp/patch.inc.get2.dIah1X/include/util_time.h	2013-04-28 19:22:38.595436226 +0200
+*************** extern "C" {
+*** 40,45 ****
+--- 40,52 ----
+   */
+  #define AP_TIME_RECENT_THRESHOLD 15
+  
++ /* Options for ap_recent_ctime_ex */
++ /* No extension */
++ #define AP_CTIME_OPTION_NONE    0x0
++ /* Add sub second timestamps with micro second resolution */
++ #define AP_CTIME_OPTION_USEC    0x1
++ 
++ 
+  /**
+   * convert a recent time to its human readable components in local timezone
+   * @param tm the exploded time
+*************** AP_DECLARE(apr_status_t) ap_explode_rece
+*** 73,81 ****
+--- 80,105 ----
+   * format a recent timestamp in the ctime() format.
+   * @param date_str String to write to.
+   * @param t the time to convert 
++  * @note Consider using ap_recent_ctime_ex instead.
++  * @return APR_SUCCESS iff successful
+   */
+  AP_DECLARE(apr_status_t) ap_recent_ctime(char *date_str, apr_time_t t);
+  
++ 
++ /**
++  * format a recent timestamp in an extended ctime() format.
++  * @param date_str String to write to.
++  * @param t the time to convert 
++  * @param option Additional formatting options (AP_CTIME_OPTION_*).
++  * @param len Pointer to an int containing the length of the provided buffer.
++  *        On successful return it contains the number of bytes written to the
++  *        buffer.
++  * @return APR_SUCCESS iff successful, APR_ENOMEM if buffer was to short.
++  */
++ AP_DECLARE(apr_status_t) ap_recent_ctime_ex(char *date_str, apr_time_t t,
++                                             int option, int *len);
++ 
++ 
+  /**
+   * format a recent timestamp in the RFC822 format
+   * @param date_str String to write to (must have length >= APR_RFC822_DATE_LEN)
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/os/unix/unixd.c /tmp/patch.inc.get2.dIah1X/os/unix/unixd.c
+*** /tmp/patch.inc.get1.f0Yx3d/os/unix/unixd.c	2013-04-28 19:22:19.383340949 +0200
+--- /tmp/patch.inc.get2.dIah1X/os/unix/unixd.c	2013-04-28 19:22:38.663436576 +0200
+***************
+*** 52,57 ****
+--- 52,58 ----
+  
+  unixd_config_rec ap_unixd_config;
+  
++ APLOG_USE_MODULE(core);
+  
+  AP_DECLARE(void) ap_unixd_set_rlimit(cmd_parms *cmd, struct rlimit **plimit,
+                                       const char *arg,
+*************** AP_DECLARE(apr_status_t) ap_unixd_accept
+*** 416,429 ****
+  #endif /*ENETDOWN*/
+  
+          default:
+- #ifdef _OSD_POSIX /* Possibly on other platforms too */
+              /* If the socket has been closed in ap_close_listeners()
+               * by the restart/stop action, we may get EBADF.
+               * Do not print an error in this case.
+               */
+!             if (!lr->active && status == EBADF)
+                  return status;
+! #endif
+              ap_log_error(APLOG_MARK, APLOG_ERR, status, ap_server_conf,
+                           "apr_socket_accept: (client socket)");
+              return APR_EGENERAL;
+--- 417,431 ----
+  #endif /*ENETDOWN*/
+  
+          default:
+              /* If the socket has been closed in ap_close_listeners()
+               * by the restart/stop action, we may get EBADF.
+               * Do not print an error in this case.
+               */
+!             if (!lr->active) {
+!                 ap_log_error(APLOG_MARK, APLOG_DEBUG, status, ap_server_conf,
+!                              "apr_socket_accept failed for inactive listener");
+                  return status;
+!             }
+              ap_log_error(APLOG_MARK, APLOG_ERR, status, ap_server_conf,
+                           "apr_socket_accept: (client socket)");
+              return APR_EGENERAL;
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/server/config.c /tmp/patch.inc.get2.dIah1X/server/config.c
+*** /tmp/patch.inc.get1.f0Yx3d/server/config.c	2013-04-28 19:22:19.383340949 +0200
+--- /tmp/patch.inc.get2.dIah1X/server/config.c	2013-04-28 19:22:38.671436587 +0200
+***************
+*** 50,55 ****
+--- 50,58 ----
+  #include "http_vhost.h"
+  #include "util_cfgtree.h"
+  
++ #define APLOG_UNSET   (APLOG_NO_MODULE - 1)
++ APLOG_USE_MODULE(core);
++ 
+  AP_DECLARE_DATA const char *ap_server_argv0 = NULL;
+  AP_DECLARE_DATA const char *ap_server_root = NULL;
+  AP_DECLARE_DATA server_rec *ap_server_conf = NULL;
+*************** AP_CORE_DECLARE(ap_conf_vector_t *) ap_c
+*** 309,318 ****
+      return create_empty_config(p);
+  }
+  
+! static int ap_invoke_filter_init(ap_filter_t *filters)
+  {
+      while (filters) {
+!         if (filters->frec->filter_init_func) {
+              int result = filters->frec->filter_init_func(filters);
+              if (result != OK) {
+                  return result;
+--- 312,325 ----
+      return create_empty_config(p);
+  }
+  
+! /* Invoke the filter_init_func for all filters with FILTERS where f->r
+!  * matches R.  Restricting to a matching R avoids re-running init
+!  * functions for filters configured for r->main where r is a
+!  * subrequest.  */
+! static int invoke_filter_init(request_rec *r, ap_filter_t *filters)
+  {
+      while (filters) {
+!         if (filters->frec->filter_init_func && filters->r == r) {
+              int result = filters->frec->filter_init_func(filters);
+              if (result != OK) {
+                  return result;
+*************** AP_CORE_DECLARE(int) ap_invoke_handler(r
+*** 351,361 ****
+       * run their init function to let them do any magic before we could
+       * start generating data.
+       */
+!     result = ap_invoke_filter_init(r->input_filters);
+      if (result != OK) {
+          return result;
+      }
+!     result = ap_invoke_filter_init(r->output_filters);
+      if (result != OK) {
+          return result;
+      }
+--- 358,368 ----
+       * run their init function to let them do any magic before we could
+       * start generating data.
+       */
+!     result = invoke_filter_init(r, r->input_filters);
+      if (result != OK) {
+          return result;
+      }
+!     result = invoke_filter_init(r, r->output_filters);
+      if (result != OK) {
+          return result;
+      }
+*************** AP_DECLARE_NONSTD(const char *) ap_set_d
+*** 1353,1358 ****
+--- 1360,1391 ----
+      return cmd->cmd->errmsg;
+  }
+  
++ AP_DECLARE(void) ap_reset_module_loglevels(struct ap_logconf *l, int val)
++ {
++     if (l->module_levels) {
++         int i;
++         for (i = 0; i < total_modules + DYNAMIC_MODULE_LIMIT; i++)
++             l->module_levels[i] = val;
++     }
++ }
++ 
++ AP_DECLARE(void) ap_set_module_loglevel(apr_pool_t *pool, struct ap_logconf *l,
++                                         int index, int level)
++ {
++     if (!l->module_levels) {
++         l->module_levels = apr_palloc(pool,
++                      sizeof(int) * (total_modules + DYNAMIC_MODULE_LIMIT));
++         if (l->level == APLOG_UNSET) {
++                 ap_reset_module_loglevels(l, APLOG_UNSET);
++         }
++         else {
++                 ap_reset_module_loglevels(l, APLOG_NO_MODULE);
++         }
++     }
++ 
++     l->module_levels[index] = level;
++ }
++ 
+  /*****************************************************************
+   *
+   * Reading whole config files...
+*************** static const char *process_command_confi
+*** 1542,1548 ****
+  }
+  
+  typedef struct {
+!     char *fname;
+  } fnames;
+  
+  static int fname_alphasort(const void *fn1, const void *fn2)
+--- 1575,1581 ----
+  }
+  
+  typedef struct {
+!     const char *fname;
+  } fnames;
+  
+  static int fname_alphasort(const void *fn1, const void *fn2)
+*************** static int fname_alphasort(const void *f
+*** 1553,1567 ****
+      return strcmp(f1->fname,f2->fname);
+  }
+  
+  static const char *process_resource_config_nofnmatch(server_rec *s,
+                                                       const char *fname,
+                                                       ap_directive_t **conftree,
+                                                       apr_pool_t *p,
+                                                       apr_pool_t *ptemp,
+!                                                      unsigned depth)
+  {
+-     cmd_parms parms;
+-     ap_configfile_t *cfp;
+      const char *error;
+      apr_status_t rv;
+  
+--- 1586,1637 ----
+      return strcmp(f1->fname,f2->fname);
+  }
+  
++ AP_DECLARE(const char *) ap_process_resource_config(server_rec *s,
++                                                     const char *fname,
++                                                     ap_directive_t **conftree,
++                                                     apr_pool_t *p,
++                                                     apr_pool_t *ptemp)
++ {
++     ap_configfile_t *cfp;
++     cmd_parms parms;
++     apr_status_t rv;
++     const char *error;
++ 
++     parms = default_parms;
++     parms.pool = p;
++     parms.temp_pool = ptemp;
++     parms.server = s;
++     parms.override = (RSRC_CONF | OR_ALL) & ~(OR_AUTHCFG | OR_LIMIT);
++     parms.override_opts = OPT_ALL | OPT_SYM_OWNER | OPT_MULTI;
++ 
++     rv = ap_pcfg_openfile(&cfp, p, fname);
++     if (rv != APR_SUCCESS) {
++         char errmsg[120];
++         return apr_psprintf(p, "Could not open configuration file %s: %s",
++                             fname, apr_strerror(rv, errmsg, sizeof errmsg));
++     }
++ 
++     parms.config_file = cfp;
++     error = ap_build_config(&parms, p, ptemp, conftree);
++     ap_cfg_closefile(cfp);
++ 
++     if (error) {
++         return apr_psprintf(p, "Syntax error on line %d of %s: %s",
++                             parms.err_directive->line_num,
++                             parms.err_directive->filename, error);
++     }
++ 
++     return NULL;
++ }
++ 
+  static const char *process_resource_config_nofnmatch(server_rec *s,
+                                                       const char *fname,
+                                                       ap_directive_t **conftree,
+                                                       apr_pool_t *p,
+                                                       apr_pool_t *ptemp,
+!                                                      unsigned depth,
+!                                                      int optional)
+  {
+      const char *error;
+      apr_status_t rv;
+  
+*************** static const char *process_resource_conf
+*** 1615,1621 ****
+                  fnew = &((fnames *) candidates->elts)[current];
+                  error = process_resource_config_nofnmatch(s, fnew->fname,
+                                                            conftree, p, ptemp,
+!                                                           depth);
+                  if (error) {
+                      return error;
+                  }
+--- 1685,1691 ----
+                  fnew = &((fnames *) candidates->elts)[current];
+                  error = process_resource_config_nofnmatch(s, fnew->fname,
+                                                            conftree, p, ptemp,
+!                                                           depth, optional);
+                  if (error) {
+                      return error;
+                  }
+*************** static const char *process_resource_conf
+*** 1625,1663 ****
+          return NULL;
+      }
+  
+!     /* GCC's initialization extensions are soooo nice here... */
+!     parms = default_parms;
+!     parms.pool = p;
+!     parms.temp_pool = ptemp;
+!     parms.server = s;
+!     parms.override = (RSRC_CONF | OR_ALL) & ~(OR_AUTHCFG | OR_LIMIT);
+!     parms.override_opts = OPT_ALL | OPT_SYM_OWNER | OPT_MULTI;
+  
+!     rv = ap_pcfg_openfile(&cfp, p, fname);
+      if (rv != APR_SUCCESS) {
+          char errmsg[120];
+!         return apr_psprintf(p, "Could not open configuration file %s: %s",
+!                             fname, apr_strerror(rv, errmsg, sizeof errmsg));
+      }
+  
+!     parms.config_file = cfp;
+!     error = ap_build_config(&parms, p, ptemp, conftree);
+!     ap_cfg_closefile(cfp);
+  
+!     if (error) {
+!         return apr_psprintf(p, "Syntax error on line %d of %s: %s",
+!                             parms.err_directive->line_num,
+!                             parms.err_directive->filename, error);
+      }
+  
+      return NULL;
+  }
+  
+! AP_DECLARE(const char *) ap_process_resource_config(server_rec *s,
+                                                      const char *fname,
+                                                      ap_directive_t **conftree,
+                                                      apr_pool_t *p,
+!                                                     apr_pool_t *ptemp)
+  {
+      /* XXX: lstat() won't work on the wildcard pattern...
+       */
+--- 1695,1818 ----
+          return NULL;
+      }
+  
+!     return ap_process_resource_config(s, fname, conftree, p, ptemp);
+! }
+  
+! static const char *process_resource_config_fnmatch(server_rec *s,
+!                                                    const char *path,
+!                                                    const char *fname,
+!                                                    ap_directive_t **conftree,
+!                                                    apr_pool_t *p,
+!                                                    apr_pool_t *ptemp,
+!                                                    unsigned depth,
+!                                                    int optional)
+! {
+!     const char *rest;
+!     apr_status_t rv;
+!     apr_dir_t *dirp;
+!     apr_finfo_t dirent;
+!     apr_array_header_t *candidates = NULL;
+!     fnames *fnew;
+!     int current;
+! 
+!     /* find the first part of the filename */
+!     rest = ap_strchr_c(fname, '/');
+!     if (rest) {
+!         fname = apr_pstrndup(ptemp, fname, rest - fname);
+!         rest++;
+!     }
+! 
+!     /* optimisation - if the filename isn't a wildcard, process it directly */
+!     if (!apr_fnmatch_test(fname)) {
+!         path = ap_make_full_path(ptemp, path, fname);
+!         if (!rest) {
+!             return process_resource_config_nofnmatch(s, path,
+!                                                      conftree, p,
+!                                                      ptemp, 0, optional);
+!         }
+!         else {
+!             return process_resource_config_fnmatch(s, path, rest,
+!                                                    conftree, p,
+!                                                    ptemp, 0, optional);
+!         }
+!     }
+! 
+!     /*
+!      * first course of business is to grok all the directory
+!      * entries here and store 'em away. Recall we need full pathnames
+!      * for this.
+!      */
+!     rv = apr_dir_open(&dirp, path, ptemp);
+      if (rv != APR_SUCCESS) {
+          char errmsg[120];
+!         return apr_psprintf(p, "Could not open config directory %s: %s",
+!                             path, apr_strerror(rv, errmsg, sizeof errmsg));
+      }
+  
+!     candidates = apr_array_make(ptemp, 1, sizeof(fnames));
+!     while (apr_dir_read(&dirent, APR_FINFO_DIRENT | APR_FINFO_TYPE, dirp) == APR_SUCCESS) {
+!         /* strip out '.' and '..' */
+!         if (strcmp(dirent.name, ".")
+!             && strcmp(dirent.name, "..")
+!             && (apr_fnmatch(fname, dirent.name,
+!                             APR_FNM_PERIOD) == APR_SUCCESS)) {
+!             const char *full_path = ap_make_full_path(ptemp, path, dirent.name);
+!             /* If matching internal to path, and we happen to match something
+!              * other than a directory, skip it
+!              */
+!             if (rest && (rv == APR_SUCCESS) && (dirent.filetype != APR_DIR)) {
+!                 continue;
+!             }
+!             fnew = (fnames *) apr_array_push(candidates);
+!             fnew->fname = full_path;
+!         }
+!     }
+  
+!     apr_dir_close(dirp);
+!     if (candidates->nelts != 0) {
+!         const char *error;
+! 
+!         qsort((void *) candidates->elts, candidates->nelts,
+!               sizeof(fnames), fname_alphasort);
+! 
+!         /*
+!          * Now recurse these... we handle errors and subdirectories
+!          * via the recursion, which is nice
+!          */
+!         for (current = 0; current < candidates->nelts; ++current) {
+!             fnew = &((fnames *) candidates->elts)[current];
+!             if (!rest) {
+!                 error = process_resource_config_nofnmatch(s, fnew->fname,
+!                                                           conftree, p,
+!                                                           ptemp, 0, optional);
+!             }
+!             else {
+!                 error = process_resource_config_fnmatch(s, fnew->fname, rest,
+!                                                         conftree, p,
+!                                                         ptemp, 0, optional);
+!             }
+!             if (error) {
+!                 return error;
+!             }
+!         }
+!     }
+!     else {
+! 
+!         if (!optional) {
+!             return apr_psprintf(p, "No matches for the wildcard '%s' in '%s', failing "
+!                                    "(use IncludeOptional if required)", fname, path);
+!         }
+      }
+  
+      return NULL;
+  }
+  
+! AP_DECLARE(const char *) ap_process_fnmatch_configs(server_rec *s,
+                                                      const char *fname,
+                                                      ap_directive_t **conftree,
+                                                      apr_pool_t *p,
+!                                                     apr_pool_t *ptemp,
+!                                                     int optional)
+  {
+      /* XXX: lstat() won't work on the wildcard pattern...
+       */
+*************** AP_DECLARE(const char *) ap_process_reso
+*** 1673,1756 ****
+      }
+  
+      if (!apr_fnmatch_test(fname)) {
+!         return process_resource_config_nofnmatch(s, fname, conftree, p, ptemp,
+!                                                  0);
+      }
+      else {
+!         apr_dir_t *dirp;
+!         apr_finfo_t dirent;
+!         int current;
+!         apr_array_header_t *candidates = NULL;
+!         fnames *fnew;
+!         apr_status_t rv;
+!         char *path = apr_pstrdup(p, fname), *pattern = NULL;
+! 
+!         pattern = ap_strrchr(path, '/');
+! 
+!         AP_DEBUG_ASSERT(pattern != NULL); /* path must be absolute. */
+  
+!         *pattern++ = '\0';
+  
+!         if (apr_fnmatch_test(path)) {
+!             return apr_pstrcat(p, "Wildcard patterns not allowed in Include ",
+!                                fname, NULL);
+          }
+! 
+!         if (!ap_is_directory(p, path)){
+!             return apr_pstrcat(p, "Include directory '", path, "' not found",
+!                                NULL);
+          }
+  
+!         if (!apr_fnmatch_test(pattern)) {
+!             return apr_pstrcat(p, "Must include a wildcard pattern for "
+!                                "Include ", fname, NULL);
+!         }
+  
+-         /*
+-          * first course of business is to grok all the directory
+-          * entries here and store 'em away. Recall we need full pathnames
+-          * for this.
+-          */
+-         rv = apr_dir_open(&dirp, path, p);
+-         if (rv != APR_SUCCESS) {
+-             char errmsg[120];
+-             return apr_psprintf(p, "Could not open config directory %s: %s",
+-                                 path, apr_strerror(rv, errmsg, sizeof errmsg));
+-         }
+- 
+-         candidates = apr_array_make(p, 1, sizeof(fnames));
+-         while (apr_dir_read(&dirent, APR_FINFO_DIRENT, dirp) == APR_SUCCESS) {
+-             /* strip out '.' and '..' */
+-             if (strcmp(dirent.name, ".")
+-                 && strcmp(dirent.name, "..")
+-                 && (apr_fnmatch(pattern, dirent.name,
+-                                 APR_FNM_PERIOD) == APR_SUCCESS)) {
+-                 fnew = (fnames *) apr_array_push(candidates);
+-                 fnew->fname = ap_make_full_path(p, path, dirent.name);
+-             }
+-         }
+- 
+-         apr_dir_close(dirp);
+-         if (candidates->nelts != 0) {
+-             const char *error;
+- 
+-             qsort((void *) candidates->elts, candidates->nelts,
+-                   sizeof(fnames), fname_alphasort);
+- 
+-             /*
+-              * Now recurse these... we handle errors and subdirectories
+-              * via the recursion, which is nice
+-              */
+-             for (current = 0; current < candidates->nelts; ++current) {
+-                 fnew = &((fnames *) candidates->elts)[current];
+-                 error = process_resource_config_nofnmatch(s, fnew->fname,
+-                                                           conftree, p,
+-                                                           ptemp, 0);
+-                 if (error) {
+-                     return error;
+-                 }
+-             }
+-         }
+      }
+  
+      return NULL;
+--- 1828,1854 ----
+      }
+  
+      if (!apr_fnmatch_test(fname)) {
+!         return ap_process_resource_config(s, fname, conftree, p, ptemp);
+      }
+      else {
+!         apr_status_t status;
+!         const char *rootpath, *filepath = fname;
+  
+!         /* locate the start of the directories proper */
+!         status = apr_filepath_root(&rootpath, &filepath, APR_FILEPATH_TRUENAME, ptemp);
+  
+!         /* we allow APR_SUCCESS and APR_EINCOMPLETE */
+!         if (APR_ERELATIVE == status) {
+!             return apr_pstrcat(p, "Include must have an absolute path, ", fname, NULL);
+          }
+!         else if (APR_EBADPATH == status) {
+!             return apr_pstrcat(p, "Include has a bad path, ", fname, NULL);
+          }
+  
+!         /* walk the filepath */
+!         return process_resource_config_fnmatch(s, rootpath, filepath, conftree, p, ptemp,
+!                                                0, optional);
+  
+      }
+  
+      return NULL;
+*************** AP_CORE_DECLARE(const char *) ap_init_vi
+*** 1894,1900 ****
+      s->keep_alive = -1;
+      s->keep_alive_max = -1;
+      s->error_log = main_server->error_log;
+!     s->loglevel = main_server->loglevel;
+      /* useful default, otherwise we get a port of 0 on redirects */
+      s->port = main_server->port;
+      s->next = NULL;
+--- 1992,1999 ----
+      s->keep_alive = -1;
+      s->keep_alive_max = -1;
+      s->error_log = main_server->error_log;
+!     s->log.level = main_server->log.level;
+!     s->log.module_levels = NULL;
+      /* useful default, otherwise we get a port of 0 on redirects */
+      s->port = main_server->port;
+      s->next = NULL;
+*************** AP_CORE_DECLARE(const char *) ap_init_vi
+*** 1915,1924 ****
+--- 2014,2066 ----
+      return ap_parse_vhost_addrs(p, hostname, s);
+  }
+  
++ AP_DECLARE(struct ap_logconf *) ap_new_log_config(apr_pool_t *p,
++                                                   const struct ap_logconf *old)
++ {
++     struct ap_logconf *l = apr_pcalloc(p, sizeof(struct ap_logconf));
++     if (old) {
++         l->level = old->level;
++         if (old->module_levels) {
++             l->module_levels =
++                 apr_pmemdup(p, old->module_levels,
++                             sizeof(int) * (total_modules + DYNAMIC_MODULE_LIMIT));
++         }
++     }
++     else {
++         l->level = APLOG_UNSET;
++     }
++     return l;
++ }
++ 
++ AP_DECLARE(void) ap_merge_log_config(const struct ap_logconf *old,
++                                      struct ap_logconf *new)
++ {
++     if (new->level != APLOG_UNSET) {
++         /* Setting the main loglevel resets all per-module log levels.
++          * I.e. if new->level has been set, we must ignore old->module_levels.
++          */
++         return;
++     }
++ 
++     new->level = old->level;
++     if (new->module_levels == NULL) {
++         new->module_levels = old->module_levels;
++     }
++     else if (old->module_levels != NULL) {
++         int i;
++         for (i = 0; i < total_modules + DYNAMIC_MODULE_LIMIT; i++) {
++             if (new->module_levels[i] == APLOG_UNSET)
++                 new->module_levels[i] = old->module_levels[i];
++         }
++     }
++ }
+  
+  AP_DECLARE(void) ap_fixup_virtual_hosts(apr_pool_t *p, server_rec *main_server)
+  {
+      server_rec *virt;
++     core_dir_config *dconf = ap_get_module_config(main_server->lookup_defaults,
++                                                   &core_module);
++     dconf->log = &main_server->log;
+  
+      for (virt = main_server->next; virt; virt = virt->next) {
+          merge_server_configs(p, main_server->module_config,
+*************** AP_DECLARE(void) ap_fixup_virtual_hosts(
+*** 1943,1948 ****
+--- 2085,2095 ----
+          if (virt->keep_alive_max == -1)
+              virt->keep_alive_max = main_server->keep_alive_max;
+  
++         ap_merge_log_config(&main_server->log, &virt->log);
++ 
++         dconf = ap_get_module_config(virt->lookup_defaults, &core_module);
++         dconf->log = &virt->log;
++ 
+          /* XXX: this is really something that should be dealt with by a
+           * post-config api phase
+           */
+*************** static server_rec *init_server_config(pr
+*** 1975,1981 ****
+      s->server_hostname = NULL;
+      s->server_scheme = NULL;
+      s->error_fname = DEFAULT_ERRORLOG;
+!     s->loglevel = DEFAULT_LOGLEVEL;
+      s->limit_req_line = DEFAULT_LIMIT_REQUEST_LINE;
+      s->limit_req_fieldsize = DEFAULT_LIMIT_REQUEST_FIELDSIZE;
+      s->limit_req_fields = DEFAULT_LIMIT_REQUEST_FIELDS;
+--- 2122,2129 ----
+      s->server_hostname = NULL;
+      s->server_scheme = NULL;
+      s->error_fname = DEFAULT_ERRORLOG;
+!     s->log.level = DEFAULT_LOGLEVEL;
+!     s->log.module_levels = NULL;
+      s->limit_req_line = DEFAULT_LIMIT_REQUEST_LINE;
+      s->limit_req_fieldsize = DEFAULT_LIMIT_REQUEST_FIELDSIZE;
+      s->limit_req_fields = DEFAULT_LIMIT_REQUEST_FIELDS;
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/server/connection.c /tmp/patch.inc.get2.dIah1X/server/connection.c
+*** /tmp/patch.inc.get1.f0Yx3d/server/connection.c	2013-04-28 19:22:19.383340949 +0200
+--- /tmp/patch.inc.get2.dIah1X/server/connection.c	2013-04-28 19:22:38.663436576 +0200
+*************** AP_DECLARE(void) ap_lingering_close(conn
+*** 152,159 ****
+              break;
+  
+          if (timeup == 0) {
+!             /* First time through; calculate now + 30 seconds. */
+!             timeup = apr_time_now() + apr_time_from_sec(MAX_SECS_TO_LINGER);
+              continue;
+          }
+      } while (apr_time_now() < timeup);
+--- 152,171 ----
+              break;
+  
+          if (timeup == 0) {
+!             /*
+!              * First time through;
+!              * calculate now + 30 seconds (MAX_SECS_TO_LINGER).
+!              *
+!              * If some module requested a shortened waiting period, only wait for
+!              * 2s (SECONDS_TO_LINGER). This is useful for mitigating certain
+!              * DoS attacks.
+!              */
+!             if (apr_table_get(c->notes, "short-lingering-close")) {
+!                 timeup = apr_time_now() + apr_time_from_sec(SECONDS_TO_LINGER);
+!             }
+!             else {
+!                 timeup = apr_time_now() + apr_time_from_sec(MAX_SECS_TO_LINGER);
+!             }
+              continue;
+          }
+      } while (apr_time_now() < timeup);
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/server/core.c /tmp/patch.inc.get2.dIah1X/server/core.c
+*** /tmp/patch.inc.get1.f0Yx3d/server/core.c	2013-04-28 19:22:19.399341033 +0200
+--- /tmp/patch.inc.get2.dIah1X/server/core.c	2013-04-28 19:22:38.679436651 +0200
+*************** static void *merge_core_dir_configs(apr_
+*** 419,424 ****
+--- 419,434 ----
+  
+      conf->allow_encoded_slashes = new->allow_encoded_slashes;
+  
++     if (new->log) {
++         if (!conf->log) {
++             conf->log = new->log;
++         }
++         else {
++             conf->log = ap_new_log_config(a, new->log);
++             ap_merge_log_config(base->log, conf->log);
++         }
++     }
++ 
+      return (void*)conf;
+  }
+  
+*************** static const char *set_access_name(cmd_p
+*** 1102,1119 ****
+  
+  
+  static const char *set_define(cmd_parms *cmd, void *dummy,
+!                                    const char *optarg)
+  {
+!     char **newv;
+  
+!     const char *err = ap_check_cmd_context(cmd,
+!                                            GLOBAL_ONLY);
+      if (err != NULL) {
+          return err;
+      }
+  
+!     newv = (char **)apr_array_push(ap_server_config_defines);
+!     *newv = apr_pstrdup(cmd->pool, optarg);
+  
+      return NULL;
+  }
+--- 1112,1149 ----
+  
+  
+  static const char *set_define(cmd_parms *cmd, void *dummy,
+!                               const char *optarg)
+  {
+!     const char *err = ap_check_cmd_context(cmd, GLOBAL_ONLY);
+!     if (err != NULL) {
+!         return err;
+!     }
+  
+!     if (!ap_exists_config_define(optarg)) {
+!         char **newv = (char **)apr_array_push(ap_server_config_defines);
+!         *newv = apr_pstrdup(cmd->pool, optarg);
+!     }
+! 
+!     return NULL;
+! }
+! 
+! static const char *unset_define(cmd_parms *cmd, void *dummy,
+!                                 const char *optarg)
+! {
+!     int i;
+!     char **defines;
+!     const char *err = ap_check_cmd_context(cmd, GLOBAL_ONLY);
+      if (err != NULL) {
+          return err;
+      }
+  
+!     defines = (char **)ap_server_config_defines->elts;
+!     for (i = 0; i < ap_server_config_defines->nelts; i++) {
+!         if (strcmp(defines[i], optarg) == 0) {
+!             defines[i] = apr_array_pop(ap_server_config_defines);
+!             break;
+!         }
+!     }
+  
+      return NULL;
+  }
+*************** static const char *ifsection(cmd_parms *
+*** 2070,2103 ****
+      return NULL;
+  }
+  
+! static const char *start_ifmod(cmd_parms *cmd, void *mconfig, const char *arg)
+  {
+!     const char *endp = ap_strrchr_c(arg, '>');
+!     int not = (arg[0] == '!');
+!     module *found;
+! 
+!     if (endp == NULL) {
+!         return unclosed_directive(cmd);
+!     }
+! 
+!     arg = apr_pstrndup(cmd->pool, arg, endp - arg);
+! 
+!     if (not) {
+!         arg++;
+!     }
+! 
+!     if (!arg[0]) {
+!         return missing_container_arg(cmd);
+!     }
+! 
+!     found = ap_find_linked_module(arg);
+  
+      /* search prelinked stuff */
+      if (!found) {
+          ap_module_symbol_t *current = ap_prelinked_module_symbols;
+  
+          for (; current->name; ++current) {
+!             if (!strcmp(current->name, arg)) {
+                  found = current->modp;
+                  break;
+              }
+--- 2100,2115 ----
+      return NULL;
+  }
+  
+! static module *find_module(server_rec *s, const char *name)
+  {
+!     module *found = ap_find_linked_module(name);
+  
+      /* search prelinked stuff */
+      if (!found) {
+          ap_module_symbol_t *current = ap_prelinked_module_symbols;
+  
+          for (; current->name; ++current) {
+!             if (!strcmp(current->name, name)) {
+                  found = current->modp;
+                  break;
+              }
+*************** static const char *start_ifmod(cmd_parms
+*** 2110,2119 ****
+              APR_RETRIEVE_OPTIONAL_FN(ap_find_loaded_module_symbol);
+  
+          if (check_symbol) {
+!             found = check_symbol(cmd->server, arg);
+          }
+      }
+  
+      if ((!not && found) || (not && !found)) {
+          ap_directive_t *parent = NULL;
+          ap_directive_t *current = NULL;
+--- 2122,2157 ----
+              APR_RETRIEVE_OPTIONAL_FN(ap_find_loaded_module_symbol);
+  
+          if (check_symbol) {
+!             found = check_symbol(s, name);
+          }
+      }
+  
++     return found;
++ }
++ 
++ 
++ static const char *start_ifmod(cmd_parms *cmd, void *mconfig, const char *arg)
++ {
++     const char *endp = ap_strrchr_c(arg, '>');
++     int not = (arg[0] == '!');
++     module *found;
++ 
++     if (endp == NULL) {
++         return unclosed_directive(cmd);
++     }
++ 
++     arg = apr_pstrndup(cmd->pool, arg, endp - arg);
++ 
++     if (not) {
++         arg++;
++     }
++ 
++     if (!arg[0]) {
++         return missing_container_arg(cmd);
++     }
++ 
++     found = find_module(cmd->server, arg);
++ 
+      if ((!not && found) || (not && !found)) {
+          ap_directive_t *parent = NULL;
+          ap_directive_t *current = NULL;
+*************** static const char *set_use_canonical_phy
+*** 2546,2558 ****
+      return NULL;
+  }
+  
+- 
+  static const char *include_config (cmd_parms *cmd, void *dummy,
+                                     const char *name)
+  {
+      ap_directive_t *conftree = NULL;
+!     const char* conffile, *error;
+      unsigned *recursion;
+      void *data;
+  
+      apr_pool_userdata_get(&data, "ap_include_sentinel", cmd->pool);
+--- 2584,2596 ----
+      return NULL;
+  }
+  
+  static const char *include_config (cmd_parms *cmd, void *dummy,
+                                     const char *name)
+  {
+      ap_directive_t *conftree = NULL;
+!     const char *conffile, *error;
+      unsigned *recursion;
++     int optional = cmd->cmd->cmd_data ? 1 : 0;
+      void *data;
+  
+      apr_pool_userdata_get(&data, "ap_include_sentinel", cmd->pool);
+*************** static const char *include_config (cmd_p
+*** 2567,2574 ****
+  
+      if (++*recursion > AP_MAX_INCLUDE_DEPTH) {
+          *recursion = 0;
+!         return apr_psprintf(cmd->pool, "Exceeded maximum include depth of %u. "
+!                             "You have probably a recursion somewhere.",
+                              AP_MAX_INCLUDE_DEPTH);
+      }
+  
+--- 2605,2612 ----
+  
+      if (++*recursion > AP_MAX_INCLUDE_DEPTH) {
+          *recursion = 0;
+!         return apr_psprintf(cmd->pool, "Exceeded maximum include depth of %u, "
+!                             "There appears to be a recursion.",
+                              AP_MAX_INCLUDE_DEPTH);
+      }
+  
+*************** static const char *include_config (cmd_p
+*** 2579,2586 ****
+                             name, NULL);
+      }
+  
+!     error = ap_process_resource_config(cmd->server, conffile,
+!                                        &conftree, cmd->pool, cmd->temp_pool);
+      if (error) {
+          *recursion = 0;
+          return error;
+--- 2617,2625 ----
+                             name, NULL);
+      }
+  
+!     error = ap_process_fnmatch_configs(cmd->server, conffile, &conftree, 
+!                                        cmd->pool, cmd->temp_pool, 
+!                                        optional);
+      if (error) {
+          *recursion = 0;
+          return error;
+*************** static const char *include_config (cmd_p
+*** 2596,2644 ****
+      return NULL;
+  }
+  
+! static const char *set_loglevel(cmd_parms *cmd, void *dummy, const char *arg)
+  {
+!     char *str;
+  
+      const char *err = ap_check_cmd_context(cmd, NOT_IN_DIR_LOC_FILE);
+      if (err != NULL) {
+          return err;
+      }
+  
+!     if ((str = ap_getword_conf(cmd->pool, &arg))) {
+!         if (!strcasecmp(str, "emerg")) {
+!             cmd->server->loglevel = APLOG_EMERG;
+!         }
+!         else if (!strcasecmp(str, "alert")) {
+!             cmd->server->loglevel = APLOG_ALERT;
+!         }
+!         else if (!strcasecmp(str, "crit")) {
+!             cmd->server->loglevel = APLOG_CRIT;
+!         }
+!         else if (!strcasecmp(str, "error")) {
+!             cmd->server->loglevel = APLOG_ERR;
+!         }
+!         else if (!strcasecmp(str, "warn")) {
+!             cmd->server->loglevel = APLOG_WARNING;
+!         }
+!         else if (!strcasecmp(str, "notice")) {
+!             cmd->server->loglevel = APLOG_NOTICE;
+!         }
+!         else if (!strcasecmp(str, "info")) {
+!             cmd->server->loglevel = APLOG_INFO;
+!         }
+!         else if (!strcasecmp(str, "debug")) {
+!             cmd->server->loglevel = APLOG_DEBUG;
+!         }
+!         else {
+!             return "LogLevel requires level keyword: one of "
+!                    "emerg/alert/crit/error/warn/notice/info/debug";
+          }
+      }
+      else {
+!         return "LogLevel requires level keyword";
+      }
+  
+      return NULL;
+  }
+  
+--- 2635,2709 ----
+      return NULL;
+  }
+  
+! static const char *set_loglevel(cmd_parms *cmd, void *config_, const char *arg_)
+  {
+!     char *level_str;
+!     int level;
+!     module *module;
+!     char *arg = apr_pstrdup(cmd->temp_pool, arg_);
+!     struct ap_logconf *log;
+!     const char *err;
+  
++     /* XXX: what check is necessary here? */
++ #if 0
+      const char *err = ap_check_cmd_context(cmd, NOT_IN_DIR_LOC_FILE);
+      if (err != NULL) {
+          return err;
+      }
++ #endif
+  
+!     if (cmd->path) {
+!         core_dir_config *dconf = config_;
+!         if (!dconf->log) {
+!             dconf->log = ap_new_log_config(cmd->pool, NULL);
+          }
++         log = dconf->log;
+      }
+      else {
+!         log = &cmd->server->log;
+!     }
+! 
+!     if (arg == NULL)
+!         return "LogLevel requires level keyword or module loglevel specifier";
+! 
+!     level_str = ap_strchr(arg, ':');
+! 
+!     if (level_str == NULL) {
+!         err = ap_parse_log_level(arg, &log->level);
+!         if (err != NULL)
+!             return err;
+!         ap_reset_module_loglevels(log, APLOG_NO_MODULE);
+!         ap_log_error(APLOG_MARK, APLOG_TRACE3, 0, cmd->server,
+!                      "Setting LogLevel for all modules to %s", arg);
+!         return NULL;
+!     }
+! 
+!     *level_str++ = '\0';
+!     if (!*level_str) {
+!         return apr_psprintf(cmd->temp_pool, "Module specifier '%s' must be "
+!                             "followed by a log level keyword", arg);
+!     }
+! 
+!     err = ap_parse_log_level(level_str, &level);
+!     if (err != NULL)
+!         return apr_psprintf(cmd->temp_pool, "%s:%s: %s", arg, level_str, err);
+! 
+!     if ((module = find_module(cmd->server, arg)) == NULL) {
+!         char *name = apr_psprintf(cmd->temp_pool, "%s_module", arg);
+!         ap_log_error(APLOG_MARK, APLOG_TRACE6, 0, cmd->server,
+!                      "Cannot find module '%s', trying '%s'", arg, name);
+!         module = find_module(cmd->server, name);
+      }
+  
++     if (module == NULL) {
++         return apr_psprintf(cmd->temp_pool, "Cannot find module %s", arg);
++     }
++ 
++     ap_set_module_loglevel(cmd->pool, log, module->module_index, level);
++     ap_log_error(APLOG_MARK, APLOG_TRACE3, 0, cmd->server,
++                  "Setting LogLevel for module %s to %s", module->name,
++                  level_str);
++ 
+      return NULL;
+  }
+  
+*************** AP_INIT_TAKE1("AcceptPathInfo", set_acce
+*** 3240,3245 ****
+--- 3305,3312 ----
+    "Set to on or off for PATH_INFO to be accepted by handlers, or default for the per-handler preference"),
+  AP_INIT_TAKE1("Define", set_define, NULL, RSRC_CONF,
+                "Define the existance of a variable.  Same as passing -D to the command line."),
++ AP_INIT_TAKE1("UnDefine", unset_define, NULL, RSRC_CONF,
++               "Undefine the existance of a variable. Undo a Define."),
+  AP_INIT_RAW_ARGS("<If", ifsection, NULL, OR_ALL,
+    "Container for directives to be conditionally applied"),
+  
+*************** AP_INIT_TAKE1("UseCanonicalPhysicalPort"
+*** 3307,3314 ****
+  /* TODO: ListenBacklog in MPM */
+  AP_INIT_TAKE1("Include", include_config, NULL,
+    (RSRC_CONF | ACCESS_CONF | EXEC_ON_READ),
+!   "Name of the config file to be included"),
+! AP_INIT_TAKE1("LogLevel", set_loglevel, NULL, RSRC_CONF,
+    "Level of verbosity in error logging"),
+  AP_INIT_TAKE1("NameVirtualHost", ap_set_name_virtual_host, NULL, RSRC_CONF,
+    "A numeric IP address:port, or the name of a host"),
+--- 3374,3386 ----
+  /* TODO: ListenBacklog in MPM */
+  AP_INIT_TAKE1("Include", include_config, NULL,
+    (RSRC_CONF | ACCESS_CONF | EXEC_ON_READ),
+!   "Name(s) of the config file(s) to be included; fails if the wildcard does "
+!   "not match at least one file"),
+! AP_INIT_TAKE1("IncludeOptional", include_config, (void*)1,
+!   (RSRC_CONF | ACCESS_CONF | EXEC_ON_READ),
+!   "Name or pattern of the config file(s) to be included; ignored if the file "
+!   "does not exist or the pattern does not match any files"),
+! AP_INIT_ITERATE("LogLevel", set_loglevel, NULL, RSRC_CONF|ACCESS_CONF,
+    "Level of verbosity in error logging"),
+  AP_INIT_TAKE1("NameVirtualHost", ap_set_name_virtual_host, NULL, RSRC_CONF,
+    "A numeric IP address:port, or the name of a host"),
+*************** AP_INIT_ITERATE2("AddOutputFilterByType"
+*** 3379,3384 ****
+--- 3451,3465 ----
+  AP_INIT_FLAG("AllowEncodedSlashes", set_allow2f, NULL, RSRC_CONF,
+               "Allow URLs containing '/' encoded as '%2F'"),
+  
++ /* scoreboard.c directives */
++ AP_INIT_TAKE1("ScoreboardFile", ap_set_scoreboard, NULL, RSRC_CONF,
++               "A file for Apache to maintain runtime process management information"),
++ AP_INIT_FLAG("ExtendedStatus", ap_set_extended_status, NULL, RSRC_CONF,
++              "\"On\" to track extended status information, \"Off\" to disable"),
++ AP_INIT_FLAG("SeeRequestTail", ap_set_reqtail, NULL, RSRC_CONF,
++              "For extended status, \"On\" to see the last 63 chars of "
++              "the request line, \"Off\" (default) to see the first 63"),
++ 
+  /*
+   * These are default configuration directives that mpms can/should
+   * pay attention to.
+*************** AP_INIT_FLAG("AllowEncodedSlashes", set_
+*** 3387,3394 ****
+   */
+  AP_INIT_TAKE1("PidFile",  ap_mpm_set_pidfile, NULL, RSRC_CONF,
+                "A file for logging the server process ID"),
+- AP_INIT_TAKE1("ScoreBoardFile", ap_mpm_set_scoreboard, NULL, RSRC_CONF,
+-               "A file for Apache to maintain runtime process management information"),
+  AP_INIT_TAKE1("MaxRequestsPerChild", ap_mpm_set_max_requests, NULL, RSRC_CONF,
+                "Maximum number of requests a particular child serves before dying."),
+  AP_INIT_TAKE1("CoreDumpDirectory", ap_mpm_set_coredumpdir, NULL, RSRC_CONF,
+--- 3468,3473 ----
+*************** AP_DECLARE(int) ap_sys_privileges_handle
+*** 3710,3715 ****
+--- 3789,3801 ----
+      sys_privileges += inc;
+      return sys_privileges;
+  }
++ 
++ static int core_pre_config(apr_pool_t *pconf, apr_pool_t *plog, apr_pool_t *ptemp)
++ {
++     ap_mutex_init(pconf);
++     return APR_SUCCESS;
++ }
++ 
+  static int core_post_config(apr_pool_t *pconf, apr_pool_t *plog, apr_pool_t *ptemp, server_rec *s)
+  {
+      ap__logio_add_bytes_out = APR_RETRIEVE_OPTIONAL_FN(ap_logio_add_bytes_out);
+*************** static int core_pre_connection(conn_rec
+*** 3918,3933 ****
+  
+  static void register_hooks(apr_pool_t *p)
+  {
+!     /* create_connection and install_transport_filters are
+!      * hooks that should always be APR_HOOK_REALLY_LAST to give other
+!      * modules the opportunity to install alternate network transports
+!      * and stop other functions from being run.
+       */
+      ap_hook_create_connection(core_create_conn, NULL, NULL,
+                                APR_HOOK_REALLY_LAST);
+      ap_hook_pre_connection(core_pre_connection, NULL, NULL,
+                             APR_HOOK_REALLY_LAST);
+  
+      ap_hook_post_config(core_post_config,NULL,NULL,APR_HOOK_REALLY_FIRST);
+      ap_hook_translate_name(ap_core_translate,NULL,NULL,APR_HOOK_REALLY_LAST);
+      ap_hook_map_to_storage(core_map_to_storage,NULL,NULL,APR_HOOK_REALLY_LAST);
+--- 4004,4020 ----
+  
+  static void register_hooks(apr_pool_t *p)
+  {
+!     /* create_connection and pre_connection should always be hooked
+!      * APR_HOOK_REALLY_LAST by core to give other modules the opportunity
+!      * to install alternate network transports and stop other functions 
+!      * from being run.
+       */
+      ap_hook_create_connection(core_create_conn, NULL, NULL,
+                                APR_HOOK_REALLY_LAST);
+      ap_hook_pre_connection(core_pre_connection, NULL, NULL,
+                             APR_HOOK_REALLY_LAST);
+  
++     ap_hook_pre_config(core_pre_config, NULL, NULL, APR_HOOK_REALLY_FIRST);
+      ap_hook_post_config(core_post_config,NULL,NULL,APR_HOOK_REALLY_FIRST);
+      ap_hook_translate_name(ap_core_translate,NULL,NULL,APR_HOOK_REALLY_LAST);
+      ap_hook_map_to_storage(core_map_to_storage,NULL,NULL,APR_HOOK_REALLY_LAST);
+*************** static void register_hooks(apr_pool_t *p
+*** 3964,3970 ****
+                                    NULL, AP_FTYPE_RESOURCE - 10);
+  }
+  
+! AP_DECLARE_DATA module core_module = {
+      MPM20_MODULE_STUFF,
+      AP_PLATFORM_REWRITE_ARGS_HOOK, /* hook to run before apache parses args */
+      create_core_dir_config,       /* create per-directory config structure */
+--- 4051,4057 ----
+                                    NULL, AP_FTYPE_RESOURCE - 10);
+  }
+  
+! AP_DECLARE_MODULE(core) = {
+      MPM20_MODULE_STUFF,
+      AP_PLATFORM_REWRITE_ARGS_HOOK, /* hook to run before apache parses args */
+      create_core_dir_config,       /* create per-directory config structure */
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/server/core_filters.c /tmp/patch.inc.get2.dIah1X/server/core_filters.c
+*** /tmp/patch.inc.get1.f0Yx3d/server/core_filters.c	2013-04-28 19:22:19.383340949 +0200
+--- /tmp/patch.inc.get2.dIah1X/server/core_filters.c	2013-04-28 19:22:38.663436576 +0200
+*************** do { \
+*** 75,80 ****
+--- 75,81 ----
+      } while (!APR_BRIGADE_EMPTY(b) && (e != APR_BRIGADE_SENTINEL(b))); \
+  } while (0)
+  
++ APLOG_USE_MODULE(core);
+  
+  int ap_core_input_filter(ap_filter_t *f, apr_bucket_brigade *b,
+                           ap_input_mode_t mode, apr_read_type_e block,
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/server/listen.c /tmp/patch.inc.get2.dIah1X/server/listen.c
+*** /tmp/patch.inc.get1.f0Yx3d/server/listen.c	2013-04-28 19:22:19.383340949 +0200
+--- /tmp/patch.inc.get2.dIah1X/server/listen.c	2013-04-28 19:22:38.671436587 +0200
+***************
+*** 28,33 ****
+--- 28,35 ----
+  #include "http_log.h"
+  #include "mpm_common.h"
+  
++ APLOG_USE_MODULE(core);
++ 
+  AP_DECLARE_DATA ap_listen_rec *ap_listeners = NULL;
+  
+  static ap_listen_rec *old_listeners;
+*************** static int open_listeners(apr_pool_t *po
+*** 437,443 ****
+  #endif
+              if (make_sock(pool, lr) == APR_SUCCESS) {
+                  ++num_open;
+-                 lr->active = 1;
+              }
+              else {
+  #if APR_HAVE_IPV6
+--- 439,444 ----
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/server/log.c /tmp/patch.inc.get2.dIah1X/server/log.c
+*** /tmp/patch.inc.get1.f0Yx3d/server/log.c	2013-04-28 19:22:19.399341033 +0200
+--- /tmp/patch.inc.get2.dIah1X/server/log.c	2013-04-28 19:22:38.679436651 +0200
+***************
+*** 28,33 ****
+--- 28,34 ----
+  #include "apr_thread_proc.h"
+  #include "apr_lib.h"
+  #include "apr_signal.h"
++ #include "apr_portable.h"
+  
+  #define APR_WANT_STDIO
+  #define APR_WANT_STRFUNC
+***************
+*** 49,54 ****
+--- 50,57 ----
+  #include "util_time.h"
+  #include "ap_mpm.h"
+  
++ APLOG_USE_MODULE(core);
++ 
+  typedef struct {
+      const char *t_name;
+      int t_val;
+*************** static const TRANS priorities[] = {
+*** 134,139 ****
+--- 137,150 ----
+      {"notice",  APLOG_NOTICE},
+      {"info",    APLOG_INFO},
+      {"debug",   APLOG_DEBUG},
++     {"trace1",  APLOG_TRACE1},
++     {"trace2",  APLOG_TRACE2},
++     {"trace3",  APLOG_TRACE3},
++     {"trace4",  APLOG_TRACE4},
++     {"trace5",  APLOG_TRACE5},
++     {"trace6",  APLOG_TRACE6},
++     {"trace7",  APLOG_TRACE7},
++     {"trace8",  APLOG_TRACE8},
+      {NULL,      -1},
+  };
+  
+*************** AP_DECLARE(void) ap_error_log2stderr(ser
+*** 535,541 ****
+      }
+  }
+  
+! static void log_error_core(const char *file, int line, int level,
+                             apr_status_t status, const server_rec *s,
+                             const conn_rec *c,
+                             const request_rec *r, apr_pool_t *pool,
+--- 546,553 ----
+      }
+  }
+  
+! static void log_error_core(const char *file, int line, int module_index,
+!                            int level,
+                             apr_status_t status, const server_rec *s,
+                             const conn_rec *c,
+                             const request_rec *r, apr_pool_t *pool,
+*************** static void log_error_core(const char *f
+*** 569,602 ****
+  
+          logf = stderr_log;
+      }
+-     else if (s->error_log) {
+-         /*
+-          * If we are doing normal logging, don't log messages that are
+-          * above the server log level unless it is a startup/shutdown notice
+-          */
+-         if ((level_and_mask != APLOG_NOTICE)
+-             && (level_and_mask > s->loglevel)) {
+-             return;
+-         }
+- 
+-         logf = s->error_log;
+-     }
+      else {
+!         /*
+!          * If we are doing syslog logging, don't log messages that are
+!          * above the server log level (including a startup/shutdown notice)
+!          */
+!         if (level_and_mask > s->loglevel) {
+!             return;
+          }
+      }
+  
+      if (logf && ((level & APLOG_STARTUP) != APLOG_STARTUP)) {
+          errstr[0] = '[';
+!         ap_recent_ctime(errstr + 1, apr_time_now());
+!         errstr[1 + APR_CTIME_LEN - 1] = ']';
+!         errstr[1 + APR_CTIME_LEN    ] = ' ';
+!         len = 1 + APR_CTIME_LEN + 1;
+      } else {
+          len = 0;
+      }
+--- 581,624 ----
+  
+          logf = stderr_log;
+      }
+      else {
+!         int configured_level = r ? ap_get_request_module_loglevel(r, module_index) :
+!                                c ? ap_get_conn_module_loglevel(c, module_index) :
+!                                    ap_get_server_module_loglevel(s, module_index);
+!         if (s->error_log) {
+!             /*
+!              * If we are doing normal logging, don't log messages that are
+!              * above the module's log level unless it is a startup/shutdown notice
+!              */
+!             if ((level_and_mask != APLOG_NOTICE)
+!                 && (level_and_mask > configured_level)) {
+!                 return;
+!             }
+! 
+!             logf = s->error_log;
+!         }
+!         else {
+!             /*
+!              * If we are doing syslog logging, don't log messages that are
+!              * above the module's log level (including a startup/shutdown notice)
+!              */
+!             if (level_and_mask > configured_level) {
+!                 return;
+!             }
+          }
+      }
+  
+      if (logf && ((level & APLOG_STARTUP) != APLOG_STARTUP)) {
++         int time_len;
++ 
+          errstr[0] = '[';
+!         len = 1;
+!         time_len = MAX_STRING_LEN - len;
+!         ap_recent_ctime_ex(errstr + len, apr_time_now(),
+!                            AP_CTIME_OPTION_USEC, &time_len);
+!         len += time_len -1;
+!         errstr[len++] = ']';
+!         errstr[len++] = ' ';
+      } else {
+          len = 0;
+      }
+*************** static void log_error_core(const char *f
+*** 604,612 ****
+      if ((level & APLOG_STARTUP) != APLOG_STARTUP) {
+          len += apr_snprintf(errstr + len, MAX_STRING_LEN - len,
+                              "[%s] ", priorities[level_and_mask].t_name);
+      }
+  
+!     if (file && level_and_mask == APLOG_DEBUG) {
+  #if defined(_OSD_POSIX) || defined(WIN32) || defined(__MVS__)
+          char tmp[256];
+          char *e = strrchr(file, '/');
+--- 626,651 ----
+      if ((level & APLOG_STARTUP) != APLOG_STARTUP) {
+          len += apr_snprintf(errstr + len, MAX_STRING_LEN - len,
+                              "[%s] ", priorities[level_and_mask].t_name);
++ 
++         len += apr_snprintf(errstr + len, MAX_STRING_LEN - len,
++                             "[pid %" APR_PID_T_FMT, getpid());
++ #if APR_HAS_THREADS
++         {
++             int result;
++ 
++             if (ap_mpm_query(AP_MPMQ_IS_THREADED, &result) == APR_SUCCESS
++                 && result != AP_MPMQ_NOT_SUPPORTED) {
++                 apr_os_thread_t tid = apr_os_thread_current();
++                 len += apr_snprintf(errstr + len, MAX_STRING_LEN - len,
++                                     ":tid %pT", &tid);
++             }
++         }
++ #endif
++         errstr[len++] = ']';
++         errstr[len++] = ' ';
+      }
+  
+!     if (file && level_and_mask >= APLOG_DEBUG) {
+  #if defined(_OSD_POSIX) || defined(WIN32) || defined(__MVS__)
+          char tmp[256];
+          char *e = strrchr(file, '/');
+*************** static void log_error_core(const char *f
+*** 643,655 ****
+      }
+  
+      if (c) {
+!         /* XXX: TODO: add a method of selecting whether logged client
+           * addresses are in dotted quad or resolved form... dotted
+           * quad is the most secure, which is why I'm implementing it
+           * first. -djg
+           */
+          len += apr_snprintf(errstr + len, MAX_STRING_LEN - len,
+!                             "[client %s] ", c->remote_ip);
+      }
+      if (status != 0) {
+          if (status < APR_OS_START_EAIERR) {
+--- 682,699 ----
+      }
+  
+      if (c) {
+!         /* XXX: TODO: add a method of selecting whether logged remote
+           * addresses are in dotted quad or resolved form... dotted
+           * quad is the most secure, which is why I'm implementing it
+           * first. -djg
+           */
++         /*
++          * remote_ip can be client or backend server. If we have a scoreboard
++          * handle, it is likely a client.
++          */
+          len += apr_snprintf(errstr + len, MAX_STRING_LEN - len,
+!                             c->sbh ? "[client %s:%d] " : "[remote %s:%d] ",
+!                             c->remote_ip, c->remote_addr->port);
+      }
+      if (status != 0) {
+          if (status < APR_OS_START_EAIERR) {
+*************** static void log_error_core(const char *f
+*** 714,757 ****
+      }
+  #ifdef HAVE_SYSLOG
+      else {
+!         syslog(level_and_mask, "%s", errstr);
+      }
+  #endif
+  
+!     ap_run_error_log(file, line, level, status, s, r, pool, errstr + errstrlen);
+  }
+  
+! AP_DECLARE(void) ap_log_error(const char *file, int line, int level,
+!                               apr_status_t status, const server_rec *s,
+!                               const char *fmt, ...)
+  {
+      va_list args;
+  
+      va_start(args, fmt);
+!     log_error_core(file, line, level, status, s, NULL, NULL, NULL, fmt, args);
+      va_end(args);
+  }
+  
+! AP_DECLARE(void) ap_log_perror(const char *file, int line, int level,
+!                                apr_status_t status, apr_pool_t *p,
+!                                const char *fmt, ...)
+  {
+      va_list args;
+  
+      va_start(args, fmt);
+!     log_error_core(file, line, level, status, NULL, NULL, NULL, p, fmt, args);
+      va_end(args);
+  }
+  
+! AP_DECLARE(void) ap_log_rerror(const char *file, int line, int level,
+!                                apr_status_t status, const request_rec *r,
+!                                const char *fmt, ...)
+  {
+      va_list args;
+  
+      va_start(args, fmt);
+!     log_error_core(file, line, level, status, r->server, NULL, r, NULL, fmt,
+!                    args);
+  
+      /*
+       * IF APLOG_TOCLIENT is set,
+--- 758,805 ----
+      }
+  #ifdef HAVE_SYSLOG
+      else {
+!         syslog(level_and_mask < LOG_PRIMASK ? level_and_mask : APLOG_DEBUG,
+!                "%s", errstr);
+      }
+  #endif
+  
+!     ap_run_error_log(file, line, module_index, level, status, s, r, pool,
+!                      errstr + errstrlen);
+  }
+  
+! AP_DECLARE(void) ap_log_error_(const char *file, int line, int module_index,
+!                                int level, apr_status_t status,
+!                                const server_rec *s, const char *fmt, ...)
+  {
+      va_list args;
+  
+      va_start(args, fmt);
+!     log_error_core(file, line, module_index, level, status, s, NULL, NULL,
+!                    NULL, fmt, args);
+      va_end(args);
+  }
+  
+! AP_DECLARE(void) ap_log_perror_(const char *file, int line, int module_index,
+!                                 int level, apr_status_t status, apr_pool_t *p,
+!                                 const char *fmt, ...)
+  {
+      va_list args;
+  
+      va_start(args, fmt);
+!     log_error_core(file, line, module_index, level, status, NULL, NULL, NULL,
+!                    p, fmt, args);
+      va_end(args);
+  }
+  
+! AP_DECLARE(void) ap_log_rerror_(const char *file, int line, int module_index,
+!                                 int level, apr_status_t status,
+!                                 const request_rec *r, const char *fmt, ...)
+  {
+      va_list args;
+  
+      va_start(args, fmt);
+!     log_error_core(file, line, module_index, level, status, r->server, NULL, r,
+!                    NULL, fmt, args);
+  
+      /*
+       * IF APLOG_TOCLIENT is set,
+*************** AP_DECLARE(void) ap_log_rerror(const cha
+*** 772,789 ****
+      va_end(args);
+  }
+  
+! AP_DECLARE(void) ap_log_cerror(const char *file, int line, int level,
+!                                apr_status_t status, const conn_rec *c,
+!                                const char *fmt, ...)
+  {
+      va_list args;
+  
+      va_start(args, fmt);
+!     log_error_core(file, line, level, status, c->base_server, c, NULL, NULL,
+!                    fmt, args);
+      va_end(args);
+  }
+  
+  AP_DECLARE(void) ap_log_pid(apr_pool_t *p, const char *filename)
+  {
+      apr_file_t *pid_file = NULL;
+--- 820,864 ----
+      va_end(args);
+  }
+  
+! AP_DECLARE(void) ap_log_cerror_(const char *file, int line, int module_index,
+!                                 int level, apr_status_t status,
+!                                 const conn_rec *c, const char *fmt, ...)
+  {
+      va_list args;
+  
+      va_start(args, fmt);
+!     log_error_core(file, line, module_index, level, status, c->base_server, c,
+!                    NULL, NULL, fmt, args);
+      va_end(args);
+  }
+  
++ AP_DECLARE(void) ap_log_command_line(apr_pool_t *plog, server_rec *s)
++ {
++     int i;
++     process_rec *process = s->process;
++     char *result;
++     int len_needed = 0;
++     
++     /* Piece together the command line from the pieces
++      * in process->argv, with spaces in between.
++      */
++     for (i = 0; i < process->argc; i++) {
++         len_needed += strlen(process->argv[i]) + 1;
++     }
++ 
++     result = (char *) apr_palloc(plog, len_needed);
++     *result = '\0';
++ 
++     for (i = 0; i < process->argc; i++) {
++         strcat(result, process->argv[i]);
++         if ((i+1)< process->argc) {
++             strcat(result, " ");
++         }
++     }
++     ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, s,
++                  "Command line: '%s'", result);
++ }
++ 
+  AP_DECLARE(void) ap_log_pid(apr_pool_t *p, const char *filename)
+  {
+      apr_file_t *pid_file = NULL;
+*************** AP_DECLARE(void) ap_log_pid(apr_pool_t *
+*** 831,837 ****
+                       ap_server_argv0, fname);
+          exit(1);
+      }
+!     apr_file_printf(pid_file, "%ld" APR_EOL_STR, (long)mypid);
+      apr_file_close(pid_file);
+      saved_pid = mypid;
+  }
+--- 906,912 ----
+                       ap_server_argv0, fname);
+          exit(1);
+      }
+!     apr_file_printf(pid_file, "%" APR_PID_T_FMT APR_EOL_STR, mypid);
+      apr_file_close(pid_file);
+      saved_pid = mypid;
+  }
+*************** AP_DECLARE(void) ap_close_piped_log(pipe
+*** 1127,1135 ****
+      apr_pool_cleanup_run(pl->p, pl, piped_log_cleanup);
+  }
+  
+  AP_IMPLEMENT_HOOK_VOID(error_log,
+!                        (const char *file, int line, int level,
+                          apr_status_t status, const server_rec *s,
+                          const request_rec *r, apr_pool_t *pool,
+!                         const char *errstr), (file, line, level,
+                          status, s, r, pool, errstr))
+--- 1202,1229 ----
+      apr_pool_cleanup_run(pl->p, pl, piped_log_cleanup);
+  }
+  
++ AP_DECLARE(const char *) ap_parse_log_level(const char *str, int *val)
++ {
++     char *err = "Log level keyword must be one of emerg/alert/crit/error/warn/"
++                 "notice/info/debug/trace1/.../trace8";
++     int i = 0;
++ 
++     if (str == NULL)
++         return err;
++ 
++     while (priorities[i].t_name != NULL) {
++         if (!strcasecmp(str, priorities[i].t_name)) {
++             *val = priorities[i].t_val;
++             return NULL;
++         }
++         i++;
++     }
++     return err;
++ }
++ 
+  AP_IMPLEMENT_HOOK_VOID(error_log,
+!                        (const char *file, int line, int module_index, int level,
+                          apr_status_t status, const server_rec *s,
+                          const request_rec *r, apr_pool_t *pool,
+!                         const char *errstr), (file, line, module_index, level,
+                          status, s, r, pool, errstr))
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/server/main.c /tmp/patch.inc.get2.dIah1X/server/main.c
+*** /tmp/patch.inc.get1.f0Yx3d/server/main.c	2013-04-28 19:22:19.399341033 +0200
+--- /tmp/patch.inc.get2.dIah1X/server/main.c	2013-04-28 19:22:38.679436651 +0200
+*************** int main(int argc, const char * const ar
+*** 530,562 ****
+              break;
+  
+          case 'e':
+!             if (strcasecmp(optarg, "emerg") == 0) {
+!                 ap_default_loglevel = APLOG_EMERG;
+!             }
+!             else if (strcasecmp(optarg, "alert") == 0) {
+!                 ap_default_loglevel = APLOG_ALERT;
+!             }
+!             else if (strcasecmp(optarg, "crit") == 0) {
+!                 ap_default_loglevel = APLOG_CRIT;
+!             }
+!             else if (strncasecmp(optarg, "err", 3) == 0) {
+!                 ap_default_loglevel = APLOG_ERR;
+!             }
+!             else if (strncasecmp(optarg, "warn", 4) == 0) {
+!                 ap_default_loglevel = APLOG_WARNING;
+!             }
+!             else if (strcasecmp(optarg, "notice") == 0) {
+!                 ap_default_loglevel = APLOG_NOTICE;
+!             }
+!             else if (strcasecmp(optarg, "info") == 0) {
+!                 ap_default_loglevel = APLOG_INFO;
+!             }
+!             else if (strcasecmp(optarg, "debug") == 0) {
+!                 ap_default_loglevel = APLOG_DEBUG;
+!             }
+!             else {
+                  usage(process);
+-             }
+              break;
+  
+          case 'E':
+--- 530,537 ----
+              break;
+  
+          case 'e':
+!             if (ap_parse_log_level(optarg, &ap_default_loglevel) != NULL)
+                  usage(process);
+              break;
+  
+          case 'E':
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/server/mpm/event/event.c /tmp/patch.inc.get2.dIah1X/server/mpm/event/event.c
+*** /tmp/patch.inc.get1.f0Yx3d/server/mpm/event/event.c	2013-04-28 19:22:19.391340998 +0200
+--- /tmp/patch.inc.get2.dIah1X/server/mpm/event/event.c	2013-04-28 19:22:38.671436587 +0200
+***************
+*** 25,31 ****
+   * this MPM has a dedicated thread for handling both the Listenting sockets,
+   * and all sockets that are in a Keep Alive status.
+   *
+!  * The MPM assumes the underlying apr_pollset implmentation is somewhat
+   * threadsafe.  This currently is only compatible with KQueue and EPoll.  This
+   * enables the MPM to avoid extra high level locking or having to wake up the
+   * listener thread when a keep-alive socket needs to be sent to it.
+--- 25,31 ----
+   * this MPM has a dedicated thread for handling both the Listenting sockets,
+   * and all sockets that are in a Keep Alive status.
+   *
+!  * The MPM assumes the underlying apr_pollset implementation is somewhat
+   * threadsafe.  This currently is only compatible with KQueue and EPoll.  This
+   * enables the MPM to avoid extra high level locking or having to wake up the
+   * listener thread when a keep-alive socket needs to be sent to it.
+*************** static int make_child(server_rec * s, in
+*** 1861,1869 ****
+          int status = bindprocessor(BINDPROCESS, (int) getpid(),
+                                     PROCESSOR_CLASS_ANY);
+          if (status != OK)
+!             ap_log_error(APLOG_MARK, APLOG_WARNING, errno,
+                           ap_server_conf,
+!                          "processor unbind failed %d", status);
+  #endif
+          RAISE_SIGSTOP(MAKE_CHILD);
+  
+--- 1861,1869 ----
+          int status = bindprocessor(BINDPROCESS, (int) getpid(),
+                                     PROCESSOR_CLASS_ANY);
+          if (status != OK)
+!             ap_log_error(APLOG_MARK, APLOG_DEBUG, errno,
+                           ap_server_conf,
+!                          "processor unbind failed");
+  #endif
+          RAISE_SIGSTOP(MAKE_CHILD);
+  
+*************** static int event_run(apr_pool_t * _pconf
+*** 2239,2244 ****
+--- 2239,2245 ----
+                   ap_get_server_description());
+      ap_log_error(APLOG_MARK, APLOG_INFO, 0, ap_server_conf,
+                   "Server built: %s", ap_get_server_built());
++     ap_log_command_line(plog, s);
+  
+      restart_pending = shutdown_pending = 0;
+      mpm_state = AP_MPMQ_RUNNING;
+*************** static const command_rec event_cmds[] =
+*** 2841,2847 ****
+      {NULL}
+  };
+  
+! module AP_MODULE_DECLARE_DATA mpm_event_module = {
+      MPM20_MODULE_STUFF,
+      NULL,                       /* hook to run before apache parses args */
+      NULL,                       /* create per-directory config structure */
+--- 2842,2848 ----
+      {NULL}
+  };
+  
+! AP_DECLARE_MODULE(mpm_event) = {
+      MPM20_MODULE_STUFF,
+      NULL,                       /* hook to run before apache parses args */
+      NULL,                       /* create per-directory config structure */
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/server/mpm/event/pod.c /tmp/patch.inc.get2.dIah1X/server/mpm/event/pod.c
+*** /tmp/patch.inc.get1.f0Yx3d/server/mpm/event/pod.c	2013-04-28 19:22:19.391340998 +0200
+--- /tmp/patch.inc.get2.dIah1X/server/mpm/event/pod.c	2013-04-28 19:22:38.671436587 +0200
+***************
+*** 22,27 ****
+--- 22,29 ----
+  #include <unistd.h>
+  #endif
+  
++ APLOG_USE_MODULE(mpm_event);
++ 
+  AP_DECLARE(apr_status_t) ap_event_pod_open(apr_pool_t * p, ap_event_pod_t ** pod)
+  {
+      apr_status_t rv;
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/server/mpm/prefork/prefork.c /tmp/patch.inc.get2.dIah1X/server/mpm/prefork/prefork.c
+*** /tmp/patch.inc.get1.f0Yx3d/server/mpm/prefork/prefork.c	2013-04-28 19:22:19.391340998 +0200
+--- /tmp/patch.inc.get2.dIah1X/server/mpm/prefork/prefork.c	2013-04-28 19:22:38.671436587 +0200
+*************** static void child_main(int child_num_arg
+*** 684,689 ****
+--- 684,690 ----
+              die_now = 1;
+          }
+      }
++     apr_pool_clear(ptrans);
+      clean_child_exit(0);
+  }
+  
+*************** static int make_child(server_rec *s, int
+*** 743,750 ****
+          int status = bindprocessor(BINDPROCESS, (int)getpid(),
+                                     PROCESSOR_CLASS_ANY);
+          if (status != OK) {
+!             ap_log_error(APLOG_MARK, APLOG_WARNING, errno,
+!                          ap_server_conf, "processor unbind failed %d", status);
+          }
+  #endif
+          RAISE_SIGSTOP(MAKE_CHILD);
+--- 744,751 ----
+          int status = bindprocessor(BINDPROCESS, (int)getpid(),
+                                     PROCESSOR_CLASS_ANY);
+          if (status != OK) {
+!             ap_log_error(APLOG_MARK, APLOG_DEBUG, errno,
+!                          ap_server_conf, "processor unbind failed");
+          }
+  #endif
+          RAISE_SIGSTOP(MAKE_CHILD);
+*************** static int prefork_run(apr_pool_t *_pcon
+*** 915,922 ****
+      ap_log_pid(pconf, ap_pid_fname);
+  
+      /* Initialize cross-process accept lock */
+!     rv = ap_proc_mutex_create(&accept_mutex, ap_accept_mutex_type, NULL, s,
+!                               _pconf, 0);
+      if (rv != APR_SUCCESS) {
+          mpm_state = AP_MPMQ_STOPPING;
+          return DONE;
+--- 916,923 ----
+      ap_log_pid(pconf, ap_pid_fname);
+  
+      /* Initialize cross-process accept lock */
+!     rv = ap_proc_mutex_create(&accept_mutex, NULL, AP_ACCEPT_MUTEX_TYPE, NULL,
+!                               s, _pconf, 0);
+      if (rv != APR_SUCCESS) {
+          mpm_state = AP_MPMQ_STOPPING;
+          return DONE;
+*************** static int prefork_run(apr_pool_t *_pcon
+*** 971,976 ****
+--- 972,978 ----
+                  ap_get_server_description());
+      ap_log_error(APLOG_MARK, APLOG_INFO, 0, ap_server_conf,
+                  "Server built: %s", ap_get_server_built());
++     ap_log_command_line(plog, s);
+      ap_log_error(APLOG_MARK, APLOG_DEBUG, 0, ap_server_conf,
+                  "Accept mutex: %s (default: %s)",
+                  apr_proc_mutex_name(accept_mutex),
+*************** static int prefork_pre_config(apr_pool_t
+*** 1268,1274 ****
+          foreground = ap_exists_config_define("FOREGROUND");
+      }
+  
+!     ap_mutex_register(p, ap_accept_mutex_type, NULL, APR_LOCK_DEFAULT, 0);
+  
+      /* sigh, want this only the second time around */
+      retained = ap_retained_data_get(userdata_key);
+--- 1270,1276 ----
+          foreground = ap_exists_config_define("FOREGROUND");
+      }
+  
+!     ap_mutex_register(p, AP_ACCEPT_MUTEX_TYPE, NULL, APR_LOCK_DEFAULT, 0);
+  
+      /* sigh, want this only the second time around */
+      retained = ap_retained_data_get(userdata_key);
+*************** AP_GRACEFUL_SHUTDOWN_TIMEOUT_COMMAND,
+*** 1521,1527 ****
+  { NULL }
+  };
+  
+! module AP_MODULE_DECLARE_DATA mpm_prefork_module = {
+      MPM20_MODULE_STUFF,
+      NULL,                       /* hook to run before apache parses args */
+      NULL,                       /* create per-directory config structure */
+--- 1523,1529 ----
+  { NULL }
+  };
+  
+! AP_DECLARE_MODULE(mpm_prefork) = {
+      MPM20_MODULE_STUFF,
+      NULL,                       /* hook to run before apache parses args */
+      NULL,                       /* create per-directory config structure */
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/server/mpm/simple/simple_api.c /tmp/patch.inc.get2.dIah1X/server/mpm/simple/simple_api.c
+*** /tmp/patch.inc.get1.f0Yx3d/server/mpm/simple/simple_api.c	2013-04-28 19:22:19.399341033 +0200
+--- /tmp/patch.inc.get2.dIah1X/server/mpm/simple/simple_api.c	2013-04-28 19:22:38.679436651 +0200
+*************** static const command_rec simple_cmds[] =
+*** 265,271 ****
+  
+  
+  
+! module AP_MODULE_DECLARE_DATA mpm_simple_module = {
+      MPM20_MODULE_STUFF,
+      NULL,                       /* hook to run before apache parses args */
+      NULL,                       /* create per-directory config structure */
+--- 265,271 ----
+  
+  
+  
+! AP_DECLARE_MODULE(mpm_simple) = {
+      MPM20_MODULE_STUFF,
+      NULL,                       /* hook to run before apache parses args */
+      NULL,                       /* create per-directory config structure */
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/server/mpm/simple/simple_children.c /tmp/patch.inc.get2.dIah1X/server/mpm/simple/simple_children.c
+*** /tmp/patch.inc.get1.f0Yx3d/server/mpm/simple/simple_children.c	2013-04-28 19:22:19.399341033 +0200
+--- /tmp/patch.inc.get2.dIah1X/server/mpm/simple/simple_children.c	2013-04-28 19:22:38.679436651 +0200
+***************
+*** 27,32 ****
+--- 27,34 ----
+  
+  #define SPAWN_CHILDREN_INTERVAL (apr_time_from_sec(5))
+  
++ APLOG_USE_MODULE(mpm_simple);
++ 
+  static void simple_kill_random_child(simple_core_t * sc)
+  {
+      /* See comment in simple_spawn_child for why we check here. */
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/server/mpm/simple/simple_core.c /tmp/patch.inc.get2.dIah1X/server/mpm/simple/simple_core.c
+*** /tmp/patch.inc.get1.f0Yx3d/server/mpm/simple/simple_core.c	2013-04-28 19:22:19.391340998 +0200
+--- /tmp/patch.inc.get2.dIah1X/server/mpm/simple/simple_core.c	2013-04-28 19:22:38.679436651 +0200
+*************** static simple_core_t *g_simple_core;
+*** 31,36 ****
+--- 31,38 ----
+  #endif
+  
+  
++ APLOG_USE_MODULE(mpm_simple);
++ 
+  simple_core_t *simple_core_get()
+  {
+      return g_simple_core;
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/server/mpm/simple/simple_io.c /tmp/patch.inc.get2.dIah1X/server/mpm/simple/simple_io.c
+*** /tmp/patch.inc.get1.f0Yx3d/server/mpm/simple/simple_io.c	2013-04-28 19:22:19.399341033 +0200
+--- /tmp/patch.inc.get2.dIah1X/server/mpm/simple/simple_io.c	2013-04-28 19:22:38.679436651 +0200
+***************
+*** 27,32 ****
+--- 27,34 ----
+  #include "scoreboard.h"
+  #include "http_vhost.h"
+  
++ APLOG_USE_MODULE(mpm_simple);
++ 
+  static void simple_io_timeout_cb(simple_core_t * sc, void *baton)
+  {
+      simple_conn_t *scon = (simple_conn_t *) baton;
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/server/mpm/simple/simple_run.c /tmp/patch.inc.get2.dIah1X/server/mpm/simple/simple_run.c
+*** /tmp/patch.inc.get1.f0Yx3d/server/mpm/simple/simple_run.c	2013-04-28 19:22:19.399341033 +0200
+--- /tmp/patch.inc.get2.dIah1X/server/mpm/simple/simple_run.c	2013-04-28 19:22:38.679436651 +0200
+***************
+*** 35,40 ****
+--- 35,42 ----
+  #define apr_time_from_msec(msec) ((apr_time_t)(msec) * 1000)
+  #endif
+  
++ APLOG_USE_MODULE(mpm_simple);
++ 
+  /**
+   * Create Timers.
+   */
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/server/mpm/worker/pod.c /tmp/patch.inc.get2.dIah1X/server/mpm/worker/pod.c
+*** /tmp/patch.inc.get1.f0Yx3d/server/mpm/worker/pod.c	2013-04-28 19:22:19.399341033 +0200
+--- /tmp/patch.inc.get2.dIah1X/server/mpm/worker/pod.c	2013-04-28 19:22:38.679436651 +0200
+***************
+*** 21,26 ****
+--- 21,28 ----
+  #include <unistd.h>
+  #endif
+  
++ APLOG_USE_MODULE(mpm_worker);
++ 
+  AP_DECLARE(apr_status_t) ap_worker_pod_open(apr_pool_t *p, ap_worker_pod_t **pod)
+  {
+      apr_status_t rv;
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/server/mpm/worker/worker.c /tmp/patch.inc.get2.dIah1X/server/mpm/worker/worker.c
+*** /tmp/patch.inc.get1.f0Yx3d/server/mpm/worker/worker.c	2013-04-28 19:22:19.399341033 +0200
+--- /tmp/patch.inc.get2.dIah1X/server/mpm/worker/worker.c	2013-04-28 19:22:38.679436651 +0200
+*************** static void * APR_THREAD_FUNC listener_t
+*** 726,733 ****
+  
+                      /* apr_pollset_poll() will only return errors in catastrophic
+                       * circumstances. Let's try exiting gracefully, for now. */
+!                     ap_log_error(APLOG_MARK, APLOG_ERR, rv,
+!                                  (const server_rec *) ap_server_conf,
+                                   "apr_pollset_poll: (listen)");
+                      signal_threads(ST_GRACEFUL);
+                  }
+--- 726,732 ----
+  
+                      /* apr_pollset_poll() will only return errors in catastrophic
+                       * circumstances. Let's try exiting gracefully, for now. */
+!                     ap_log_error(APLOG_MARK, APLOG_ERR, rv, ap_server_conf,
+                                   "apr_pollset_poll: (listen)");
+                      signal_threads(ST_GRACEFUL);
+                  }
+*************** static int make_child(server_rec *s, int
+*** 1360,1368 ****
+          int status = bindprocessor(BINDPROCESS, (int)getpid(),
+                                 PROCESSOR_CLASS_ANY);
+          if (status != OK)
+!             ap_log_error(APLOG_MARK, APLOG_WARNING, errno,
+                           ap_server_conf,
+!                          "processor unbind failed %d", status);
+  #endif
+          RAISE_SIGSTOP(MAKE_CHILD);
+  
+--- 1359,1367 ----
+          int status = bindprocessor(BINDPROCESS, (int)getpid(),
+                                 PROCESSOR_CLASS_ANY);
+          if (status != OK)
+!             ap_log_error(APLOG_MARK, APLOG_DEBUG, errno,
+                           ap_server_conf,
+!                          "processor unbind failed");
+  #endif
+          RAISE_SIGSTOP(MAKE_CHILD);
+  
+*************** static void perform_idle_server_maintena
+*** 1547,1560 ****
+          if (free_length == 0) { /* scoreboard is full, can't fork */
+  
+              if (active_thread_count >= ap_daemons_limit * threads_per_child) { 
+!                 static int reported = 0;
+!                 if (!reported) {
+!                     /* only report this condition once */
+!                     ap_log_error(APLOG_MARK, APLOG_ERR, 0,
+!                                  ap_server_conf,
+!                                  "server reached MaxClients setting, consider"
+!                                  " raising the MaxClients setting");
+!                     reported = 1;
+                  }
+              }
+              else {
+--- 1546,1572 ----
+          if (free_length == 0) { /* scoreboard is full, can't fork */
+  
+              if (active_thread_count >= ap_daemons_limit * threads_per_child) { 
+!                 /* no threads are "inactive" - starting, stopping, etc. */
+!                 /* have we reached MaxClients, or just getting close? */
+!                 if (0 == idle_thread_count) {
+!                     static int reported = 0;
+!                     if (!reported) {
+!                         /* only report this condition once */
+!                         ap_log_error(APLOG_MARK, APLOG_ERR, 0,
+!                                      ap_server_conf,
+!                                      "server reached MaxClients setting, consider"
+!                                      " raising the MaxClients setting");
+!                         reported = 1;
+!                     }
+!                 } else {
+!                     static int reported = 0;
+!                     if (!reported) {
+!                         ap_log_error(APLOG_MARK, APLOG_ERR, 0,
+!                                      ap_server_conf,
+!                                      "server is within MinSpareThreads of MaxClients, "
+!                                      "consider raising the MaxClients setting");
+!                         reported = 1;
+!                     }
+                  }
+              }
+              else {
+*************** static int worker_run(apr_pool_t *_pconf
+*** 1694,1701 ****
+      ap_log_pid(pconf, ap_pid_fname);
+  
+      /* Initialize cross-process accept lock */
+!     rv = ap_proc_mutex_create(&accept_mutex, ap_accept_mutex_type, NULL, s,
+!                               _pconf, 0);
+      if (rv != APR_SUCCESS) {
+          mpm_state = AP_MPMQ_STOPPING;
+          return DONE;
+--- 1706,1713 ----
+      ap_log_pid(pconf, ap_pid_fname);
+  
+      /* Initialize cross-process accept lock */
+!     rv = ap_proc_mutex_create(&accept_mutex, NULL, AP_ACCEPT_MUTEX_TYPE, NULL,
+!                               s, _pconf, 0);
+      if (rv != APR_SUCCESS) {
+          mpm_state = AP_MPMQ_STOPPING;
+          return DONE;
+*************** static int worker_run(apr_pool_t *_pconf
+*** 1745,1750 ****
+--- 1757,1763 ----
+                  ap_get_server_description());
+      ap_log_error(APLOG_MARK, APLOG_INFO, 0, ap_server_conf,
+                  "Server built: %s", ap_get_server_built());
++     ap_log_command_line(plog, s);
+      ap_log_error(APLOG_MARK, APLOG_DEBUG, 0, ap_server_conf,
+                  "Accept mutex: %s (default: %s)",
+                  apr_proc_mutex_name(accept_mutex),
+*************** static int worker_pre_config(apr_pool_t
+*** 1937,1943 ****
+          foreground = ap_exists_config_define("FOREGROUND");
+      }
+  
+!     ap_mutex_register(pconf, ap_accept_mutex_type, NULL, APR_LOCK_DEFAULT, 0);
+  
+      /* sigh, want this only the second time around */
+      retained = ap_retained_data_get(userdata_key);
+--- 1950,1956 ----
+          foreground = ap_exists_config_define("FOREGROUND");
+      }
+  
+!     ap_mutex_register(pconf, AP_ACCEPT_MUTEX_TYPE, NULL, APR_LOCK_DEFAULT, 0);
+  
+      /* sigh, want this only the second time around */
+      retained = ap_retained_data_get(userdata_key);
+*************** AP_GRACEFUL_SHUTDOWN_TIMEOUT_COMMAND,
+*** 2338,2344 ****
+  { NULL }
+  };
+  
+! module AP_MODULE_DECLARE_DATA mpm_worker_module = {
+      MPM20_MODULE_STUFF,
+      NULL,                       /* hook to run before apache parses args */
+      NULL,                       /* create per-directory config structure */
+--- 2351,2357 ----
+  { NULL }
+  };
+  
+! AP_DECLARE_MODULE(mpm_worker) = {
+      MPM20_MODULE_STUFF,
+      NULL,                       /* hook to run before apache parses args */
+      NULL,                       /* create per-directory config structure */
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/server/mpm_common.c /tmp/patch.inc.get2.dIah1X/server/mpm_common.c
+*** /tmp/patch.inc.get1.f0Yx3d/server/mpm_common.c	2013-04-28 19:22:19.399341033 +0200
+--- /tmp/patch.inc.get2.dIah1X/server/mpm_common.c	2013-04-28 19:22:38.679436651 +0200
+***************
+*** 56,61 ****
+--- 56,63 ----
+  #include <unistd.h>
+  #endif
+  
++ APLOG_USE_MODULE(core);
++ 
+  #if AP_ENABLE_EXCEPTION_HOOK
+  APR_HOOK_STRUCT(
+      APR_HOOK_LINK(fatal_exception)
+*************** const char *ap_mpm_set_pidfile(cmd_parms
+*** 241,258 ****
+      return NULL;
+  }
+  
+- const char * ap_mpm_set_scoreboard(cmd_parms *cmd, void *dummy,
+-                                    const char *arg)
+- {
+-     const char *err = ap_check_cmd_context(cmd, GLOBAL_ONLY);
+-     if (err != NULL) {
+-         return err;
+-     }
+- 
+-     ap_scoreboard_fname = arg;
+-     return NULL;
+- }
+- 
+  int ap_max_requests_per_child = 0;
+  
+  const char *ap_mpm_set_max_requests(cmd_parms *cmd, void *dummy,
+--- 243,248 ----
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/server/mpm_unix.c /tmp/patch.inc.get2.dIah1X/server/mpm_unix.c
+*** /tmp/patch.inc.get1.f0Yx3d/server/mpm_unix.c	2013-04-28 19:22:19.391340998 +0200
+--- /tmp/patch.inc.get2.dIah1X/server/mpm_unix.c	2013-04-28 19:22:38.671436587 +0200
+***************
+*** 56,61 ****
+--- 56,63 ----
+  #endif
+  
+  
++ APLOG_USE_MODULE(core);
++ 
+  typedef enum {DO_NOTHING, SEND_SIGTERM, SEND_SIGKILL, GIVEUP} action_t;
+  
+  typedef struct extra_process_t {
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/server/protocol.c /tmp/patch.inc.get2.dIah1X/server/protocol.c
+*** /tmp/patch.inc.get1.f0Yx3d/server/protocol.c	2013-04-28 19:22:19.383340949 +0200
+--- /tmp/patch.inc.get2.dIah1X/server/protocol.c	2013-04-28 19:22:38.663436576 +0200
+***************
+*** 15,21 ****
+   */
+  
+  /*
+!  * http_protocol.c --- routines which directly communicate with the client.
+   *
+   * Code originally by Rob McCool; much redone by Robert S. Thau
+   * and the Apache Software Foundation.
+--- 15,21 ----
+   */
+  
+  /*
+!  * protocol.c --- routines which directly communicate with the client.
+   *
+   * Code originally by Rob McCool; much redone by Robert S. Thau
+   * and the Apache Software Foundation.
+***************
+*** 57,62 ****
+--- 57,64 ----
+  #endif
+  
+  
++ APLOG_USE_MODULE(core);
++ 
+  APR_HOOK_STRUCT(
+      APR_HOOK_LINK(post_read_request)
+      APR_HOOK_LINK(log_transaction)
+*************** static int read_request_line(request_rec
+*** 621,626 ****
+--- 623,634 ----
+          }
+      } while ((len <= 0) && (++num_blank_lines < max_blank_lines));
+  
++     if (APLOGrtrace5(r)) {
++         ap_log_rerror(APLOG_MARK, APLOG_TRACE5, 0, r,
++                       "Request received from client: %s",
++                       ap_escape_logitem(r->pool, r->the_request));
++     }
++ 
+      /* we've probably got something to do, ignore graceful restart requests */
+  
+      r->request_time = apr_time_now();
+*************** request_rec *ap_read_request(conn_rec *c
+*** 923,929 ****
+          }
+          else if (r->status == HTTP_REQUEST_TIME_OUT) {
+              ap_update_child_status(conn->sbh, SERVER_BUSY_LOG, r);
+!             ap_run_log_transaction(r);
+              apr_brigade_destroy(tmp_bb);
+              goto traceout;
+          }
+--- 931,939 ----
+          }
+          else if (r->status == HTTP_REQUEST_TIME_OUT) {
+              ap_update_child_status(conn->sbh, SERVER_BUSY_LOG, r);
+!             if (!r->connection->keepalives) {
+!                 ap_run_log_transaction(r);
+!             }
+              apr_brigade_destroy(tmp_bb);
+              goto traceout;
+          }
+*************** AP_DECLARE(void) ap_set_sub_req_protocol
+*** 1114,1120 ****
+  
+      rnew->status          = HTTP_OK;
+  
+!     rnew->headers_in = apr_table_copy(rnew->pool, r->headers_in);
+  
+      /* did the original request have a body?  (e.g. POST w/SSI tags)
+       * if so, make sure the subrequest doesn't inherit body headers
+--- 1124,1130 ----
+  
+      rnew->status          = HTTP_OK;
+  
+!     rnew->headers_in      = apr_table_copy(rnew->pool, r->headers_in);
+  
+      /* did the original request have a body?  (e.g. POST w/SSI tags)
+       * if so, make sure the subrequest doesn't inherit body headers
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/server/request.c /tmp/patch.inc.get2.dIah1X/server/request.c
+*** /tmp/patch.inc.get1.f0Yx3d/server/request.c	2013-04-28 19:22:19.391340998 +0200
+--- /tmp/patch.inc.get2.dIah1X/server/request.c	2013-04-28 19:22:38.671436587 +0200
+***************
+*** 54,59 ****
+--- 54,61 ----
+  #include <stdarg.h>
+  #endif
+  
++ APLOG_USE_MODULE(core);
++ 
+  APR_HOOK_STRUCT(
+      APR_HOOK_LINK(translate_name)
+      APR_HOOK_LINK(map_to_storage)
+*************** AP_DECLARE(int) ap_process_request_inter
+*** 110,119 ****
+  {
+      int file_req = (r->main && r->filename);
+      int access_status;
+  
+      /* Ignore embedded %2F's in path for proxy requests */
+      if (!r->proxyreq && r->parsed_uri.path) {
+-         core_dir_config *d;
+          d = ap_get_module_config(r->per_dir_config, &core_module);
+          if (d->allow_encoded_slashes) {
+              access_status = ap_unescape_url_keep2f(r->parsed_uri.path);
+--- 112,121 ----
+  {
+      int file_req = (r->main && r->filename);
+      int access_status;
++     core_dir_config *d;
+  
+      /* Ignore embedded %2F's in path for proxy requests */
+      if (!r->proxyreq && r->parsed_uri.path) {
+          d = ap_get_module_config(r->per_dir_config, &core_module);
+          if (d->allow_encoded_slashes) {
+              access_status = ap_unescape_url_keep2f(r->parsed_uri.path);
+*************** AP_DECLARE(int) ap_process_request_inter
+*** 145,150 ****
+--- 147,157 ----
+              return access_status;
+          }
+  
++         d = ap_get_module_config(r->per_dir_config, &core_module);
++         if (d->log) {
++             r->log = d->log;
++         }
++ 
+          if ((access_status = ap_run_translate_name(r))) {
+              return decl_die(access_status, "translate", r);
+          }
+*************** AP_DECLARE(int) ap_process_request_inter
+*** 165,170 ****
+--- 172,182 ----
+          return access_status;
+      }
+  
++     d = ap_get_module_config(r->per_dir_config, &core_module);
++     if (d->log) {
++         r->log = d->log;
++     }
++ 
+      /* Only on the main request! */
+      if (r->main == NULL) {
+          if ((access_status = ap_run_header_parser(r))) {
+*************** static request_rec *make_sub_request(con
+*** 1587,1592 ****
+--- 1599,1605 ----
+      rnew->request_time   = r->request_time;
+      rnew->connection     = r->connection;
+      rnew->server         = r->server;
++     rnew->log            = r->log;
+  
+      rnew->request_config = ap_create_request_config(rnew->pool);
+  
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/server/scoreboard.c /tmp/patch.inc.get2.dIah1X/server/scoreboard.c
+*** /tmp/patch.inc.get1.f0Yx3d/server/scoreboard.c	2013-04-28 19:22:19.399341033 +0200
+--- /tmp/patch.inc.get2.dIah1X/server/scoreboard.c	2013-04-28 19:22:38.679436651 +0200
+***************
+*** 36,46 ****
+--- 36,83 ----
+  
+  #include "scoreboard.h"
+  
++ APLOG_USE_MODULE(core);
++ 
+  AP_DECLARE_DATA scoreboard *ap_scoreboard_image = NULL;
+  AP_DECLARE_DATA const char *ap_scoreboard_fname = NULL;
++ 
++ const char * ap_set_scoreboard(cmd_parms *cmd, void *dummy,
++                                const char *arg)
++ {
++     const char *err = ap_check_cmd_context(cmd, GLOBAL_ONLY);
++     if (err != NULL) {
++         return err;
++     }
++ 
++     ap_scoreboard_fname = arg;
++     return NULL;
++ }
++ 
++ /* Default to false when mod_status is not loaded */
+  AP_DECLARE_DATA int ap_extended_status = 0;
++ 
++ const char *ap_set_extended_status(cmd_parms *cmd, void *dummy, int arg)
++ {
++     const char *err = ap_check_cmd_context(cmd, GLOBAL_ONLY);
++     if (err != NULL) {
++         return err;
++     }
++     ap_extended_status = arg;
++     return NULL;
++ }
++ 
+  AP_DECLARE_DATA int ap_mod_status_reqtail = 0;
+  
++ const char *ap_set_reqtail(cmd_parms *cmd, void *dummy, int arg)
++ {
++     const char *err = ap_check_cmd_context(cmd, GLOBAL_ONLY);
++     if (err != NULL) {
++         return err;
++     }
++     ap_mod_status_reqtail = arg;
++     return NULL;
++ }
++ 
+  #if APR_HAS_SHARED_MEMORY
+  
+  #include "apr_shm.h"
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/server/util.c /tmp/patch.inc.get2.dIah1X/server/util.c
+*** /tmp/patch.inc.get1.f0Yx3d/server/util.c	2013-04-28 19:22:19.399341033 +0200
+--- /tmp/patch.inc.get2.dIah1X/server/util.c	2013-04-28 19:22:38.679436651 +0200
+***************
+*** 80,85 ****
+--- 80,87 ----
+  #define IS_SLASH(s) (s == '/')
+  #endif
+  
++ APLOG_USE_MODULE(core);
++ 
+  
+  /*
+   * Examine a field value (such as a media-/content-type) string and return
+*************** AP_DECLARE(char *) ap_pregsub(apr_pool_t
+*** 376,390 ****
+      len = 0;
+  
+      while ((c = *src++) != '\0') {
+!         if (c == '&')
+!             no = 0;
+!         else if (c == '$' && apr_isdigit(*src))
+              no = *src++ - '0';
+          else
+              no = 10;
+  
+          if (no > 9) {                /* Ordinary character. */
+!             if (c == '\\' && (*src == '$' || *src == '&'))
+                  c = *src++;
+              len++;
+          }
+--- 378,390 ----
+      len = 0;
+  
+      while ((c = *src++) != '\0') {
+!         if (c == '$' && apr_isdigit(*src))
+              no = *src++ - '0';
+          else
+              no = 10;
+  
+          if (no > 9) {                /* Ordinary character. */
+!             if (c == '\\' && *src)
+                  c = *src++;
+              len++;
+          }
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/server/util_cookies.c /tmp/patch.inc.get2.dIah1X/server/util_cookies.c
+*** /tmp/patch.inc.get1.f0Yx3d/server/util_cookies.c	2013-04-28 19:22:19.383340949 +0200
+--- /tmp/patch.inc.get2.dIah1X/server/util_cookies.c	2013-04-28 19:22:38.663436576 +0200
+***************
+*** 21,26 ****
+--- 21,28 ----
+  
+  #define LOG_PREFIX "ap_cookie: "
+  
++ APLOG_USE_MODULE(core);
++ 
+  /**
+   * Write an RFC2109 compliant cookie.
+   *
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/server/util_debug.c /tmp/patch.inc.get2.dIah1X/server/util_debug.c
+*** /tmp/patch.inc.get1.f0Yx3d/server/util_debug.c	2013-04-28 19:22:19.383340949 +0200
+--- /tmp/patch.inc.get2.dIah1X/server/util_debug.c	2013-04-28 19:22:38.671436587 +0200
+*************** AP_DECLARE(void *) ap_get_module_config(
+*** 106,111 ****
+--- 106,163 ----
+      return ((void **)cv)[m->module_index];
+  }
+  
++ #if defined(ap_get_server_module_loglevel)
++ #undef ap_get_server_module_loglevel
++ AP_DECLARE(int) ap_get_server_module_loglevel(const server_rec *s, int module_index);
++ #endif
++ 
++ AP_DECLARE(int) ap_get_server_module_loglevel(const server_rec *s, int module_index)
++ {
++     if (module_index < 0 || s->log.module_levels == NULL ||
++         s->log.module_levels[module_index] < 0)
++     {
++         return s->log.level;
++     }
++ 
++     return s->log.module_levels[module_index];
++ }
++ 
++ #if defined(ap_get_conn_module_loglevel)
++ #undef ap_get_conn_module_loglevel
++ AP_DECLARE(int) ap_get_conn_module_loglevel(const conn_rec *c, int module_index);
++ #endif
++ 
++ AP_DECLARE(int) ap_get_conn_module_loglevel(const conn_rec *c, int module_index)
++ {
++     const struct ap_logconf *l = (c)->log ? (c)->log : &(c)->base_server->log;
++     if (module_index < 0 || l->module_levels == NULL ||
++         l->module_levels[module_index] < 0)
++     {
++         return l->level;
++     }
++ 
++     return l->module_levels[module_index];
++ }
++ 
++ #if defined(ap_get_request_module_loglevel)
++ #undef ap_get_request_module_loglevel
++ AP_DECLARE(int) ap_get_request_module_loglevel(const request_rec *c, int module_index);
++ #endif
++ 
++ AP_DECLARE(int) ap_get_request_module_loglevel(const request_rec *r, int module_index)
++ {
++     const struct ap_logconf *l = r->log             ? r->log             :
++                                  r->connection->log ? r->connection->log :
++                                  &r->server->log;
++     if (module_index < 0 || l->module_levels == NULL ||
++         l->module_levels[module_index] < 0)
++     {
++         return l->level;
++     }
++ 
++     return l->module_levels[module_index];
++ }
++ 
+  /**
+   * Generic accessors for other modules to set at their own module-specific
+   * data
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/server/util_ebcdic.c /tmp/patch.inc.get2.dIah1X/server/util_ebcdic.c
+*** /tmp/patch.inc.get1.f0Yx3d/server/util_ebcdic.c	2013-04-28 19:22:19.391340998 +0200
+--- /tmp/patch.inc.get2.dIah1X/server/util_ebcdic.c	2013-04-28 19:22:38.671436587 +0200
+***************
+*** 24,29 ****
+--- 24,31 ----
+  #include "http_core.h"
+  #include "util_ebcdic.h"
+  
++ APLOG_USE_MODULE(core);
++ 
+  apr_status_t ap_init_ebcdic(apr_pool_t *pool)
+  {
+      apr_status_t rv;
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/server/util_expr.c /tmp/patch.inc.get2.dIah1X/server/util_expr.c
+*** /tmp/patch.inc.get1.f0Yx3d/server/util_expr.c	2013-04-28 19:22:19.391340998 +0200
+--- /tmp/patch.inc.get2.dIah1X/server/util_expr.c	2013-04-28 19:22:38.671436587 +0200
+***************
+*** 27,32 ****
+--- 27,35 ----
+  #include "http_core.h"
+  
+  #include "ap_expr.h"
++ 
++ APLOG_USE_MODULE(core);
++ 
+  #if 1
+  /*
+   * +-------------------------------------------------------+
+***************
+*** 44,50 ****
+  } while(0)
+  
+  #define CREATE_NODE(pool,name) do {                          \
+!     (name) = apr_pcalloc(pool, sizeof(*(name)));
+  } while(0)
+  
+  static void debug_printf(request_rec *r, const char *fmt, ...)
+--- 47,53 ----
+  } while(0)
+  
+  #define CREATE_NODE(pool,name) do {                          \
+!     (name) = apr_pcalloc(pool, sizeof(*(name)));             \
+  } while(0)
+  
+  static void debug_printf(request_rec *r, const char *fmt, ...)
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/server/util_filter.c /tmp/patch.inc.get2.dIah1X/server/util_filter.c
+*** /tmp/patch.inc.get1.f0Yx3d/server/util_filter.c	2013-04-28 19:22:19.383340949 +0200
+--- /tmp/patch.inc.get2.dIah1X/server/util_filter.c	2013-04-28 19:22:38.663436576 +0200
+***************
+*** 44,49 ****
+--- 44,51 ----
+   * filter names to filters
+   */
+  
++ APLOG_USE_MODULE(core);
++ 
+  typedef struct filter_trie_node filter_trie_node;
+  
+  typedef struct {
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/server/util_mutex.c /tmp/patch.inc.get2.dIah1X/server/util_mutex.c
+*** /tmp/patch.inc.get1.f0Yx3d/server/util_mutex.c	2013-04-28 19:22:19.399341033 +0200
+--- /tmp/patch.inc.get2.dIah1X/server/util_mutex.c	2013-04-28 19:22:38.679436651 +0200
+***************
+*** 41,46 ****
+--- 41,48 ----
+  #include <unistd.h> /* getpid() */
+  #endif
+  
++ APLOG_USE_MODULE(core);
++ 
+  AP_DECLARE(apr_status_t) ap_parse_mutex(const char *arg, apr_pool_t *pool,
+                                          apr_lockmech_e *mutexmech,
+                                          const char **mutexfile)
+*************** static apr_status_t cleanup_mx_hash(void
+*** 143,149 ****
+      return APR_SUCCESS;
+  }
+  
+! static void mx_hash_init(apr_pool_t *p)
+  {
+      mutex_cfg_t *def;
+  
+--- 145,151 ----
+      return APR_SUCCESS;
+  }
+  
+! AP_DECLARE_NONSTD(void) ap_mutex_init(apr_pool_t *p)
+  {
+      mutex_cfg_t *def;
+  
+*************** AP_DECLARE(apr_status_t) ap_mutex_regist
+*** 266,272 ****
+          return APR_EINVAL;
+      }
+  
+!     mx_hash_init(pconf);
+  
+      mxcfg->options = options;
+      if (options & AP_MUTEX_DEFAULT_NONE) {
+--- 268,274 ----
+          return APR_EINVAL;
+      }
+  
+!     ap_mutex_init(pconf); /* in case this mod's pre-config ran before core's */
+  
+      mxcfg->options = options;
+      if (options & AP_MUTEX_DEFAULT_NONE) {
+*************** static void log_perms_failure(apr_status
+*** 406,411 ****
+--- 408,414 ----
+  }
+  
+  AP_DECLARE(apr_status_t) ap_global_mutex_create(apr_global_mutex_t **mutex,
++                                                 const char **name,
+                                                  const char *type,
+                                                  const char *instance_id,
+                                                  server_rec *s, apr_pool_t *p,
+*************** AP_DECLARE(apr_status_t) ap_global_mutex
+*** 438,455 ****
+          return rv;
+      }
+  
+  #ifdef AP_NEED_SET_MUTEX_PERMS
+      rv = ap_unixd_set_global_mutex_perms(*mutex);
+      if (rv != APR_SUCCESS) {
+          log_perms_failure(rv, s, type);
+-         return rv;
+      }
+  #endif
+  
+!     return APR_SUCCESS;
+  }
+  
+  AP_DECLARE(apr_status_t) ap_proc_mutex_create(apr_proc_mutex_t **mutex,
+                                                const char *type,
+                                                const char *instance_id,
+                                                server_rec *s, apr_pool_t *p,
+--- 441,461 ----
+          return rv;
+      }
+  
++     if (name)
++         *name = fname;
++ 
+  #ifdef AP_NEED_SET_MUTEX_PERMS
+      rv = ap_unixd_set_global_mutex_perms(*mutex);
+      if (rv != APR_SUCCESS) {
+          log_perms_failure(rv, s, type);
+      }
+  #endif
+  
+!     return rv;
+  }
+  
+  AP_DECLARE(apr_status_t) ap_proc_mutex_create(apr_proc_mutex_t **mutex,
++                                               const char **name,
+                                                const char *type,
+                                                const char *instance_id,
+                                                server_rec *s, apr_pool_t *p,
+*************** AP_DECLARE(apr_status_t) ap_proc_mutex_c
+*** 482,494 ****
+          return rv;
+      }
+  
+  #ifdef AP_NEED_SET_MUTEX_PERMS
+      rv = ap_unixd_set_proc_mutex_perms(*mutex);
+      if (rv != APR_SUCCESS) {
+          log_perms_failure(rv, s, type);
+-         return rv;
+      }
+  #endif
+  
+!     return APR_SUCCESS;
+  }
+--- 488,502 ----
+          return rv;
+      }
+  
++     if (name)
++         *name = fname;
++ 
+  #ifdef AP_NEED_SET_MUTEX_PERMS
+      rv = ap_unixd_set_proc_mutex_perms(*mutex);
+      if (rv != APR_SUCCESS) {
+          log_perms_failure(rv, s, type);
+      }
+  #endif
+  
+!     return rv;
+  }
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/server/util_script.c /tmp/patch.inc.get2.dIah1X/server/util_script.c
+*** /tmp/patch.inc.get1.f0Yx3d/server/util_script.c	2013-04-28 19:22:19.399341033 +0200
+--- /tmp/patch.inc.get2.dIah1X/server/util_script.c	2013-04-28 19:22:38.679436651 +0200
+***************
+*** 52,57 ****
+--- 52,59 ----
+  #define MALFORMED_MESSAGE "malformed header from script. Bad header="
+  #define MALFORMED_HEADER_LENGTH_TO_SHOW 30
+  
++ APLOG_USE_MODULE(core);
++ 
+  static char *http2env(apr_pool_t *a, const char *w)
+  {
+      char *res = (char *)apr_palloc(a, sizeof("HTTP_") + strlen(w));
+*************** AP_DECLARE(void) ap_args_to_table(reques
+*** 758,840 ****
+      argstr_to_table(apr_pstrdup(r->pool, r->args), t);
+      *table = t;
+  }
+- 
+- AP_DECLARE(apr_status_t) ap_body_to_table(request_rec *r, apr_table_t **table)
+- {
+-     apr_bucket_brigade *bb;
+-     apr_bucket_brigade *tmpbb;
+-     apr_status_t rv = APR_SUCCESS;
+- 
+-     if (r->body_table) {
+-         *table = r->body_table;
+-         return APR_SUCCESS;
+-     }
+-     
+-     *table = NULL;
+- 
+-     bb = apr_brigade_create(r->pool, r->connection->bucket_alloc);
+-     tmpbb = apr_brigade_create(r->pool, r->connection->bucket_alloc);
+- 
+-     do {
+-         apr_off_t len;
+- 
+-         rv = ap_get_brigade(r->input_filters, tmpbb, AP_MODE_READBYTES,
+-                             APR_BLOCK_READ, AP_IOBUFSIZE);
+-         if (rv) {
+-             break;
+-         }
+- 
+-         rv = apr_brigade_length(tmpbb, 1, &len);
+-         if (rv) {
+-             break;
+-         }
+-         
+-         if (len == 0) {
+-             break;
+-         }
+- 
+-         APR_BRIGADE_CONCAT(bb, tmpbb);
+-     } while(1);
+- 
+-     if (!rv) {
+-         r->body_table = apr_table_make(r->pool, 10);
+-         
+-         if (!APR_BRIGADE_EMPTY(bb)) {
+-             char *buffer;
+-             apr_off_t len;
+-             apr_pool_t *tpool;
+- 
+-             apr_pool_create(&tpool, r->pool);
+-             
+-             rv = apr_brigade_length(bb, 1, &len);
+- 
+-             if (!rv) {
+-                 apr_size_t total;
+-                 /* XXX where's our test that len fits in memory??? 
+-                  * theoretically can be a large file > ram space.
+-                  * need to cast len to apr_size_t but it would mask
+-                  * this notable mistake
+-                  */
+-                 buffer = apr_palloc(tpool, len+1);
+-                 
+-                 total = len+1;
+- 
+-                 rv = apr_brigade_flatten(bb, buffer, &total);
+- 
+-                 buffer[total] = '\0';
+- 
+-                 argstr_to_table(buffer, r->body_table);
+-             }
+-             apr_pool_destroy(tpool);
+-         }
+-     }
+- 
+-     apr_brigade_destroy(bb);
+-     apr_brigade_destroy(tmpbb);
+- 
+-     *table = r->body_table;
+- 
+-     return rv;
+- }
+- 
+- 
+--- 760,762 ----
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/server/util_time.c /tmp/patch.inc.get2.dIah1X/server/util_time.c
+*** /tmp/patch.inc.get1.f0Yx3d/server/util_time.c	2013-04-28 19:22:19.399341033 +0200
+--- /tmp/patch.inc.get2.dIah1X/server/util_time.c	2013-04-28 19:22:38.679436651 +0200
+***************
+*** 16,21 ****
+--- 16,28 ----
+  
+  #include "util_time.h"
+  
++ 
++ /* Number of characters needed to format the microsecond part of a timestamp.
++  * Microseconds have 6 digits plus one separator character makes 7.
++  *   */
++ #define AP_CTIME_USEC_LENGTH      7
++ 
++ 
+  /* Cache for exploded values of recent timestamps
+   */
+  
+*************** AP_DECLARE(apr_status_t) ap_explode_rece
+*** 145,159 ****
+  
+  AP_DECLARE(apr_status_t) ap_recent_ctime(char *date_str, apr_time_t t)
+  {
+      /* ### This code is a clone of apr_ctime(), except that it
+       * uses ap_explode_recent_localtime() instead of apr_time_exp_lt().
+       */
+      apr_time_exp_t xt;
+      const char *s;
+      int real_year;
+  
+!     /* example: "Wed Jun 30 21:49:08 1993" */
+!     /*           123456789012345678901234  */
+  
+      ap_explode_recent_localtime(&xt, t);
+      s = &apr_day_snames[xt.tm_wday][0];
+--- 152,192 ----
+  
+  AP_DECLARE(apr_status_t) ap_recent_ctime(char *date_str, apr_time_t t)
+  {
++     int len = APR_CTIME_LEN;
++     return ap_recent_ctime_ex(date_str, t, AP_CTIME_OPTION_NONE, &len);
++ }
++ 
++ AP_DECLARE(apr_status_t) ap_recent_ctime_ex(char *date_str, apr_time_t t,
++                                             int option, int *len)
++ {
+      /* ### This code is a clone of apr_ctime(), except that it
+       * uses ap_explode_recent_localtime() instead of apr_time_exp_lt().
+       */
+      apr_time_exp_t xt;
+      const char *s;
+      int real_year;
++     int needed;
++ 
++ 
++     /* Calculate the needed buffer length */
++     needed = APR_CTIME_LEN;
++     if (option & AP_CTIME_OPTION_USEC) {
++         needed += AP_CTIME_USEC_LENGTH;
++     }
++ 
++     /* Check the provided buffer length */
++     if (len && *len >= needed) {
++         *len = needed;
++     }
++     else {
++         if (len != NULL) {
++             *len = 0;
++         }
++         return APR_ENOMEM;
++     }
+  
+!     /* example without options: "Wed Jun 30 21:49:08 1993" */
+!     /*                           123456789012345678901234  */
+  
+      ap_explode_recent_localtime(&xt, t);
+      s = &apr_day_snames[xt.tm_wday][0];
+*************** AP_DECLARE(apr_status_t) ap_recent_ctime
+*** 177,182 ****
+--- 210,224 ----
+      *date_str++ = ':';
+      *date_str++ = xt.tm_sec / 10 + '0';
+      *date_str++ = xt.tm_sec % 10 + '0';
++     if (option & AP_CTIME_OPTION_USEC) {
++         int div;
++         int usec = (int)xt.tm_usec;
++         *date_str++ = '.';
++         for (div=100000; div>0; div=div/10) {
++             *date_str++ = usec / div + '0';
++             usec = usec % div;
++         }
++     }
+      *date_str++ = ' ';
+      real_year = 1900 + xt.tm_year;
+      *date_str++ = real_year / 1000 + '0';
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/server/util_xml.c /tmp/patch.inc.get2.dIah1X/server/util_xml.c
+*** /tmp/patch.inc.get1.f0Yx3d/server/util_xml.c	2013-04-28 19:22:19.399341033 +0200
+--- /tmp/patch.inc.get2.dIah1X/server/util_xml.c	2013-04-28 19:22:38.679436651 +0200
+***************
+*** 29,34 ****
+--- 29,36 ----
+  #define READ_BLOCKSIZE 2048
+  
+  
++ APLOG_USE_MODULE(core);
++ 
+  AP_DECLARE(int) ap_xml_parse_input(request_rec * r, apr_xml_doc **pdoc)
+  {
+      apr_xml_parser *parser;
+diff -p --text -r /tmp/patch.inc.get1.f0Yx3d/server/vhost.c /tmp/patch.inc.get2.dIah1X/server/vhost.c
+*** /tmp/patch.inc.get1.f0Yx3d/server/vhost.c	2013-04-28 19:22:19.383340949 +0200
+--- /tmp/patch.inc.get2.dIah1X/server/vhost.c	2013-04-28 19:22:38.663436576 +0200
+***************
+*** 39,44 ****
+--- 39,46 ----
+  #include <arpa/inet.h>
+  #endif
+  
++ APLOG_USE_MODULE(core);
++ 
+  /*
+   * After all the definitions there's an explanation of how it's all put
+   * together.
+*************** static void remove_unused_name_vhosts(se
+*** 507,513 ****
+  
+          if (ic->server == NULL) {
+              ap_log_error(APLOG_MARK, APLOG_WARNING, 0, main_s,
+!                          "NameVirtualHost %s:%u has no VirtualHosts",
+                           ic->sar->virthost, ic->sar->host_port);
+              *pic = ic->next;
+          }
+--- 509,517 ----
+  
+          if (ic->server == NULL) {
+              ap_log_error(APLOG_MARK, APLOG_WARNING, 0, main_s,
+!                          "Either NameVirtualHost %s:%u has no VirtualHosts,"
+!                          " or there is more than one identical NameVirtualHost line,"
+!                          " or your VirtualHost declarations do not match the NameVirtualHost line",
+                           ic->sar->virthost, ic->sar->host_port);
+              *pic = ic->next;
+          }

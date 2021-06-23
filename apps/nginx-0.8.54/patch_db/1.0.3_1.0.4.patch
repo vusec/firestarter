@@ -1,0 +1,257 @@
+diff -p -N --text -r /tmp/patch.inc.get1.aWjuse/src/core/nginx.h /tmp/patch.inc.get2.gZJgch/src/core/nginx.h
+*** /tmp/patch.inc.get1.aWjuse/src/core/nginx.h	2013-04-30 01:49:15.266896788 +0200
+--- /tmp/patch.inc.get2.gZJgch/src/core/nginx.h	2013-04-30 01:49:18.474912685 +0200
+***************
+*** 8,15 ****
+  #define _NGINX_H_INCLUDED_
+  
+  
+! #define nginx_version      1000003
+! #define NGINX_VERSION      "1.0.3"
+  #define NGINX_VER          "nginx/" NGINX_VERSION
+  
+  #define NGINX_VAR          "NGINX"
+--- 8,15 ----
+  #define _NGINX_H_INCLUDED_
+  
+  
+! #define nginx_version      1000004
+! #define NGINX_VERSION      "1.0.4"
+  #define NGINX_VER          "nginx/" NGINX_VERSION
+  
+  #define NGINX_VAR          "NGINX"
+diff -p -N --text -r /tmp/patch.inc.get1.aWjuse/src/core/ngx_crypt.c /tmp/patch.inc.get2.gZJgch/src/core/ngx_crypt.c
+*** /tmp/patch.inc.get1.aWjuse/src/core/ngx_crypt.c	2013-04-30 01:49:15.266896788 +0200
+--- /tmp/patch.inc.get2.gZJgch/src/core/ngx_crypt.c	2013-04-30 01:49:18.474912685 +0200
+***************
+*** 12,17 ****
+--- 12,19 ----
+  #endif
+  
+  
++ #if (NGX_CRYPT)
++ 
+  static ngx_int_t ngx_crypt_apr1(ngx_pool_t *pool, u_char *key, u_char *salt,
+      u_char **encrypted);
+  static ngx_int_t ngx_crypt_plain(ngx_pool_t *pool, u_char *key, u_char *salt,
+*************** ngx_crypt_apr1(ngx_pool_t *pool, u_char
+*** 73,79 ****
+  
+      ngx_md5_init(&md5);
+      ngx_md5_update(&md5, key, keylen);
+!     ngx_md5_update(&md5, "$apr1$", sizeof("$apr1$") - 1);
+      ngx_md5_update(&md5, salt, saltlen);
+  
+      ngx_md5_init(&ctx1);
+--- 75,81 ----
+  
+      ngx_md5_init(&md5);
+      ngx_md5_update(&md5, key, keylen);
+!     ngx_md5_update(&md5, (u_char *) "$apr1$", sizeof("$apr1$") - 1);
+      ngx_md5_update(&md5, salt, saltlen);
+  
+      ngx_md5_init(&ctx1);
+*************** ngx_crypt_ssha(ngx_pool_t *pool, u_char
+*** 232,234 ****
+--- 234,238 ----
+  }
+  
+  #endif /* NGX_HAVE_SHA1 */
++ 
++ #endif /* NGX_CRYPT */
+diff -p -N --text -r /tmp/patch.inc.get1.aWjuse/src/core/ngx_md5.c /tmp/patch.inc.get2.gZJgch/src/core/ngx_md5.c
+*** /tmp/patch.inc.get1.aWjuse/src/core/ngx_md5.c	2013-04-30 01:49:15.270896779 +0200
+--- /tmp/patch.inc.get2.gZJgch/src/core/ngx_md5.c	2013-04-30 01:49:18.478912684 +0200
+*************** ngx_md5_init(ngx_md5_t *ctx)
+*** 32,38 ****
+  
+  
+  void
+! ngx_md5_update(ngx_md5_t *ctx, const u_char *data, size_t size)
+  {
+      size_t  used, free;
+  
+--- 32,38 ----
+  
+  
+  void
+! ngx_md5_update(ngx_md5_t *ctx, const void *data, size_t size)
+  {
+      size_t  used, free;
+  
+*************** ngx_md5_update(ngx_md5_t *ctx, const u_c
+*** 47,54 ****
+              return;
+          }
+  
+!         ngx_memcpy(&ctx->buffer[used], data, free);
+!         data = (u_char *)data + free;
+          size -= free;
+          (void) ngx_md5_body(ctx, ctx->buffer, 64);
+      }
+--- 47,53 ----
+              return;
+          }
+  
+!         data = ngx_cpymem(&ctx->buffer[used], data, free);
+          size -= free;
+          (void) ngx_md5_body(ctx, ctx->buffer, 64);
+      }
+diff -p -N --text -r /tmp/patch.inc.get1.aWjuse/src/core/ngx_md5.h /tmp/patch.inc.get2.gZJgch/src/core/ngx_md5.h
+*** /tmp/patch.inc.get1.aWjuse/src/core/ngx_md5.h	2013-04-30 01:49:15.266896788 +0200
+--- /tmp/patch.inc.get2.gZJgch/src/core/ngx_md5.h	2013-04-30 01:49:18.474912685 +0200
+*************** typedef struct {
+*** 50,56 ****
+  
+  
+  void ngx_md5_init(ngx_md5_t *ctx);
+! void ngx_md5_update(ngx_md5_t *ctx, const u_char *data, size_t size);
+  void ngx_md5_final(u_char result[16], ngx_md5_t *ctx);
+  
+  
+--- 50,56 ----
+  
+  
+  void ngx_md5_init(ngx_md5_t *ctx);
+! void ngx_md5_update(ngx_md5_t *ctx, const void *data, size_t size);
+  void ngx_md5_final(u_char result[16], ngx_md5_t *ctx);
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.aWjuse/src/http/modules/ngx_http_map_module.c /tmp/patch.inc.get2.gZJgch/src/http/modules/ngx_http_map_module.c
+*** /tmp/patch.inc.get1.aWjuse/src/http/modules/ngx_http_map_module.c	2013-04-30 01:49:15.262896792 +0200
+--- /tmp/patch.inc.get2.gZJgch/src/http/modules/ngx_http_map_module.c	2013-04-30 01:49:18.470912687 +0200
+*************** ngx_http_map_variable(ngx_http_request_t
+*** 111,117 ****
+  
+      size_t                      len;
+      ngx_str_t                   val;
+-     ngx_uint_t                  key;
+      ngx_http_variable_value_t  *value;
+  
+      ngx_log_debug0(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
+--- 111,116 ----
+*************** ngx_http_map_variable(ngx_http_request_t
+*** 127,135 ****
+          len--;
+      }
+  
+!     key = ngx_hash_strlow(val.data, val.data, len);
+! 
+!     value = ngx_http_map_find(r, &map->map, key, val.data, len, &val);
+  
+      if (value == NULL) {
+          value = map->default_value;
+--- 126,132 ----
+          len--;
+      }
+  
+!     value = ngx_http_map_find(r, &map->map, &val);
+  
+      if (value == NULL) {
+          value = map->default_value;
+*************** found:
+*** 529,534 ****
+--- 526,537 ----
+  
+          ngx_memzero(&rc, sizeof(ngx_regex_compile_t));
+  
++         if (value[0].data[0] == '*') {
++             value[0].len--;
++             value[0].data++;
++             rc.options = NGX_REGEX_CASELESS;
++         }
++ 
+          rc.pattern = value[0];
+          rc.err.len = NGX_MAX_CONF_ERRSTR;
+          rc.err.data = errstr;
+diff -p -N --text -r /tmp/patch.inc.get1.aWjuse/src/http/ngx_http_upstream.c /tmp/patch.inc.get2.gZJgch/src/http/ngx_http_upstream.c
+*** /tmp/patch.inc.get1.aWjuse/src/http/ngx_http_upstream.c	2013-04-30 01:49:15.262896792 +0200
+--- /tmp/patch.inc.get2.gZJgch/src/http/ngx_http_upstream.c	2013-04-30 01:49:18.470912687 +0200
+*************** ngx_http_upstream_send_response(ngx_http
+*** 2031,2036 ****
+--- 2031,2045 ----
+              c->error = 1;
+  
+          } else {
++ 
++ #if (NGX_HTTP_CACHE)
++ 
++             if (r->cache) {
++                 ngx_http_file_cache_free(r->cache, u->pipe->temp_file);
++             }
++ 
++ #endif
++ 
+              ngx_http_upstream_finalize_request(r, u, rc);
+              return;
+          }
+diff -p -N --text -r /tmp/patch.inc.get1.aWjuse/src/http/ngx_http_variables.c /tmp/patch.inc.get2.gZJgch/src/http/ngx_http_variables.c
+*** /tmp/patch.inc.get1.aWjuse/src/http/ngx_http_variables.c	2013-04-30 01:49:15.266896788 +0200
+--- /tmp/patch.inc.get2.gZJgch/src/http/ngx_http_variables.c	2013-04-30 01:49:18.474912685 +0200
+*************** ngx_http_variable_pid(ngx_http_request_t
+*** 1661,1674 ****
+  
+  
+  void *
+! ngx_http_map_find(ngx_http_request_t *r, ngx_http_map_t *map, ngx_uint_t key,
+!     u_char *text, size_t len, ngx_str_t *match)
+  {
+!     void  *p;
+  
+!     p = ngx_hash_find_combined(&map->hash, key, text, len);
+!     if (p) {
+!         return p;
+      }
+  
+  #if (NGX_PCRE)
+--- 1661,1690 ----
+  
+  
+  void *
+! ngx_http_map_find(ngx_http_request_t *r, ngx_http_map_t *map, ngx_str_t *match)
+  {
+!     void        *value;
+!     u_char      *low;
+!     size_t       len;
+!     ngx_uint_t   key;
+  
+!     len = match->len;
+! 
+!     if (len) {
+!         low = ngx_pnalloc(r->pool, len);
+!         if (low == NULL) {
+!             return NULL;
+!         }
+! 
+!     } else {
+!         low = NULL;
+!     }
+! 
+!     key = ngx_hash_strlow(low, match->data, len);
+! 
+!     value = ngx_hash_find_combined(&map->hash, key, low, len);
+!     if (value) {
+!         return value;
+      }
+  
+  #if (NGX_PCRE)
+diff -p -N --text -r /tmp/patch.inc.get1.aWjuse/src/http/ngx_http_variables.h /tmp/patch.inc.get2.gZJgch/src/http/ngx_http_variables.h
+*** /tmp/patch.inc.get1.aWjuse/src/http/ngx_http_variables.h	2013-04-30 01:49:15.262896792 +0200
+--- /tmp/patch.inc.get2.gZJgch/src/http/ngx_http_variables.h	2013-04-30 01:49:18.470912687 +0200
+*************** typedef struct {
+*** 100,106 ****
+  
+  
+  void *ngx_http_map_find(ngx_http_request_t *r, ngx_http_map_t *map,
+!     ngx_uint_t key, u_char *text, size_t len, ngx_str_t *match);
+  
+  
+  ngx_int_t ngx_http_variables_add_core_vars(ngx_conf_t *cf);
+--- 100,106 ----
+  
+  
+  void *ngx_http_map_find(ngx_http_request_t *r, ngx_http_map_t *map,
+!     ngx_str_t *match);
+  
+  
+  ngx_int_t ngx_http_variables_add_core_vars(ngx_conf_t *cf);

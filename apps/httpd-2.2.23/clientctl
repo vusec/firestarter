@@ -1,0 +1,19 @@
+#!/bin/bash
+
+PROC_NAME=httpd
+BIN_PATH=`pwd`/install/bin/httpd
+RUN_DEPS="wget"
+ST_IPC=4
+#ST_TIMEOUT=3 # Default value is 3
+
+. ../scripts/include/cmdctl.inc
+
+mode=$1
+shift || mode="no_action"
+
+case "$mode" in
+  *)
+    cmdctl_client_action $mode $*
+    ;;
+esac
+

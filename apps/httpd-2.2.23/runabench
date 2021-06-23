@@ -1,0 +1,49 @@
+#!/bin/bash
+
+set -o errexit
+set -o errtrace
+
+RUNBENCH_THREADS=${RUNBENCH_THREADS:-1}
+RUNBENCH_WORKLOAD=${RUNBENCH_WORKLOAD:-static}
+RUNBENCH_FILE_SUFFIX=${RUNBENCH_FILE_SUFFIX:-}
+BENCH_OPTS=${BENCH_OPTS:-}
+
+echo "Runbench started (`date`). Workload is ${RUNBENCH_WORKLOAD}"
+
+###############################################################################
+# Apache Test                                                                 #
+###############################################################################
+
+# ApacheBench variables
+if [ -f  ../httpd*/install/bin/ab ]; then
+    AB=../httpd*/install/bin/ab
+else
+    AB=ab
+fi
+
+if [ "$RUNBENCH_WORKLOAD" == "static" ]; then
+RUNBENCH_REQUESTS=${RUNBENCH_REQUESTS:-100000}
+AB_URL=http://127.0.0.1:1080/index${RUNBENCH_FILE_SUFFIX}.html
+
+elif [ "$RUNBENCH_WORKLOAD" == "php" ]; then
+RUNBENCH_REQUESTS=${RUNBENCH_REQUESTS:-10000}
+AB_URL=http://127.0.0.1:1080/index.php
+else
+echo "ERROR: apache runbench: invalid workload"
+exit 1
+fi
+
+#
+# Special configurations.
+#
+CLIENT_CP=${CLIENT_CP:-0}
+if [ $CLIENT_CP -eq 1 ]; then
+	RUNBENCH_REQUESTS=25000
+	if [ $RUNBENCH_THREADS -eq 1 ]; then
+		RUNBENCH_THREADS=10
+	fi
+	BENCH_OPTS="-k -m 10 -t 25"
+fi
+
+${AB} -n ${RUNBENCH_REQUESTS} ${BENCH_OPTS} -c $RUNBENCH_THREADS ${AB_URL}
+

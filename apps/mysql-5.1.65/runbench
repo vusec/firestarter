@@ -1,0 +1,12 @@
+#!/bin/bash
+
+. ../scripts/include/cmdctl.inc
+
+RUNBENCH_CMD="../mysql*/runabench" cmdctl_runbench \
+    "^Number.of.threads:\s*\([0-9]*\).*$::::num_threads=\1" \
+    "^\s*read.write.requests:\s*\([0-9]*\).*$::::num_requests=\1" \
+    "^\s*deadlocks:\s*\([0-9]*\).*$::::num_failed_requests=\1" \
+    "^\s*transactions:\s*\([0-9]*\).*$::::num_transactions=\1" \
+    "^\s*read.write.requests:[^(]*(\([0-9.]*\)\s.*$::::requests_per_sec=\1" \
+    "^\s*transactions:[^(]*(\([0-9.]*\)\s.*$::::transactions_per_sec=\1" \
+    "^\s*total.time:\s*\([0-9.]*\)s.*$::::bench_secs=\1"

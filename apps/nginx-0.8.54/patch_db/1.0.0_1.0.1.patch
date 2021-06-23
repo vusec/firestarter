@@ -1,0 +1,1017 @@
+diff -p -N --text -r /tmp/patch.inc.get1.YK9bFh/src/core/nginx.h /tmp/patch.inc.get2.5c73C2/src/core/nginx.h
+*** /tmp/patch.inc.get1.YK9bFh/src/core/nginx.h	2013-04-30 01:48:55.786800171 +0200
+--- /tmp/patch.inc.get2.5c73C2/src/core/nginx.h	2013-04-30 01:48:58.986816042 +0200
+***************
+*** 8,15 ****
+  #define _NGINX_H_INCLUDED_
+  
+  
+! #define nginx_version      1000000
+! #define NGINX_VERSION      "1.0.0"
+  #define NGINX_VER          "nginx/" NGINX_VERSION
+  
+  #define NGINX_VAR          "NGINX"
+--- 8,15 ----
+  #define _NGINX_H_INCLUDED_
+  
+  
+! #define nginx_version      1000001
+! #define NGINX_VERSION      "1.0.1"
+  #define NGINX_VER          "nginx/" NGINX_VERSION
+  
+  #define NGINX_VAR          "NGINX"
+diff -p -N --text -r /tmp/patch.inc.get1.YK9bFh/src/core/ngx_core.h /tmp/patch.inc.get2.5c73C2/src/core/ngx_core.h
+*** /tmp/patch.inc.get1.YK9bFh/src/core/ngx_core.h	2013-04-30 01:48:55.786800171 +0200
+--- /tmp/patch.inc.get2.5c73C2/src/core/ngx_core.h	2013-04-30 01:48:58.990816069 +0200
+*************** typedef void (*ngx_connection_handler_pt
+*** 58,63 ****
+--- 58,64 ----
+  #include <ngx_file.h>
+  #include <ngx_crc.h>
+  #include <ngx_crc32.h>
++ #include <ngx_murmurhash.h>
+  #if (NGX_PCRE)
+  #include <ngx_regex.h>
+  #endif
+diff -p -N --text -r /tmp/patch.inc.get1.YK9bFh/src/core/ngx_inet.c /tmp/patch.inc.get2.5c73C2/src/core/ngx_inet.c
+*** /tmp/patch.inc.get1.YK9bFh/src/core/ngx_inet.c	2013-04-30 01:48:55.786800171 +0200
+--- /tmp/patch.inc.get2.5c73C2/src/core/ngx_inet.c	2013-04-30 01:48:58.986816042 +0200
+*************** ngx_inet6_addr(u_char *p, size_t len, u_
+*** 110,116 ****
+          }
+  
+          if (c == '.' && nibbles) {
+!             if (n < 2) {
+                  return NGX_ERROR;
+              }
+  
+--- 110,116 ----
+          }
+  
+          if (c == '.' && nibbles) {
+!             if (n < 2 || digit == NULL) {
+                  return NGX_ERROR;
+              }
+  
+diff -p -N --text -r /tmp/patch.inc.get1.YK9bFh/src/core/ngx_md5.c /tmp/patch.inc.get2.5c73C2/src/core/ngx_md5.c
+*** /tmp/patch.inc.get1.YK9bFh/src/core/ngx_md5.c	1970-01-01 01:00:00.000000000 +0100
+--- /tmp/patch.inc.get2.5c73C2/src/core/ngx_md5.c	2013-04-30 01:48:58.990816069 +0200
+***************
+*** 0 ****
+--- 1,289 ----
++ 
++ /*
++  * An internal implementation, based on Alexander Peslyak's
++  * public domain implementation:
++  * http://openwall.info/wiki/people/solar/software/public-domain-source-code/md5
++  * It is not expected to be optimal and is used only
++  * if no MD5 implementation was found in system.
++  */
++ 
++ 
++ #include <ngx_config.h>
++ #include <ngx_core.h>
++ #include <ngx_md5.h>
++ 
++ 
++ #if !(NGX_HAVE_MD5)
++ 
++ static const u_char *ngx_md5_body(ngx_md5_t *ctx, const u_char *data,
++     size_t size);
++ 
++ 
++ void
++ ngx_md5_init(ngx_md5_t *ctx)
++ {
++     ctx->a = 0x67452301;
++     ctx->b = 0xefcdab89;
++     ctx->c = 0x98badcfe;
++     ctx->d = 0x10325476;
++ 
++     ctx->bytes = 0;
++ }
++ 
++ 
++ void
++ ngx_md5_update(ngx_md5_t *ctx, const u_char *data, size_t size)
++ {
++     size_t  used, free;
++ 
++     used = ctx->bytes & 0x3f;
++     ctx->bytes += size;
++ 
++     if (used) {
++         free = 64 - used;
++ 
++         if (size < free) {
++             ngx_memcpy(&ctx->buffer[used], data, size);
++             return;
++         }
++ 
++         ngx_memcpy(&ctx->buffer[used], data, free);
++         data = (u_char *)data + free;
++         size -= free;
++         (void) ngx_md5_body(ctx, ctx->buffer, 64);
++     }
++ 
++     if (size >= 64) {
++         data = ngx_md5_body(ctx, data, size & ~(size_t) 0x3f);
++         size &= 0x3f;
++     }
++ 
++     ngx_memcpy(ctx->buffer, data, size);
++ }
++ 
++ 
++ void
++ ngx_md5_final(u_char result[16], ngx_md5_t *ctx)
++ {
++     size_t  used, free;
++ 
++     used = ctx->bytes & 0x3f;
++ 
++     ctx->buffer[used++] = 0x80;
++ 
++     free = 64 - used;
++ 
++     if (free < 8) {
++         ngx_memzero(&ctx->buffer[used], free);
++         (void) ngx_md5_body(ctx, ctx->buffer, 64);
++         used = 0;
++         free = 64;
++     }
++ 
++     ngx_memzero(&ctx->buffer[used], free - 8);
++ 
++     ctx->bytes <<= 3;
++     ctx->buffer[56] = ctx->bytes;
++     ctx->buffer[57] = ctx->bytes >> 8;
++     ctx->buffer[58] = ctx->bytes >> 16;
++     ctx->buffer[59] = ctx->bytes >> 24;
++     ctx->buffer[60] = ctx->bytes >> 32;
++     ctx->buffer[61] = ctx->bytes >> 40;
++     ctx->buffer[62] = ctx->bytes >> 48;
++     ctx->buffer[63] = ctx->bytes >> 56;
++ 
++     (void) ngx_md5_body(ctx, ctx->buffer, 64);
++ 
++     result[0] = ctx->a;
++     result[1] = ctx->a >> 8;
++     result[2] = ctx->a >> 16;
++     result[3] = ctx->a >> 24;
++     result[4] = ctx->b;
++     result[5] = ctx->b >> 8;
++     result[6] = ctx->b >> 16;
++     result[7] = ctx->b >> 24;
++     result[8] = ctx->c;
++     result[9] = ctx->c >> 8;
++     result[10] = ctx->c >> 16;
++     result[11] = ctx->c >> 24;
++     result[12] = ctx->d;
++     result[13] = ctx->d >> 8;
++     result[14] = ctx->d >> 16;
++     result[15] = ctx->d >> 24;
++ 
++     ngx_memzero(ctx, sizeof(*ctx));
++ }
++ 
++ 
++ /*
++  * The basic MD5 functions.
++  *
++  * F and G are optimized compared to their RFC 1321 definitions for
++  * architectures that lack an AND-NOT instruction, just like in
++  * Colin Plumb's implementation.
++  */
++ 
++ #define F(x, y, z)  ((z) ^ ((x) & ((y) ^ (z))))
++ #define G(x, y, z)  ((y) ^ ((z) & ((x) ^ (y))))
++ #define H(x, y, z)  ((x) ^ (y) ^ (z))
++ #define I(x, y, z)  ((y) ^ ((x) | ~(z)))
++ 
++ /*
++  * The MD5 transformation for all four rounds.
++  */
++ 
++ #define STEP(f, a, b, c, d, x, t, s)                                          \
++     (a) += f((b), (c), (d)) + (x) + (t);                                      \
++     (a) = (((a) << (s)) | (((a) & 0xffffffff) >> (32 - (s))));                \
++     (a) += (b)
++ 
++ /*
++  * SET() reads 4 input bytes in little-endian byte order and stores them
++  * in a properly aligned word in host byte order.
++  *
++  * The check for little-endian architectures that tolerate unaligned
++  * memory accesses is just an optimization.  Nothing will break if it
++  * does not work.
++  */
++ 
++ #if (NGX_HAVE_LITTLE_ENDIAN && NGX_HAVE_NONALIGNED)
++ 
++ #define SET(n)      (*(uint32_t *) &p[n * 4])
++ #define GET(n)      (*(uint32_t *) &p[n * 4])
++ 
++ #else
++ 
++ #define SET(n)                                                                \
++     (block[n] =                                                               \
++     (uint32_t) p[n * 4] |                                                     \
++     ((uint32_t) p[n * 4 + 1] << 8) |                                          \
++     ((uint32_t) p[n * 4 + 2] << 16) |                                         \
++     ((uint32_t) p[n * 4 + 3] << 24))
++ 
++ #define GET(n)      block[n]
++ 
++ #endif
++ 
++ 
++ /*
++  * This processes one or more 64-byte data blocks, but does not update
++  * the bit counters.  There are no alignment requirements.
++  */
++ 
++ static const u_char *
++ ngx_md5_body(ngx_md5_t *ctx, const u_char *data, size_t size)
++ {
++     uint32_t       a, b, c, d;
++     uint32_t       saved_a, saved_b, saved_c, saved_d;
++     const u_char  *p;
++ #if !(NGX_HAVE_LITTLE_ENDIAN && NGX_HAVE_NONALIGNED)
++     uint32_t       block[16];
++ #endif
++ 
++     p = data;
++ 
++     a = ctx->a;
++     b = ctx->b;
++     c = ctx->c;
++     d = ctx->d;
++ 
++     do {
++         saved_a = a;
++         saved_b = b;
++         saved_c = c;
++         saved_d = d;
++ 
++         /* Round 1 */
++ 
++         STEP(F, a, b, c, d, SET(0),  0xd76aa478, 7);
++         STEP(F, d, a, b, c, SET(1),  0xe8c7b756, 12);
++         STEP(F, c, d, a, b, SET(2),  0x242070db, 17);
++         STEP(F, b, c, d, a, SET(3),  0xc1bdceee, 22);
++         STEP(F, a, b, c, d, SET(4),  0xf57c0faf, 7);
++         STEP(F, d, a, b, c, SET(5),  0x4787c62a, 12);
++         STEP(F, c, d, a, b, SET(6),  0xa8304613, 17);
++         STEP(F, b, c, d, a, SET(7),  0xfd469501, 22);
++         STEP(F, a, b, c, d, SET(8),  0x698098d8, 7);
++         STEP(F, d, a, b, c, SET(9),  0x8b44f7af, 12);
++         STEP(F, c, d, a, b, SET(10), 0xffff5bb1, 17);
++         STEP(F, b, c, d, a, SET(11), 0x895cd7be, 22);
++         STEP(F, a, b, c, d, SET(12), 0x6b901122, 7);
++         STEP(F, d, a, b, c, SET(13), 0xfd987193, 12);
++         STEP(F, c, d, a, b, SET(14), 0xa679438e, 17);
++         STEP(F, b, c, d, a, SET(15), 0x49b40821, 22);
++ 
++         /* Round 2 */
++ 
++         STEP(G, a, b, c, d, GET(1),  0xf61e2562, 5);
++         STEP(G, d, a, b, c, GET(6),  0xc040b340, 9);
++         STEP(G, c, d, a, b, GET(11), 0x265e5a51, 14);
++         STEP(G, b, c, d, a, GET(0),  0xe9b6c7aa, 20);
++         STEP(G, a, b, c, d, GET(5),  0xd62f105d, 5);
++         STEP(G, d, a, b, c, GET(10), 0x02441453, 9);
++         STEP(G, c, d, a, b, GET(15), 0xd8a1e681, 14);
++         STEP(G, b, c, d, a, GET(4),  0xe7d3fbc8, 20);
++         STEP(G, a, b, c, d, GET(9),  0x21e1cde6, 5);
++         STEP(G, d, a, b, c, GET(14), 0xc33707d6, 9);
++         STEP(G, c, d, a, b, GET(3),  0xf4d50d87, 14);
++         STEP(G, b, c, d, a, GET(8),  0x455a14ed, 20);
++         STEP(G, a, b, c, d, GET(13), 0xa9e3e905, 5);
++         STEP(G, d, a, b, c, GET(2),  0xfcefa3f8, 9);
++         STEP(G, c, d, a, b, GET(7),  0x676f02d9, 14);
++         STEP(G, b, c, d, a, GET(12), 0x8d2a4c8a, 20);
++ 
++         /* Round 3 */
++ 
++         STEP(H, a, b, c, d, GET(5),  0xfffa3942, 4);
++         STEP(H, d, a, b, c, GET(8),  0x8771f681, 11);
++         STEP(H, c, d, a, b, GET(11), 0x6d9d6122, 16);
++         STEP(H, b, c, d, a, GET(14), 0xfde5380c, 23);
++         STEP(H, a, b, c, d, GET(1),  0xa4beea44, 4);
++         STEP(H, d, a, b, c, GET(4),  0x4bdecfa9, 11);
++         STEP(H, c, d, a, b, GET(7),  0xf6bb4b60, 16);
++         STEP(H, b, c, d, a, GET(10), 0xbebfbc70, 23);
++         STEP(H, a, b, c, d, GET(13), 0x289b7ec6, 4);
++         STEP(H, d, a, b, c, GET(0),  0xeaa127fa, 11);
++         STEP(H, c, d, a, b, GET(3),  0xd4ef3085, 16);
++         STEP(H, b, c, d, a, GET(6),  0x04881d05, 23);
++         STEP(H, a, b, c, d, GET(9),  0xd9d4d039, 4);
++         STEP(H, d, a, b, c, GET(12), 0xe6db99e5, 11);
++         STEP(H, c, d, a, b, GET(15), 0x1fa27cf8, 16);
++         STEP(H, b, c, d, a, GET(2),  0xc4ac5665, 23);
++ 
++         /* Round 4 */
++ 
++         STEP(I, a, b, c, d, GET(0),  0xf4292244, 6);
++         STEP(I, d, a, b, c, GET(7),  0x432aff97, 10);
++         STEP(I, c, d, a, b, GET(14), 0xab9423a7, 15);
++         STEP(I, b, c, d, a, GET(5),  0xfc93a039, 21);
++         STEP(I, a, b, c, d, GET(12), 0x655b59c3, 6);
++         STEP(I, d, a, b, c, GET(3),  0x8f0ccc92, 10);
++         STEP(I, c, d, a, b, GET(10), 0xffeff47d, 15);
++         STEP(I, b, c, d, a, GET(1),  0x85845dd1, 21);
++         STEP(I, a, b, c, d, GET(8),  0x6fa87e4f, 6);
++         STEP(I, d, a, b, c, GET(15), 0xfe2ce6e0, 10);
++         STEP(I, c, d, a, b, GET(6),  0xa3014314, 15);
++         STEP(I, b, c, d, a, GET(13), 0x4e0811a1, 21);
++         STEP(I, a, b, c, d, GET(4),  0xf7537e82, 6);
++         STEP(I, d, a, b, c, GET(11), 0xbd3af235, 10);
++         STEP(I, c, d, a, b, GET(2),  0x2ad7d2bb, 15);
++         STEP(I, b, c, d, a, GET(9),  0xeb86d391, 21);
++ 
++         a += saved_a;
++         b += saved_b;
++         c += saved_c;
++         d += saved_d;
++ 
++         p += 64;
++ 
++     } while (size -= 64);
++ 
++     ctx->a = a;
++     ctx->b = b;
++     ctx->c = c;
++     ctx->d = d;
++ 
++     return p;
++ }
++ 
++ #endif
+diff -p -N --text -r /tmp/patch.inc.get1.YK9bFh/src/core/ngx_md5.h /tmp/patch.inc.get2.5c73C2/src/core/ngx_md5.h
+*** /tmp/patch.inc.get1.YK9bFh/src/core/ngx_md5.h	2013-04-30 01:48:55.786800171 +0200
+--- /tmp/patch.inc.get2.5c73C2/src/core/ngx_md5.h	2013-04-30 01:48:58.986816042 +0200
+***************
+*** 12,17 ****
+--- 12,19 ----
+  #include <ngx_core.h>
+  
+  
++ #if (NGX_HAVE_MD5)
++ 
+  #if (NGX_HAVE_OPENSSL_MD5_H)
+  #include <openssl/md5.h>
+  #else
+*************** typedef MD5_CTX  ngx_md5_t;
+*** 37,40 ****
+--- 39,59 ----
+  #endif
+  
+  
++ #else /* !NGX_HAVE_MD5 */
++ 
++ 
++ typedef struct {
++     uint64_t  bytes;
++     uint32_t  a, b, c, d;
++     u_char    buffer[64];
++ } ngx_md5_t;
++ 
++ 
++ void ngx_md5_init(ngx_md5_t *ctx);
++ void ngx_md5_update(ngx_md5_t *ctx, const u_char *data, size_t size);
++ void ngx_md5_final(u_char result[16], ngx_md5_t *ctx);
++ 
++ 
++ #endif
++ 
+  #endif /* _NGX_MD5_H_INCLUDED_ */
+diff -p -N --text -r /tmp/patch.inc.get1.YK9bFh/src/core/ngx_murmurhash.c /tmp/patch.inc.get2.5c73C2/src/core/ngx_murmurhash.c
+*** /tmp/patch.inc.get1.YK9bFh/src/core/ngx_murmurhash.c	1970-01-01 01:00:00.000000000 +0100
+--- /tmp/patch.inc.get2.5c73C2/src/core/ngx_murmurhash.c	2013-04-30 01:48:58.986816042 +0200
+***************
+*** 0 ****
+--- 1,50 ----
++ 
++ /*
++  * Copyright (C) Austin Appleby
++  */
++ 
++ 
++ #include <ngx_config.h>
++ #include <ngx_core.h>
++ 
++ 
++ uint32_t
++ ngx_murmur_hash2(u_char *data, size_t len)
++ {
++     uint32_t  h, k;
++ 
++     h = 0 ^ len;
++ 
++     while (len >= 4) {
++         k  = data[0];
++         k |= data[1] << 8;
++         k |= data[2] << 16;
++         k |= data[3] << 24;
++ 
++         k *= 0x5bd1e995;
++         k ^= k >> 24;
++         k *= 0x5bd1e995;
++ 
++         h *= 0x5bd1e995;
++         h ^= k;
++ 
++         data += 4;
++         len -= 4;
++     }
++ 
++     switch (len) {
++     case 3:
++         h ^= data[2] << 16;
++     case 2:
++         h ^= data[1] << 8;
++     case 1:
++         h ^= data[0];
++         h *= 0x5bd1e995;
++     }
++ 
++     h ^= h >> 13;
++     h *= 0x5bd1e995;
++     h ^= h >> 15;
++ 
++     return h;
++ }
+diff -p -N --text -r /tmp/patch.inc.get1.YK9bFh/src/core/ngx_murmurhash.h /tmp/patch.inc.get2.5c73C2/src/core/ngx_murmurhash.h
+*** /tmp/patch.inc.get1.YK9bFh/src/core/ngx_murmurhash.h	1970-01-01 01:00:00.000000000 +0100
+--- /tmp/patch.inc.get2.5c73C2/src/core/ngx_murmurhash.h	2013-04-30 01:48:58.990816069 +0200
+***************
+*** 0 ****
+--- 1,18 ----
++ 
++ /*
++  * Copyright (C) Igor Sysoev
++  */
++ 
++ 
++ #ifndef _NGX_MURMURHASH_H_INCLUDED_
++ #define _NGX_MURMURHASH_H_INCLUDED_
++ 
++ 
++ #include <ngx_config.h>
++ #include <ngx_core.h>
++ 
++ 
++ uint32_t ngx_murmur_hash2(u_char *data, size_t len);
++ 
++ 
++ #endif /* _NGX_CRC_H_INCLUDED_ */
+diff -p -N --text -r /tmp/patch.inc.get1.YK9bFh/src/core/ngx_open_file_cache.c /tmp/patch.inc.get2.5c73C2/src/core/ngx_open_file_cache.c
+*** /tmp/patch.inc.get1.YK9bFh/src/core/ngx_open_file_cache.c	2013-04-30 01:48:55.786800171 +0200
+--- /tmp/patch.inc.get2.5c73C2/src/core/ngx_open_file_cache.c	2013-04-30 01:48:58.986816042 +0200
+*************** ngx_open_cached_file(ngx_open_file_cache
+*** 155,160 ****
+--- 155,161 ----
+              of->uniq = ngx_file_uniq(&fi);
+              of->mtime = ngx_file_mtime(&fi);
+              of->size = ngx_file_size(&fi);
++             of->fs_size = ngx_file_fs_size(&fi);
+              of->is_dir = ngx_is_dir(&fi);
+              of->is_file = ngx_is_file(&fi);
+              of->is_link = ngx_is_link(&fi);
+*************** done:
+*** 557,562 ****
+--- 558,564 ----
+      of->uniq = ngx_file_uniq(&fi);
+      of->mtime = ngx_file_mtime(&fi);
+      of->size = ngx_file_size(&fi);
++     of->fs_size = ngx_file_fs_size(&fi);
+      of->is_dir = ngx_is_dir(&fi);
+      of->is_file = ngx_is_file(&fi);
+      of->is_link = ngx_is_link(&fi);
+diff -p -N --text -r /tmp/patch.inc.get1.YK9bFh/src/core/ngx_open_file_cache.h /tmp/patch.inc.get2.5c73C2/src/core/ngx_open_file_cache.h
+*** /tmp/patch.inc.get1.YK9bFh/src/core/ngx_open_file_cache.h	2013-04-30 01:48:55.786800171 +0200
+--- /tmp/patch.inc.get2.5c73C2/src/core/ngx_open_file_cache.h	2013-04-30 01:48:58.990816069 +0200
+*************** typedef struct {
+*** 20,25 ****
+--- 20,26 ----
+      ngx_file_uniq_t          uniq;
+      time_t                   mtime;
+      off_t                    size;
++     off_t                    fs_size;
+      off_t                    directio;
+      size_t                   read_ahead;
+  
+diff -p -N --text -r /tmp/patch.inc.get1.YK9bFh/src/core/ngx_resolver.c /tmp/patch.inc.get2.5c73C2/src/core/ngx_resolver.c
+*** /tmp/patch.inc.get1.YK9bFh/src/core/ngx_resolver.c	2013-04-30 01:48:55.786800171 +0200
+--- /tmp/patch.inc.get2.5c73C2/src/core/ngx_resolver.c	2013-04-30 01:48:58.990816069 +0200
+*************** ngx_resolver_process_ptr(ngx_resolver_t
+*** 1422,1428 ****
+      in_addr_t             addr;
+      ngx_int_t             digit;
+      ngx_str_t             name;
+!     ngx_uint_t            i, mask, qtype, qclass, qident;
+      ngx_resolver_an_t    *an;
+      ngx_resolver_ctx_t   *ctx, *next;
+      ngx_resolver_node_t  *rn;
+--- 1422,1428 ----
+      in_addr_t             addr;
+      ngx_int_t             digit;
+      ngx_str_t             name;
+!     ngx_uint_t            i, mask, qident;
+      ngx_resolver_an_t    *an;
+      ngx_resolver_ctx_t   *ctx, *next;
+      ngx_resolver_node_t  *rn;
+*************** ngx_resolver_process_ptr(ngx_resolver_t
+*** 1514,1525 ****
+  
+      an = (ngx_resolver_an_t *) &buf[i + 2];
+  
+-     qtype = (an->type_hi << 8) + an->type_lo;
+-     qclass = (an->class_hi << 8) + an->class_lo;
+      len = (an->len_hi << 8) + an->len_lo;
+  
+      ngx_log_debug3(NGX_LOG_DEBUG_CORE, r->log, 0,
+!                   "resolver qt:%ui cl:%ui len:%uz", qtype, qclass, len);
+  
+      i += 2 + sizeof(ngx_resolver_an_t);
+  
+--- 1514,1525 ----
+  
+      an = (ngx_resolver_an_t *) &buf[i + 2];
+  
+      len = (an->len_hi << 8) + an->len_lo;
+  
+      ngx_log_debug3(NGX_LOG_DEBUG_CORE, r->log, 0,
+!                   "resolver qt:%ui cl:%ui len:%uz",
+!                   (an->type_hi << 8) + an->type_lo,
+!                   (an->class_hi << 8) + an->class_lo, len);
+  
+      i += 2 + sizeof(ngx_resolver_an_t);
+  
+diff -p -N --text -r /tmp/patch.inc.get1.YK9bFh/src/event/modules/ngx_epoll_module.c /tmp/patch.inc.get2.5c73C2/src/event/modules/ngx_epoll_module.c
+*** /tmp/patch.inc.get1.YK9bFh/src/event/modules/ngx_epoll_module.c	2013-04-30 01:48:55.782800157 +0200
+--- /tmp/patch.inc.get2.5c73C2/src/event/modules/ngx_epoll_module.c	2013-04-30 01:48:58.986816042 +0200
+*************** ngx_epoll_process_events(ngx_cycle_t *cy
+*** 518,524 ****
+      ngx_int_t          instance, i;
+      ngx_uint_t         level;
+      ngx_err_t          err;
+-     ngx_log_t         *log;
+      ngx_event_t       *rev, *wev, **queue;
+      ngx_connection_t  *c;
+  
+--- 518,523 ----
+*************** ngx_epoll_process_events(ngx_cycle_t *cy
+*** 565,572 ****
+  
+      ngx_mutex_lock(ngx_posted_events_mutex);
+  
+-     log = cycle->log;
+- 
+      for (i = 0; i < events; i++) {
+          c = event_list[i].data.ptr;
+  
+--- 564,569 ----
+*************** ngx_epoll_process_events(ngx_cycle_t *cy
+*** 587,611 ****
+              continue;
+          }
+  
+- #if (NGX_DEBUG0)
+-         log = c->log ? c->log : cycle->log;
+- #endif
+- 
+          revents = event_list[i].events;
+  
+!         ngx_log_debug3(NGX_LOG_DEBUG_EVENT, log, 0,
+                         "epoll: fd:%d ev:%04XD d:%p",
+                         c->fd, revents, event_list[i].data.ptr);
+  
+          if (revents & (EPOLLERR|EPOLLHUP)) {
+!             ngx_log_debug2(NGX_LOG_DEBUG_EVENT, log, 0,
+                             "epoll_wait() error on fd:%d ev:%04XD",
+                             c->fd, revents);
+          }
+  
+  #if 0
+          if (revents & ~(EPOLLIN|EPOLLOUT|EPOLLERR|EPOLLHUP)) {
+!             ngx_log_error(NGX_LOG_ALERT, log, 0,
+                            "strange epoll_wait() events fd:%d ev:%04XD",
+                            c->fd, revents);
+          }
+--- 584,604 ----
+              continue;
+          }
+  
+          revents = event_list[i].events;
+  
+!         ngx_log_debug3(NGX_LOG_DEBUG_EVENT, cycle->log, 0,
+                         "epoll: fd:%d ev:%04XD d:%p",
+                         c->fd, revents, event_list[i].data.ptr);
+  
+          if (revents & (EPOLLERR|EPOLLHUP)) {
+!             ngx_log_debug2(NGX_LOG_DEBUG_EVENT, cycle->log, 0,
+                             "epoll_wait() error on fd:%d ev:%04XD",
+                             c->fd, revents);
+          }
+  
+  #if 0
+          if (revents & ~(EPOLLIN|EPOLLOUT|EPOLLERR|EPOLLHUP)) {
+!             ngx_log_error(NGX_LOG_ALERT, cycle->log, 0,
+                            "strange epoll_wait() events fd:%d ev:%04XD",
+                            c->fd, revents);
+          }
+diff -p -N --text -r /tmp/patch.inc.get1.YK9bFh/src/http/modules/ngx_http_split_clients_module.c /tmp/patch.inc.get2.5c73C2/src/http/modules/ngx_http_split_clients_module.c
+*** /tmp/patch.inc.get1.YK9bFh/src/http/modules/ngx_http_split_clients_module.c	2013-04-30 01:48:55.782800157 +0200
+--- /tmp/patch.inc.get2.5c73C2/src/http/modules/ngx_http_split_clients_module.c	2013-04-30 01:48:58.982816022 +0200
+*************** ngx_http_split_clients_variable(ngx_http
+*** 87,93 ****
+          return NGX_OK;
+      }
+  
+!     hash = ngx_crc32_short(val.data, val.len);
+  
+      part = ctx->parts.elts;
+  
+--- 87,93 ----
+          return NGX_OK;
+      }
+  
+!     hash = ngx_murmur_hash2(val.data, val.len);
+  
+      part = ctx->parts.elts;
+  
+diff -p -N --text -r /tmp/patch.inc.get1.YK9bFh/src/http/ngx_http_cache.h /tmp/patch.inc.get2.5c73C2/src/http/ngx_http_cache.h
+*** /tmp/patch.inc.get1.YK9bFh/src/http/ngx_http_cache.h	2013-04-30 01:48:55.782800157 +0200
+--- /tmp/patch.inc.get2.5c73C2/src/http/ngx_http_cache.h	2013-04-30 01:48:58.986816042 +0200
+*************** typedef struct {
+*** 50,56 ****
+      time_t                           expire;
+      time_t                           valid_sec;
+      size_t                           body_start;
+!     off_t                            length;
+  } ngx_http_file_cache_node_t;
+  
+  
+--- 50,56 ----
+      time_t                           expire;
+      time_t                           valid_sec;
+      size_t                           body_start;
+!     off_t                            fs_size;
+  } ngx_http_file_cache_node_t;
+  
+  
+*************** struct ngx_http_cache_s {
+*** 68,73 ****
+--- 68,74 ----
+      size_t                           header_start;
+      size_t                           body_start;
+      off_t                            length;
++     off_t                            fs_size;
+  
+      ngx_uint_t                       min_uses;
+      ngx_uint_t                       error;
+diff -p -N --text -r /tmp/patch.inc.get1.YK9bFh/src/http/ngx_http_core_module.c /tmp/patch.inc.get2.5c73C2/src/http/ngx_http_core_module.c
+*** /tmp/patch.inc.get1.YK9bFh/src/http/ngx_http_core_module.c	2013-04-30 01:48:55.782800157 +0200
+--- /tmp/patch.inc.get2.5c73C2/src/http/ngx_http_core_module.c	2013-04-30 01:48:58.986816042 +0200
+*************** ngx_http_subrequest(ngx_http_request_t *
+*** 2281,2288 ****
+      sr->uri_changes = NGX_HTTP_MAX_URI_CHANGES + 1;
+  
+      tp = ngx_timeofday();
+!     r->start_sec = tp->sec;
+!     r->start_msec = tp->msec;
+  
+      r->main->subrequests++;
+      r->main->count++;
+--- 2281,2288 ----
+      sr->uri_changes = NGX_HTTP_MAX_URI_CHANGES + 1;
+  
+      tp = ngx_timeofday();
+!     sr->start_sec = tp->sec;
+!     sr->start_msec = tp->msec;
+  
+      r->main->subrequests++;
+      r->main->count++;
+diff -p -N --text -r /tmp/patch.inc.get1.YK9bFh/src/http/ngx_http_file_cache.c /tmp/patch.inc.get2.5c73C2/src/http/ngx_http_file_cache.c
+*** /tmp/patch.inc.get1.YK9bFh/src/http/ngx_http_file_cache.c	2013-04-30 01:48:55.778800146 +0200
+--- /tmp/patch.inc.get2.5c73C2/src/http/ngx_http_file_cache.c	2013-04-30 01:48:58.982816022 +0200
+*************** ngx_http_file_cache_open(ngx_http_reques
+*** 349,354 ****
+--- 349,355 ----
+      c->file.log = r->connection->log;
+      c->uniq = of.uniq;
+      c->length = of.size;
++     c->fs_size = (of.fs_size + cache->bsize - 1) / cache->bsize;
+  
+      c->buf = ngx_create_temp_buf(r->pool, c->body_start);
+      if (c->buf == NULL) {
+*************** ngx_http_file_cache_read(ngx_http_reques
+*** 411,417 ****
+              c->node->exists = 1;
+              c->node->uniq = c->uniq;
+  
+!             cache->sh->size += (c->length + cache->bsize - 1) / cache->bsize;
+          }
+  
+          ngx_shmtx_unlock(&cache->shpool->mutex);
+--- 412,418 ----
+              c->node->exists = 1;
+              c->node->uniq = c->uniq;
+  
+!             cache->sh->size += c->fs_size;
+          }
+  
+          ngx_shmtx_unlock(&cache->shpool->mutex);
+*************** renew:
+*** 594,600 ****
+      fcn->valid_sec = 0;
+      fcn->uniq = 0;
+      fcn->body_start = 0;
+!     fcn->length = 0;
+  
+  done:
+  
+--- 595,601 ----
+      fcn->valid_sec = 0;
+      fcn->uniq = 0;
+      fcn->body_start = 0;
+!     fcn->fs_size = 0;
+  
+  done:
+  
+*************** ngx_http_file_cache_set_header(ngx_http_
+*** 777,783 ****
+  void
+  ngx_http_file_cache_update(ngx_http_request_t *r, ngx_temp_file_t *tf)
+  {
+!     off_t                   size, length;
+      ngx_int_t               rc;
+      ngx_file_uniq_t         uniq;
+      ngx_file_info_t         fi;
+--- 778,784 ----
+  void
+  ngx_http_file_cache_update(ngx_http_request_t *r, ngx_temp_file_t *tf)
+  {
+!     off_t                   fs_size;
+      ngx_int_t               rc;
+      ngx_file_uniq_t         uniq;
+      ngx_file_info_t         fi;
+*************** ngx_http_file_cache_update(ngx_http_requ
+*** 800,806 ****
+      cache = c->file_cache;
+  
+      uniq = 0;
+!     length = 0;
+  
+      ngx_log_debug2(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
+                     "http file cache rename: \"%s\" to \"%s\"",
+--- 801,807 ----
+      cache = c->file_cache;
+  
+      uniq = 0;
+!     fs_size = 0;
+  
+      ngx_log_debug2(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
+                     "http file cache rename: \"%s\" to \"%s\"",
+*************** ngx_http_file_cache_update(ngx_http_requ
+*** 825,847 ****
+  
+          } else {
+              uniq = ngx_file_uniq(&fi);
+!             length = ngx_file_size(&fi);
+          }
+      }
+  
+-     size = (length + cache->bsize - 1) / cache->bsize;
+- 
+      ngx_shmtx_lock(&cache->shpool->mutex);
+  
+      c->node->count--;
+      c->node->uniq = uniq;
+      c->node->body_start = c->body_start;
+  
+!     size = size - (c->node->length + cache->bsize - 1) / cache->bsize;
+! 
+!     c->node->length = length;
+! 
+!     cache->sh->size += size;
+  
+      if (rc == NGX_OK) {
+          c->node->exists = 1;
+--- 826,843 ----
+  
+          } else {
+              uniq = ngx_file_uniq(&fi);
+!             fs_size = (ngx_file_fs_size(&fi) + cache->bsize - 1) / cache->bsize;
+          }
+      }
+  
+      ngx_shmtx_lock(&cache->shpool->mutex);
+  
+      c->node->count--;
+      c->node->uniq = uniq;
+      c->node->body_start = c->body_start;
+  
+!     cache->sh->size += fs_size - c->node->fs_size;
+!     c->node->fs_size = fs_size;
+  
+      if (rc == NGX_OK) {
+          c->node->exists = 1;
+*************** ngx_http_file_cache_delete(ngx_http_file
+*** 1148,1154 ****
+      fcn = ngx_queue_data(q, ngx_http_file_cache_node_t, queue);
+  
+      if (fcn->exists) {
+!         cache->sh->size -= (fcn->length + cache->bsize - 1) / cache->bsize;
+  
+          path = cache->path;
+          p = name + path->name.len + 1 + path->len;
+--- 1144,1150 ----
+      fcn = ngx_queue_data(q, ngx_http_file_cache_node_t, queue);
+  
+      if (fcn->exists) {
+!         cache->sh->size -= fcn->fs_size;
+  
+          path = cache->path;
+          p = name + path->name.len + 1 + path->len;
+*************** ngx_http_file_cache_add_file(ngx_tree_ct
+*** 1371,1376 ****
+--- 1367,1374 ----
+          return NGX_ERROR;
+      }
+  
++     cache = ctx->data;
++ 
+      if (ngx_fd_info(fd, &fi) == NGX_FILE_ERROR) {
+          ngx_log_error(NGX_LOG_CRIT, ctx->log, ngx_errno,
+                        ngx_fd_info_n " \"%s\" failed", name->data);
+*************** ngx_http_file_cache_add_file(ngx_tree_ct
+*** 1381,1386 ****
+--- 1379,1385 ----
+          c.valid_msec = h.valid_msec;
+          c.body_start = h.body_start;
+          c.length = ngx_file_size(&fi);
++         c.fs_size = (ngx_file_fs_size(&fi) + cache->bsize - 1) / cache->bsize;
+      }
+  
+      if (ngx_close_file(fd) == NGX_FILE_ERROR) {
+*************** ngx_http_file_cache_add_file(ngx_tree_ct
+*** 1406,1413 ****
+          c.key[i] = (u_char) n;
+      }
+  
+-     cache = ctx->data;
+- 
+      return ngx_http_file_cache_add(cache, &c);
+  }
+  
+--- 1405,1410 ----
+*************** ngx_http_file_cache_add(ngx_http_file_ca
+*** 1447,1455 ****
+          fcn->uniq = c->uniq;
+          fcn->valid_sec = c->valid_sec;
+          fcn->body_start = c->body_start;
+!         fcn->length = c->length;
+  
+!         cache->sh->size += (c->length + cache->bsize - 1) / cache->bsize;
+  
+      } else {
+          ngx_queue_remove(&fcn->queue);
+--- 1444,1452 ----
+          fcn->uniq = c->uniq;
+          fcn->valid_sec = c->valid_sec;
+          fcn->body_start = c->body_start;
+!         fcn->fs_size = c->fs_size;
+  
+!         cache->sh->size += c->fs_size;
+  
+      } else {
+          ngx_queue_remove(&fcn->queue);
+diff -p -N --text -r /tmp/patch.inc.get1.YK9bFh/src/http/ngx_http_script.c /tmp/patch.inc.get2.5c73C2/src/http/ngx_http_script.c
+*** /tmp/patch.inc.get1.YK9bFh/src/http/ngx_http_script.c	2013-04-30 01:48:55.778800146 +0200
+--- /tmp/patch.inc.get2.5c73C2/src/http/ngx_http_script.c	2013-04-30 01:48:58.982816022 +0200
+*************** ngx_http_test_predicates(ngx_http_reques
+*** 265,271 ****
+              return NGX_ERROR;
+          }
+  
+!         if (val.len && val.data[0] != '0') {
+              return NGX_DECLINED;
+          }
+      }
+--- 265,271 ----
+              return NGX_ERROR;
+          }
+  
+!         if (val.len && (val.len != 1 || val.data[0] != '0')) {
+              return NGX_DECLINED;
+          }
+      }
+*************** ngx_http_script_if_code(ngx_http_script_
+*** 1395,1401 ****
+  
+      e->sp--;
+  
+!     if (e->sp->len && e->sp->data[0] != '0') {
+          if (code->loc_conf) {
+              e->request->loc_conf = code->loc_conf;
+              ngx_http_update_location_config(e->request);
+--- 1395,1401 ----
+  
+      e->sp--;
+  
+!     if (e->sp->len && (e->sp->len !=1 || e->sp->data[0] != '0')) {
+          if (code->loc_conf) {
+              e->request->loc_conf = code->loc_conf;
+              ngx_http_update_location_config(e->request);
+diff -p -N --text -r /tmp/patch.inc.get1.YK9bFh/src/http/ngx_http_upstream.c /tmp/patch.inc.get2.5c73C2/src/http/ngx_http_upstream.c
+*** /tmp/patch.inc.get1.YK9bFh/src/http/ngx_http_upstream.c	2013-04-30 01:48:55.778800146 +0200
+--- /tmp/patch.inc.get2.5c73C2/src/http/ngx_http_upstream.c	2013-04-30 01:48:58.982816022 +0200
+*************** static ngx_http_variable_t  ngx_http_ups
+*** 313,337 ****
+  
+      { ngx_string("upstream_addr"), NULL,
+        ngx_http_upstream_addr_variable, 0,
+!       NGX_HTTP_VAR_NOHASH|NGX_HTTP_VAR_NOCACHEABLE, 0 },
+  
+      { ngx_string("upstream_status"), NULL,
+        ngx_http_upstream_status_variable, 0,
+!       NGX_HTTP_VAR_NOHASH|NGX_HTTP_VAR_NOCACHEABLE, 0 },
+  
+      { ngx_string("upstream_response_time"), NULL,
+        ngx_http_upstream_response_time_variable, 0,
+!       NGX_HTTP_VAR_NOHASH|NGX_HTTP_VAR_NOCACHEABLE, 0 },
+  
+      { ngx_string("upstream_response_length"), NULL,
+        ngx_http_upstream_response_length_variable, 0,
+!       NGX_HTTP_VAR_NOHASH|NGX_HTTP_VAR_NOCACHEABLE, 0 },
+  
+  #if (NGX_HTTP_CACHE)
+  
+      { ngx_string("upstream_cache_status"), NULL,
+        ngx_http_upstream_cache_status, 0,
+!       NGX_HTTP_VAR_NOHASH|NGX_HTTP_VAR_NOCACHEABLE, 0 },
+  
+  #endif
+  
+--- 313,337 ----
+  
+      { ngx_string("upstream_addr"), NULL,
+        ngx_http_upstream_addr_variable, 0,
+!       NGX_HTTP_VAR_NOCACHEABLE, 0 },
+  
+      { ngx_string("upstream_status"), NULL,
+        ngx_http_upstream_status_variable, 0,
+!       NGX_HTTP_VAR_NOCACHEABLE, 0 },
+  
+      { ngx_string("upstream_response_time"), NULL,
+        ngx_http_upstream_response_time_variable, 0,
+!       NGX_HTTP_VAR_NOCACHEABLE, 0 },
+  
+      { ngx_string("upstream_response_length"), NULL,
+        ngx_http_upstream_response_length_variable, 0,
+!       NGX_HTTP_VAR_NOCACHEABLE, 0 },
+  
+  #if (NGX_HTTP_CACHE)
+  
+      { ngx_string("upstream_cache_status"), NULL,
+        ngx_http_upstream_cache_status, 0,
+!       NGX_HTTP_VAR_NOCACHEABLE, 0 },
+  
+  #endif
+  
+diff -p -N --text -r /tmp/patch.inc.get1.YK9bFh/src/os/unix/ngx_files.h /tmp/patch.inc.get2.5c73C2/src/os/unix/ngx_files.h
+*** /tmp/patch.inc.get1.YK9bFh/src/os/unix/ngx_files.h	2013-04-30 01:48:55.786800171 +0200
+--- /tmp/patch.inc.get2.5c73C2/src/os/unix/ngx_files.h	2013-04-30 01:48:58.990816069 +0200
+*************** ngx_int_t ngx_set_file_time(u_char *name
+*** 157,162 ****
+--- 157,163 ----
+  #define ngx_is_exec(sb)          (((sb)->st_mode & S_IXUSR) == S_IXUSR)
+  #define ngx_file_access(sb)      ((sb)->st_mode & 0777)
+  #define ngx_file_size(sb)        (sb)->st_size
++ #define ngx_file_fs_size(sb)     ((sb)->st_blocks * 512)
+  #define ngx_file_mtime(sb)       (sb)->st_mtime
+  #define ngx_file_uniq(sb)        (sb)->st_ino
+  
+diff -p -N --text -r /tmp/patch.inc.get1.YK9bFh/src/os/unix/ngx_linux_config.h /tmp/patch.inc.get2.5c73C2/src/os/unix/ngx_linux_config.h
+*** /tmp/patch.inc.get1.YK9bFh/src/os/unix/ngx_linux_config.h	2013-04-30 01:48:55.786800171 +0200
+--- /tmp/patch.inc.get2.5c73C2/src/os/unix/ngx_linux_config.h	2013-04-30 01:48:58.990816069 +0200
+*************** typedef struct iocb  ngx_aiocb_t;
+*** 88,94 ****
+  #endif
+  
+  
+! #define NGX_LISTEN_BACKLOG        -1
+  
+  
+  #if defined TCP_DEFER_ACCEPT && !defined NGX_HAVE_DEFERRED_ACCEPT
+--- 88,94 ----
+  #endif
+  
+  
+! #define NGX_LISTEN_BACKLOG        511
+  
+  
+  #if defined TCP_DEFER_ACCEPT && !defined NGX_HAVE_DEFERRED_ACCEPT

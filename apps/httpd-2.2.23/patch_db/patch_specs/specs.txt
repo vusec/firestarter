@@ -1,0 +1,256 @@
+* One-time annotation effort:
+- unions with inner pointers:   79 (12 unions in annotations.c)
+- memory mgm instrumentation    1 (magic region configuration)
+- update points:                4 (annotations.c)
+- httpd total:                  84
+
+* Patches:                        LOCS   Fn_changed Var_changed Ty_changed FWD_ST_LOCS BWD_ST_LOCS
+- 2.2.23_2.2.24.patch:               67    2          0           0          0           0
+- 2.2.24_2.3.4-alpha.patch:        7540  516         23          20        154          63
+- 2.3.4-alpha_2.3.5-alpha.patch:    247   38          1           2          0           0
+- 2.3.5-alpha_2.3.6.patch:         1790  126          0           9        122          88
+- 2.3.6_2.3.8.patch:               1200  147          4          17         26           0
+- httpd total:                    10844  829         28          48        302         151
+
+- Basic stats obtained by:
+rm -f filter.log
+./serverctl patch file-clean ALL
+./serverctl patch list
+PATCH_REMOVE_TEMPS=0 ./serverctl patch getincr 2.2.23 2.3.8
+./serverctl patch file-filter-include ALL \\.[ch]      >> filter.log
+./serverctl patch file-filter-exclude ALL win32.*      >> filter.log
+./serverctl patch file-filter-exclude ALL winnt.*      >> filter.log
+./serverctl patch file-filter-exclude ALL os2.*        >> filter.log
+./serverctl patch file-filter-exclude ALL beos.*       >> filter.log
+./serverctl patch file-filter-exclude ALL bs2000.*     >> filter.log
+./serverctl patch file-filter-exclude ALL netware.*    >> filter.log
+./serverctl patch file-filter-exclude ALL tpf.*        >> filter.log
+./serverctl patch file-filter-exclude ALL module.*     >> filter.log
+./serverctl patch file-filter-exclude ALL support.*    >> filter.log
+./serverctl patch file-stats ALL
+
+- Manual inspection aided by:
+./serverctl patch file-meldcmd ALL #Run individual meld commands
+
+ST LOC:
+For each type change requiring manual ST:
+ST_LOC += (is_first_type_change ? 7 : 0) + 9 + TYPE_BASED_CALLBACK_BODY_LOC;
+
+For each variable change requiring manual ST:
+ST_LOC += LOC_TO_REINITIALIZE_VARIABLE
+
+ 
+ 
+*** Stats for patch_db/2.2.23_2.2.24.patch:
+ - Files changed: 4
+ - Functions changed: 2
+ - LOC added: 2
+ - LOC changed: 65
+ - LOC removed: 0
+ - LOC total: 67
+Running: patch_file_stats 2.2.24 2.3.4-alpha 
+*** Stats for patch_db/2.2.24_2.3.4-alpha.patch:
+ - Files changed: 53
+ - Functions changed: 516
+ - LOC added: 1462
+ - LOC changed: 4702
+ - LOC removed: 1376
+ - LOC total: 7540
+>>> Changes:
+- struct ap_listen_rec:
+    + ap_slave_t *slave                           (1 LOC F)
+- struct core_dir_config:
+    - char *ap_default_type;                                
+    - int *satisfy;
+    - char *ap_auth_type;
+    - char *ap_auth_name;
+    - apr_array_header_t *ap_requires;
+
+    ! unsigned int content_md5;
+    - unsigned int decode_encoded_slashes;
+    - int max_ranges;
+    + condition;
+- struct request_rec:
+    + apr_bucket_brigade *kept_body;
+    + apr_thread_mutex_t *invoke_mtx;
+    + apr_table_t *body_table;                   (7+9+1=17 LOC F)
+- struct conn_rec
+    + int data_in_output_filters;                (9+5=14   LOC F)
+    + ap_thread_t *current_thread;               (9+25=34  LOC F)
+- struct server_rec
+    + void *context;
+- enum conn_state_e
+    + CONN_STATE_HANDLER,    CONN_STATE_WRITE_COMPLETION,    CONN_STATE_SUSPENDED
+- struct core_output_filter_ctx
+    ! renamed apr_bucket_brigade *b              (9+2=11 LOC F+B)
+    ! semantically changed apr_pool_t *deferred_write_pool; (9+22=31 LOC F+B)
+- struct piped_loc
+    ! apr_file_t *fds[2];                        (9+5=14 LOC F+B)
+- struct process_score
+    - ap_scoreboard_e sb_type;
+- struct util_ldap_connection_t
+    + struct util_ldap_state_t *st;              (9+5=14 LOC F)
+    + int keep;                    
+    + int ChaseReferrals;          
+    + int ReferralHopLimit;        
+- typedef struct util_ldap_config_t
+    + added struct
+- struct util_ldap_state_t
+    - char *lock_file;
+    + int debug_level;                           (9+1=10 LOC F)
+- struct mod_auth_ldap_groupattr_entry_t
+    + added struct
+* VAR_RENAME
+    ! unixd_config_rec unixd_config;             (1 LOC F+B)
+    ! int ap_max_daemons_limit = -1;             (1 LOC F+B)
+    ! ap_generation_t volatile ap_my_generation=0; (1 LOC F+B);
+    ! worker.c: int ap_threads_per_child=0       (1 LOC F+B)
+    ! worker.c: int ap_max_daemons_limit = -1;   (1 LOC F+B)
+    + AP_DECLARE_DATA server_rec *ap_server_conf = NULL; (1 LOC F+B)
+    + static ap_generation_t volatile my_generation = 0; (1 LOC F+B)
+* VAR_ADD
+    + AP_DECLARE_DATA apr_pool_t *ap_pglobal = NULL;
+    + static prefork_retained_data *retained;
+    + static int max_clients = 0;
+    + static worker_retained_data *retained;
+    + static int auth_internal_per_conf = 0;
+    + static int auth_internal_per_conf_hooks = 0;
+    + static int auth_internal_per_conf_providers = 0;
+    + static int lb_size;                         (1 LOC F)
+- struct APR_HOOK_STRUCT
+    + check_config hook
+- mpm_common.c: struct APR_HOOK_STRUCT
+    + APR_HOOK_LINK(drop_privileges)
+    + APR_HOOK_LINK(mpm)
+    + APR_HOOK_LINK(mpm_query)
+    + APR_HOOK_LINK(mpm_note_child_killed)
+    + APR_HOOK_LINK(mpm_register_timed_callback)
+    + APR_HOOK_LINK(mpm_get_name)
+* VAR_DEL
+    - AP_DECLARE_DATA int ap_document_root_check = 1;
+    - static int first_server_limit = 0;
+    - static int changed_limit_at_restart;
+    - server_rec *ap_server_conf;
+    - static int first_thread_limit = 0;
+    - static int changed_limit_at_restart;
+    - static int had_healthy_child = 0;
+    - static ap_scoreboard_e scoreboard_type;
+- struct prefork_retained_data
+    + added struct
+- typedef struct worker_retained_data
+    + added struct
+- typedef struct ap_worker_pod_t ap_worker_pod_t;
+    ! renamed                                  (1 LOC F+B)
+- struct content_length_ctx
+    + apr_bucket_brigade *tmpbb;
+- struct walk_cache_t
+    + struct walk_cache_t *prev; /* Prev cache of same call in this (sub)req */
+    + int count; /* Number of prev invocations of same call in this (sub)req */
+
+Running: patch_file_stats 2.3.4-alpha 2.3.5-alpha 
+*** Stats for patch_db/2.3.4-alpha_2.3.5-alpha.patch:
+ - Files changed: 16
+ - Functions changed: 38
+ - LOC added: 69
+ - LOC changed: 154
+ - LOC removed: 24
+ - LOC total: 247
+>>> Changes:
+- struct util_ldap_state_t:
+   + struct timeval *opTimeout;
+* VAR_ADD:
+   + AP_DECLARE_DATA int ap_document_root_check = 1;
+- struct mutex_cfg_t;
+   + int omit_pid;
+
+Running: patch_file_stats 2.3.5-alpha 2.3.6 
+*** Stats for patch_db/2.3.5-alpha_2.3.6.patch:
+ - Files changed: 51
+ - Functions changed: 126
+ - LOC added: 800
+ - LOC changed: 819
+ - LOC removed: 171
+ - LOC total: 1790
+>>> Changes:
+- struct ap_socache_hints:
+    + time_t expiry_interval;
+- typedef apr_status_t (*ap_socache_iterator_t):
+    + new type
+- typedef struct ap_socache_provider_t:
+    + apr_status_t (*iterate)()
+- struct core_dir_config;
+    ! const struct ap_logconf *log; (from log_level) (7+9+14=30 LOC F, 7+9+4=20 LOC B)
+- struct request_rec
+    + const struct ap_logconf *log; (9+14=23 LOC F, 9+4=13 LOC B)
+- struct conn_rec
+    + const struct ap_logconf *log; (9+14=23 LOC F, 9+4=13 LOC B)
+- struct ap_logconf
+    + new type
+- struct server_rec
+    ! const struct ap_logconf log; (from log_level) (9+8=17 LOC F, 9+4=13 LOC B)
+- typedef struct util_ldap_config_t
+    + apr_array_header_t client_certs; (from other struct util_ldap_state_t) (9+20=29 LOC F+B)
+Running: patch_file_stats 2.3.6 2.3.8 
+*** Stats for patch_db/2.3.6_2.3.8.patch:
+ - Files changed: 35
+ - Functions changed: 147
+ - LOC added: 518
+ - LOC changed: 407
+ - LOC removed: 275
+ - LOC total: 1200
+>>> Changes:
+- typedef struct ap_socache_provider_t
+    ! apr_status_t (*iterate)(ap_socache_instance_t *instance, server_rec *s,
+                            ap_socache_iterator_t *iterator,
+                            apr_pool_t *pool);
+- struct cmd_parms_struct
+    ! moved int override_opts;
+- core_request_config;
+    ! moved char **response_code_strings;
+- core_dir_config;
+    - apr_hash_t *ct_output_filters;
+- struct process_rec
+    ! moved argc, argv
+- struct request_rec
+    ! moved char *protocol;
+    ! moved const char *method;
+    ! moved int chunked;
+    ! moved remaining, read_length;
+    ! moved apr_bucket_brigade *kept_body;
+    ! moved apr_table_t *body_table;
+    ! moved int no_cache;
+    ! moved int no_local_copy;
+    ! moved apr_finfo_t finfo;
+    ! moved apr_uri_t parsed_uri;
+    ! moved int eos_sent;
+    ! moved const struct ap_logconf *log;
+- struct conn_rec
+    ! moved N fields
+- struct server_addr_rec
+    ! moved N fields
+- struct ap_logconf
+    ! type change unsigned *module_levels;
+- struct server_rec
+    ! moved N fields
+- typedef struct core_output_filter_ctx
+    ! moved apr_bucket_brigade *tmp_flush_bb;
+    + apr_pool_t *deferred_write_pool;               (7+9+10=26 LOC F)
+- enum authz_status
+    + AUTHZ_DENIED_NO_USER
+- struct worker_score
+    ! moved N fields
+- struct ap_filter_rec_t
+    ! moved N fields
+- util_ldap_connection_t
+    ! moved N fields
+- struct util_ldap_state_t
+    ! moved N fields
+* VAR_ADD:
+    + static int max_modules = 0;
+    + static int conf_vector_length = 0; ?
+    + static char **ap_module_short_names = NULL; ?
+* VAR CHG:
+    * static cmd_parms default_parms: ?
+- APR_HOOK_STRUCT
+    + node_auth_failure ?
+    + access_checker_ex ?

@@ -1,0 +1,5 @@
+#define LTCKPT_CHECKPOINT_METHOD baseline
+
+#include "../ltckpt_local.h"
+LTCKPT_CHECKPOINT_METHOD_ONCE();
+LTCKPT_DECLARE_BASELINE_HOOKS();

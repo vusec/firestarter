@@ -1,0 +1,16 @@
+#!/bin/bash
+
+MYPWD=`pwd`
+ROOT=../..
+
+. $MYPWD/../scripts/include/configure.llvm.inc
+
+LLVM_LIBS=`build_llvm_libs $*`
+
+CC="$LLVMGOLD_CC" \
+CFLAGS="$LLVMGOLD_CFLAGS" \
+LDFLAGS="$LLVM_LIBS $LLVMGOLD_LDFLAGS" \
+PREFIX=$MYPWD/install \
+    ./configure
+
+touch src/.make-settings

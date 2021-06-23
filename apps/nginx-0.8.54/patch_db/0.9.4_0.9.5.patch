@@ -1,0 +1,288 @@
+diff -p -N --text -r /tmp/patch.inc.get1.5M6VPP/src/core/nginx.h /tmp/patch.inc.get2.QRmr4J/src/core/nginx.h
+*** /tmp/patch.inc.get1.5M6VPP/src/core/nginx.h	2013-04-30 00:52:38.630053753 +0200
+--- /tmp/patch.inc.get2.QRmr4J/src/core/nginx.h	2013-04-30 00:52:41.854069713 +0200
+***************
+*** 8,15 ****
+  #define _NGINX_H_INCLUDED_
+  
+  
+! #define nginx_version         9004
+! #define NGINX_VERSION      "0.9.4"
+  #define NGINX_VER          "nginx/" NGINX_VERSION
+  
+  #define NGINX_VAR          "NGINX"
+--- 8,15 ----
+  #define _NGINX_H_INCLUDED_
+  
+  
+! #define nginx_version         9005
+! #define NGINX_VERSION      "0.9.5"
+  #define NGINX_VER          "nginx/" NGINX_VERSION
+  
+  #define NGINX_VAR          "NGINX"
+diff -p -N --text -r /tmp/patch.inc.get1.5M6VPP/src/core/ngx_inet.c /tmp/patch.inc.get2.QRmr4J/src/core/ngx_inet.c
+*** /tmp/patch.inc.get1.5M6VPP/src/core/ngx_inet.c	2013-04-30 00:52:38.630053753 +0200
+--- /tmp/patch.inc.get2.QRmr4J/src/core/ngx_inet.c	2013-04-30 00:52:41.854069713 +0200
+*************** ngx_inet_resolve_host(ngx_pool_t *pool,
+*** 943,949 ****
+  
+          u->naddrs = i;
+  
+!         for (i = 0; h->h_addr_list[i] != NULL; i++) {
+  
+              sin = ngx_pcalloc(pool, sizeof(struct sockaddr_in));
+              if (sin == NULL) {
+--- 943,949 ----
+  
+          u->naddrs = i;
+  
+!         for (i = 0; i < u->naddrs; i++) {
+  
+              sin = ngx_pcalloc(pool, sizeof(struct sockaddr_in));
+              if (sin == NULL) {
+diff -p -N --text -r /tmp/patch.inc.get1.5M6VPP/src/http/modules/ngx_http_geoip_module.c /tmp/patch.inc.get2.QRmr4J/src/http/modules/ngx_http_geoip_module.c
+*** /tmp/patch.inc.get1.5M6VPP/src/http/modules/ngx_http_geoip_module.c	2013-04-30 00:52:38.626053733 +0200
+--- /tmp/patch.inc.get2.QRmr4J/src/http/modules/ngx_http_geoip_module.c	2013-04-30 00:52:41.846069709 +0200
+*************** static void ngx_http_geoip_cleanup(void
+*** 50,63 ****
+  static ngx_command_t  ngx_http_geoip_commands[] = {
+  
+      { ngx_string("geoip_country"),
+!       NGX_HTTP_MAIN_CONF|NGX_CONF_TAKE1,
+        ngx_http_geoip_country,
+        NGX_HTTP_MAIN_CONF_OFFSET,
+        0,
+        NULL },
+  
+      { ngx_string("geoip_city"),
+!       NGX_HTTP_MAIN_CONF|NGX_CONF_TAKE1,
+        ngx_http_geoip_city,
+        NGX_HTTP_MAIN_CONF_OFFSET,
+        0,
+--- 50,63 ----
+  static ngx_command_t  ngx_http_geoip_commands[] = {
+  
+      { ngx_string("geoip_country"),
+!       NGX_HTTP_MAIN_CONF|NGX_CONF_TAKE12,
+        ngx_http_geoip_country,
+        NGX_HTTP_MAIN_CONF_OFFSET,
+        0,
+        NULL },
+  
+      { ngx_string("geoip_city"),
+!       NGX_HTTP_MAIN_CONF|NGX_CONF_TAKE12,
+        ngx_http_geoip_city,
+        NGX_HTTP_MAIN_CONF_OFFSET,
+        0,
+*************** ngx_http_geoip_country(ngx_conf_t *cf, n
+*** 446,451 ****
+--- 446,462 ----
+          return NGX_CONF_ERROR;
+      }
+  
++     if (cf->args->nelts == 3) {
++         if (ngx_strcmp(value[2].data, "utf8") == 0) {
++             GeoIP_set_charset (gcf->country, GEOIP_CHARSET_UTF8);
++ 
++         } else {
++             ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
++                                "invalid parameter \"%V\"", &value[2]);
++             return NGX_CONF_ERROR;
++         }
++     }
++ 
+      switch (gcf->country->databaseType) {
+  
+      case GEOIP_COUNTRY_EDITION:
+*************** ngx_http_geoip_city(ngx_conf_t *cf, ngx_
+*** 485,490 ****
+--- 496,512 ----
+          return NGX_CONF_ERROR;
+      }
+  
++     if (cf->args->nelts == 3) {
++         if (ngx_strcmp(value[2].data, "utf8") == 0) {
++             GeoIP_set_charset (gcf->city, GEOIP_CHARSET_UTF8);
++ 
++         } else {
++             ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
++                                "invalid parameter \"%V\"", &value[2]);
++             return NGX_CONF_ERROR;
++         }
++     }
++ 
+      switch (gcf->city->databaseType) {
+  
+      case GEOIP_CITY_EDITION_REV0:
+diff -p -N --text -r /tmp/patch.inc.get1.5M6VPP/src/http/modules/ngx_http_proxy_module.c /tmp/patch.inc.get2.QRmr4J/src/http/modules/ngx_http_proxy_module.c
+*** /tmp/patch.inc.get1.5M6VPP/src/http/modules/ngx_http_proxy_module.c	2013-04-30 00:52:38.626053733 +0200
+--- /tmp/patch.inc.get2.QRmr4J/src/http/modules/ngx_http_proxy_module.c	2013-04-30 00:52:41.850069704 +0200
+*************** ngx_http_proxy_merge_loc_conf(ngx_conf_t
+*** 1717,1722 ****
+--- 1717,1723 ----
+      ngx_http_proxy_loc_conf_t *prev = parent;
+      ngx_http_proxy_loc_conf_t *conf = child;
+  
++     u_char                     *p;
+      size_t                      size;
+      ngx_keyval_t               *s;
+      ngx_hash_init_t             hash;
+*************** ngx_http_proxy_merge_loc_conf(ngx_conf_t
+*** 1975,1987 ****
+              }
+  
+              pr->handler = ngx_http_proxy_rewrite_redirect_text;
+-             pr->redirect = conf->url;
+  
+              if (conf->vars.uri.len) {
+                  pr->replacement.text = conf->location;
+  
+              } else {
+!                 ngx_str_null(&pr->replacement.text);
+              }
+          }
+      }
+--- 1976,2000 ----
+              }
+  
+              pr->handler = ngx_http_proxy_rewrite_redirect_text;
+  
+              if (conf->vars.uri.len) {
++                 pr->redirect = conf->url;
+                  pr->replacement.text = conf->location;
+  
+              } else {
+!                 pr->redirect.len = conf->url.len + sizeof("/") - 1;
+! 
+!                 p = ngx_pnalloc(cf->pool, pr->redirect.len);
+!                 if (p == NULL) {
+!                     return NGX_CONF_ERROR;
+!                 }
+! 
+!                 pr->redirect.data = p;
+! 
+!                 p = ngx_cpymem(p, conf->url.data, conf->url.len);
+!                 *p = '/';
+! 
+!                 ngx_str_set(&pr->replacement.text, "/");
+              }
+          }
+      }
+*************** ngx_http_proxy_redirect(ngx_conf_t *cf,
+*** 2456,2461 ****
+--- 2469,2475 ----
+  {
+      ngx_http_proxy_loc_conf_t *plcf = conf;
+  
++     u_char                     *p;
+      ngx_str_t                  *value;
+      ngx_array_t                *vars_lengths, *vars_values;
+      ngx_http_script_compile_t   sc;
+*************** ngx_http_proxy_redirect(ngx_conf_t *cf,
+*** 2518,2530 ****
+          }
+  
+          pr->handler = ngx_http_proxy_rewrite_redirect_text;
+-         pr->redirect = plcf->url;
+  
+          if (plcf->vars.uri.len) {
+              pr->replacement.text = plcf->location;
+  
+          } else {
+!             ngx_str_null(&pr->replacement.text);
+          }
+  
+          return NGX_CONF_OK;
+--- 2532,2556 ----
+          }
+  
+          pr->handler = ngx_http_proxy_rewrite_redirect_text;
+  
+          if (plcf->vars.uri.len) {
++             pr->redirect = plcf->url;
+              pr->replacement.text = plcf->location;
+  
+          } else {
+!             pr->redirect.len = plcf->url.len + sizeof("/") - 1;
+! 
+!             p = ngx_pnalloc(cf->pool, pr->redirect.len);
+!             if (p == NULL) {
+!                 return NGX_CONF_ERROR;
+!             }
+! 
+!             pr->redirect.data = p;
+! 
+!             p = ngx_cpymem(p, plcf->url.data, plcf->url.len);
+!             *p = '/';
+! 
+!             ngx_str_set(&pr->replacement.text, "/");
+          }
+  
+          return NGX_CONF_OK;
+diff -p -N --text -r /tmp/patch.inc.get1.5M6VPP/src/http/ngx_http_special_response.c /tmp/patch.inc.get2.QRmr4J/src/http/ngx_http_special_response.c
+*** /tmp/patch.inc.get1.5M6VPP/src/http/ngx_http_special_response.c	2013-04-30 00:52:38.622053718 +0200
+--- /tmp/patch.inc.get2.QRmr4J/src/http/ngx_http_special_response.c	2013-04-30 00:52:41.846069709 +0200
+*************** ngx_http_send_error_page(ngx_http_reques
+*** 570,576 ****
+          return NGX_ERROR;
+      }
+  
+!     r->err_status = overwrite > 0 ? overwrite : NGX_HTTP_MOVED_TEMPORARILY;
+  
+      location->hash = 1;
+      ngx_str_set(&location->key, "Location");
+--- 570,583 ----
+          return NGX_ERROR;
+      }
+  
+!     if (overwrite >= NGX_HTTP_MOVED_PERMANENTLY
+!         && overwrite <= NGX_HTTP_SEE_OTHER)
+!     {
+!         r->err_status = overwrite;
+! 
+!     } else {
+!         r->err_status = NGX_HTTP_MOVED_TEMPORARILY;
+!     }
+  
+      location->hash = 1;
+      ngx_str_set(&location->key, "Location");
+diff -p -N --text -r /tmp/patch.inc.get1.5M6VPP/src/os/unix/ngx_files.c /tmp/patch.inc.get2.QRmr4J/src/os/unix/ngx_files.c
+*** /tmp/patch.inc.get1.5M6VPP/src/os/unix/ngx_files.c	2013-04-30 00:52:38.630053753 +0200
+--- /tmp/patch.inc.get2.QRmr4J/src/os/unix/ngx_files.c	2013-04-30 00:52:41.854069713 +0200
+*************** ngx_set_file_time(u_char *name, ngx_fd_t
+*** 245,251 ****
+  {
+      struct timeval  tv[2];
+  
+!     tv[0].tv_sec = s;
+      tv[0].tv_usec = 0;
+      tv[1].tv_sec = s;
+      tv[1].tv_usec = 0;
+--- 245,251 ----
+  {
+      struct timeval  tv[2];
+  
+!     tv[0].tv_sec = ngx_time();
+      tv[0].tv_usec = 0;
+      tv[1].tv_sec = s;
+      tv[1].tv_usec = 0;
+diff -p -N --text -r /tmp/patch.inc.get1.5M6VPP/src/os/unix/ngx_linux_config.h /tmp/patch.inc.get2.QRmr4J/src/os/unix/ngx_linux_config.h
+*** /tmp/patch.inc.get1.5M6VPP/src/os/unix/ngx_linux_config.h	2013-04-30 00:52:38.630053753 +0200
+--- /tmp/patch.inc.get2.QRmr4J/src/os/unix/ngx_linux_config.h	2013-04-30 00:52:41.854069713 +0200
+*************** typedef struct iocb  ngx_aiocb_t;
+*** 88,94 ****
+  #endif
+  
+  
+! #define NGX_LISTEN_BACKLOG        511
+  
+  
+  #if defined TCP_DEFER_ACCEPT && !defined NGX_HAVE_DEFERRED_ACCEPT
+--- 88,94 ----
+  #endif
+  
+  
+! #define NGX_LISTEN_BACKLOG        -1
+  
+  
+  #if defined TCP_DEFER_ACCEPT && !defined NGX_HAVE_DEFERRED_ACCEPT

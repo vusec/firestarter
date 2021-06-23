@@ -1,0 +1,1596 @@
+diff -p -N --text -r /tmp/patch.inc.get1.u7cTTE/src/core/nginx.h /tmp/patch.inc.get2.HYDnUQ/src/core/nginx.h
+*** /tmp/patch.inc.get1.u7cTTE/src/core/nginx.h	2013-04-30 11:28:29.087231667 +0200
+--- /tmp/patch.inc.get2.HYDnUQ/src/core/nginx.h	2013-04-30 11:28:32.371247939 +0200
+***************
+*** 9,16 ****
+  #define _NGINX_H_INCLUDED_
+  
+  
+! #define nginx_version      1000012
+! #define NGINX_VERSION      "1.0.12"
+  #define NGINX_VER          "nginx/" NGINX_VERSION
+  
+  #define NGINX_VAR          "NGINX"
+--- 9,16 ----
+  #define _NGINX_H_INCLUDED_
+  
+  
+! #define nginx_version      1000013
+! #define NGINX_VERSION      "1.0.13"
+  #define NGINX_VER          "nginx/" NGINX_VERSION
+  
+  #define NGINX_VAR          "NGINX"
+diff -p -N --text -r /tmp/patch.inc.get1.u7cTTE/src/core/ngx_open_file_cache.c /tmp/patch.inc.get2.HYDnUQ/src/core/ngx_open_file_cache.c
+*** /tmp/patch.inc.get1.u7cTTE/src/core/ngx_open_file_cache.c	2013-04-30 11:28:29.091231682 +0200
+--- /tmp/patch.inc.get2.HYDnUQ/src/core/ngx_open_file_cache.c	2013-04-30 11:28:32.371247939 +0200
+*************** ngx_open_file_lookup(ngx_open_file_cache
+*** 837,856 ****
+  
+          /* hash == node->key */
+  
+!         do {
+!             file = (ngx_cached_open_file_t *) node;
+  
+!             rc = ngx_strcmp(name->data, file->name);
+  
+!             if (rc == 0) {
+!                 return file;
+!             }
+  
+!             node = (rc < 0) ? node->left : node->right;
+! 
+!         } while (node != sentinel && hash == node->key);
+! 
+!         break;
+      }
+  
+      return NULL;
+--- 837,851 ----
+  
+          /* hash == node->key */
+  
+!         file = (ngx_cached_open_file_t *) node;
+  
+!         rc = ngx_strcmp(name->data, file->name);
+  
+!         if (rc == 0) {
+!             return file;
+!         }
+  
+!         node = (rc < 0) ? node->left : node->right;
+      }
+  
+      return NULL;
+diff -p -N --text -r /tmp/patch.inc.get1.u7cTTE/src/core/ngx_resolver.c /tmp/patch.inc.get2.HYDnUQ/src/core/ngx_resolver.c
+*** /tmp/patch.inc.get1.u7cTTE/src/core/ngx_resolver.c	2013-04-30 11:28:29.091231682 +0200
+--- /tmp/patch.inc.get2.HYDnUQ/src/core/ngx_resolver.c	2013-04-30 11:28:32.375247961 +0200
+*************** ngx_resolver_create(ngx_conf_t *cf, ngx_
+*** 152,162 ****
+          uc->sockaddr = addr->sockaddr;
+          uc->socklen = addr->socklen;
+          uc->server = addr->name;
+- 
+-         uc->log = cf->cycle->new_log;
+-         uc->log.handler = ngx_resolver_log_error;
+-         uc->log.data = uc;
+-         uc->log.action = "resolving";
+      }
+  
+      return r;
+--- 152,157 ----
+*************** ngx_resolver_send_query(ngx_resolver_t *
+*** 830,835 ****
+--- 825,836 ----
+      uc = r->udp_connection;
+  
+      if (uc->connection == NULL) {
++ 
++         uc->log = *r->log;
++         uc->log.handler = ngx_resolver_log_error;
++         uc->log.data = uc;
++         uc->log.action = "resolving";
++ 
+          if (ngx_udp_connect(uc) != NGX_OK) {
+              return NGX_ERROR;
+          }
+*************** ngx_resolver_lookup_name(ngx_resolver_t
+*** 1625,1644 ****
+  
+          /* hash == node->key */
+  
+!         do {
+!             rn = (ngx_resolver_node_t *) node;
+  
+!             rc = ngx_memn2cmp(name->data, rn->name, name->len, rn->nlen);
+! 
+!             if (rc == 0) {
+!                 return rn;
+!             }
+  
+!             node = (rc < 0) ? node->left : node->right;
+! 
+!         } while (node != sentinel && hash == node->key);
+  
+!         break;
+      }
+  
+      /* not found */
+--- 1626,1640 ----
+  
+          /* hash == node->key */
+  
+!         rn = (ngx_resolver_node_t *) node;
+  
+!         rc = ngx_memn2cmp(name->data, rn->name, name->len, rn->nlen);
+  
+!         if (rc == 0) {
+!             return rn;
+!         }
+  
+!         node = (rc < 0) ? node->left : node->right;
+      }
+  
+      /* not found */
+diff -p -N --text -r /tmp/patch.inc.get1.u7cTTE/src/core/ngx_times.c /tmp/patch.inc.get2.HYDnUQ/src/core/ngx_times.c
+*** /tmp/patch.inc.get1.u7cTTE/src/core/ngx_times.c	2013-04-30 11:28:29.087231667 +0200
+--- /tmp/patch.inc.get2.HYDnUQ/src/core/ngx_times.c	2013-04-30 11:28:32.371247939 +0200
+*************** ngx_gmtime(time_t t, ngx_tm_t *tp)
+*** 287,293 ****
+  
+      days = n / 86400;
+  
+!     /* Jaunary 1, 1970 was Thursday */
+  
+      wday = (4 + days) % 7;
+  
+--- 287,293 ----
+  
+      days = n / 86400;
+  
+!     /* January 1, 1970 was Thursday */
+  
+      wday = (4 + days) % 7;
+  
+diff -p -N --text -r /tmp/patch.inc.get1.u7cTTE/src/event/ngx_event.h /tmp/patch.inc.get2.HYDnUQ/src/event/ngx_event.h
+*** /tmp/patch.inc.get1.u7cTTE/src/event/ngx_event.h	2013-04-30 11:28:29.087231667 +0200
+--- /tmp/patch.inc.get2.HYDnUQ/src/event/ngx_event.h	2013-04-30 11:28:32.371247939 +0200
+*************** struct ngx_event_s {
+*** 83,89 ****
+  #endif
+  
+  #if (NGX_WIN32)
+!     /* setsockopt(SO_UPDATE_ACCEPT_CONTEXT) was succesfull */
+      unsigned         accept_context_updated:1;
+  #endif
+  
+--- 83,89 ----
+  #endif
+  
+  #if (NGX_WIN32)
+!     /* setsockopt(SO_UPDATE_ACCEPT_CONTEXT) was successful */
+      unsigned         accept_context_updated:1;
+  #endif
+  
+diff -p -N --text -r /tmp/patch.inc.get1.u7cTTE/src/event/ngx_event_openssl.c /tmp/patch.inc.get2.HYDnUQ/src/event/ngx_event_openssl.c
+*** /tmp/patch.inc.get1.u7cTTE/src/event/ngx_event_openssl.c	2013-04-30 11:28:29.087231667 +0200
+--- /tmp/patch.inc.get2.HYDnUQ/src/event/ngx_event_openssl.c	2013-04-30 11:28:32.371247939 +0200
+*************** ngx_ssl_recv(ngx_connection_t *c, u_char
+*** 842,848 ****
+          case NGX_ERROR:
+              c->read->error = 1;
+  
+!             /* fall thruogh */
+  
+          case NGX_AGAIN:
+              return c->ssl->last;
+--- 842,848 ----
+          case NGX_ERROR:
+              c->read->error = 1;
+  
+!             /* fall through */
+  
+          case NGX_AGAIN:
+              return c->ssl->last;
+*************** ngx_ssl_get_cached_session(ngx_ssl_conn_
+*** 1801,1844 ****
+  
+          /* hash == node->key */
+  
+!         do {
+!             sess_id = (ngx_ssl_sess_id_t *) node;
+  
+!             rc = ngx_memn2cmp(id, sess_id->id,
+!                               (size_t) len, (size_t) node->data);
+!             if (rc == 0) {
+  
+!                 if (sess_id->expire > ngx_time()) {
+!                     ngx_memcpy(buf, sess_id->session, sess_id->len);
+  
+!                     ngx_shmtx_unlock(&shpool->mutex);
+  
+!                     p = buf;
+!                     sess = d2i_SSL_SESSION(NULL, &p, sess_id->len);
+  
+!                     return sess;
+!                 }
+  
+!                 ngx_queue_remove(&sess_id->queue);
+  
+!                 ngx_rbtree_delete(&cache->session_rbtree, node);
+  
+!                 ngx_slab_free_locked(shpool, sess_id->session);
+  #if (NGX_PTR_SIZE == 4)
+!                 ngx_slab_free_locked(shpool, sess_id->id);
+  #endif
+!                 ngx_slab_free_locked(shpool, sess_id);
+! 
+!                 sess = NULL;
+! 
+!                 goto done;
+!             }
+  
+!             node = (rc < 0) ? node->left : node->right;
+  
+!         } while (node != sentinel && hash == node->key);
+  
+!         break;
+      }
+  
+  done:
+--- 1801,1839 ----
+  
+          /* hash == node->key */
+  
+!         sess_id = (ngx_ssl_sess_id_t *) node;
+  
+!         rc = ngx_memn2cmp(id, sess_id->id, (size_t) len, (size_t) node->data);
+  
+!         if (rc == 0) {
+  
+!             if (sess_id->expire > ngx_time()) {
+!                 ngx_memcpy(buf, sess_id->session, sess_id->len);
+  
+!                 ngx_shmtx_unlock(&shpool->mutex);
+  
+!                 p = buf;
+!                 sess = d2i_SSL_SESSION(NULL, &p, sess_id->len);
+  
+!                 return sess;
+!             }
+! 
+!             ngx_queue_remove(&sess_id->queue);
+  
+!             ngx_rbtree_delete(&cache->session_rbtree, node);
+  
+!             ngx_slab_free_locked(shpool, sess_id->session);
+  #if (NGX_PTR_SIZE == 4)
+!             ngx_slab_free_locked(shpool, sess_id->id);
+  #endif
+!             ngx_slab_free_locked(shpool, sess_id);
+  
+!             sess = NULL;
+  
+!             goto done;
+!         }
+  
+!         node = (rc < 0) ? node->left : node->right;
+      }
+  
+  done:
+*************** ngx_ssl_remove_session(SSL_CTX *ssl, ngx
+*** 1908,1938 ****
+  
+          /* hash == node->key */
+  
+!         do {
+!             sess_id = (ngx_ssl_sess_id_t *) node;
+  
+!             rc = ngx_memn2cmp(id, sess_id->id, len, (size_t) node->data);
+  
+!             if (rc == 0) {
+  
+!                 ngx_queue_remove(&sess_id->queue);
+  
+!                 ngx_rbtree_delete(&cache->session_rbtree, node);
+  
+!                 ngx_slab_free_locked(shpool, sess_id->session);
+  #if (NGX_PTR_SIZE == 4)
+!                 ngx_slab_free_locked(shpool, sess_id->id);
+  #endif
+!                 ngx_slab_free_locked(shpool, sess_id);
+! 
+!                 goto done;
+!             }
+  
+!             node = (rc < 0) ? node->left : node->right;
+! 
+!         } while (node != sentinel && hash == node->key);
+  
+!         break;
+      }
+  
+  done:
+--- 1903,1928 ----
+  
+          /* hash == node->key */
+  
+!         sess_id = (ngx_ssl_sess_id_t *) node;
+  
+!         rc = ngx_memn2cmp(id, sess_id->id, len, (size_t) node->data);
+  
+!         if (rc == 0) {
+  
+!             ngx_queue_remove(&sess_id->queue);
+  
+!             ngx_rbtree_delete(&cache->session_rbtree, node);
+  
+!             ngx_slab_free_locked(shpool, sess_id->session);
+  #if (NGX_PTR_SIZE == 4)
+!             ngx_slab_free_locked(shpool, sess_id->id);
+  #endif
+!             ngx_slab_free_locked(shpool, sess_id);
+  
+!             goto done;
+!         }
+  
+!         node = (rc < 0) ? node->left : node->right;
+      }
+  
+  done:
+diff -p -N --text -r /tmp/patch.inc.get1.u7cTTE/src/event/ngx_event_pipe.c /tmp/patch.inc.get2.HYDnUQ/src/event/ngx_event_pipe.c
+*** /tmp/patch.inc.get1.u7cTTE/src/event/ngx_event_pipe.c	2013-04-30 11:28:29.087231667 +0200
+--- /tmp/patch.inc.get2.HYDnUQ/src/event/ngx_event_pipe.c	2013-04-30 11:28:32.371247939 +0200
+*************** ngx_event_pipe_add_free_buf(ngx_event_pi
+*** 946,952 ****
+          return NGX_OK;
+      }
+  
+!     /* the first free buf is partialy filled, thus add the free buf after it */
+  
+      cl->next = p->free_raw_bufs->next;
+      p->free_raw_bufs->next = cl;
+--- 946,952 ----
+          return NGX_OK;
+      }
+  
+!     /* the first free buf is partially filled, thus add the free buf after it */
+  
+      cl->next = p->free_raw_bufs->next;
+      p->free_raw_bufs->next = cl;
+diff -p -N --text -r /tmp/patch.inc.get1.u7cTTE/src/http/modules/ngx_http_autoindex_module.c /tmp/patch.inc.get2.HYDnUQ/src/http/modules/ngx_http_autoindex_module.c
+*** /tmp/patch.inc.get1.u7cTTE/src/http/modules/ngx_http_autoindex_module.c	2013-04-30 11:28:29.083231639 +0200
+--- /tmp/patch.inc.get2.HYDnUQ/src/http/modules/ngx_http_autoindex_module.c	2013-04-30 11:28:32.367247922 +0200
+*************** static ngx_http_module_t  ngx_http_autoi
+*** 95,102 ****
+      NULL,                                  /* create server configuration */
+      NULL,                                  /* merge server configuration */
+  
+!     ngx_http_autoindex_create_loc_conf,    /* create location configration */
+!     ngx_http_autoindex_merge_loc_conf      /* merge location configration */
+  };
+  
+  
+--- 95,102 ----
+      NULL,                                  /* create server configuration */
+      NULL,                                  /* merge server configuration */
+  
+!     ngx_http_autoindex_create_loc_conf,    /* create location configuration */
+!     ngx_http_autoindex_merge_loc_conf      /* merge location configuration */
+  };
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.u7cTTE/src/http/modules/ngx_http_headers_filter_module.c /tmp/patch.inc.get2.HYDnUQ/src/http/modules/ngx_http_headers_filter_module.c
+*** /tmp/patch.inc.get1.u7cTTE/src/http/modules/ngx_http_headers_filter_module.c	2013-04-30 11:28:29.083231639 +0200
+--- /tmp/patch.inc.get2.HYDnUQ/src/http/modules/ngx_http_headers_filter_module.c	2013-04-30 11:28:32.363247914 +0200
+*************** ngx_http_headers_filter(ngx_http_request
+*** 149,155 ****
+              && r->headers_out.status != NGX_HTTP_PARTIAL_CONTENT
+              && r->headers_out.status != NGX_HTTP_MOVED_PERMANENTLY
+              && r->headers_out.status != NGX_HTTP_MOVED_TEMPORARILY
+!             && r->headers_out.status != NGX_HTTP_NOT_MODIFIED))
+      {
+          return ngx_http_next_header_filter(r);
+      }
+--- 149,157 ----
+              && r->headers_out.status != NGX_HTTP_PARTIAL_CONTENT
+              && r->headers_out.status != NGX_HTTP_MOVED_PERMANENTLY
+              && r->headers_out.status != NGX_HTTP_MOVED_TEMPORARILY
+!             && r->headers_out.status != NGX_HTTP_SEE_OTHER
+!             && r->headers_out.status != NGX_HTTP_NOT_MODIFIED
+!             && r->headers_out.status != NGX_HTTP_TEMPORARY_REDIRECT))
+      {
+          return ngx_http_next_header_filter(r);
+      }
+diff -p -N --text -r /tmp/patch.inc.get1.u7cTTE/src/http/modules/ngx_http_index_module.c /tmp/patch.inc.get2.HYDnUQ/src/http/modules/ngx_http_index_module.c
+*** /tmp/patch.inc.get1.u7cTTE/src/http/modules/ngx_http_index_module.c	2013-04-30 11:28:29.087231667 +0200
+--- /tmp/patch.inc.get2.HYDnUQ/src/http/modules/ngx_http_index_module.c	2013-04-30 11:28:32.367247922 +0200
+*************** static ngx_http_module_t  ngx_http_index
+*** 62,69 ****
+      NULL,                                  /* create server configuration */
+      NULL,                                  /* merge server configuration */
+  
+!     ngx_http_index_create_loc_conf,        /* create location configration */
+!     ngx_http_index_merge_loc_conf          /* merge location configration */
+  };
+  
+  
+--- 62,69 ----
+      NULL,                                  /* create server configuration */
+      NULL,                                  /* merge server configuration */
+  
+!     ngx_http_index_create_loc_conf,        /* create location configuration */
+!     ngx_http_index_merge_loc_conf          /* merge location configuration */
+  };
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.u7cTTE/src/http/modules/ngx_http_limit_req_module.c /tmp/patch.inc.get2.HYDnUQ/src/http/modules/ngx_http_limit_req_module.c
+*** /tmp/patch.inc.get1.u7cTTE/src/http/modules/ngx_http_limit_req_module.c	2013-04-30 11:28:29.083231639 +0200
+--- /tmp/patch.inc.get2.HYDnUQ/src/http/modules/ngx_http_limit_req_module.c	2013-04-30 11:28:32.363247914 +0200
+*************** static ngx_http_module_t  ngx_http_limit
+*** 112,119 ****
+      NULL,                                  /* create server configuration */
+      NULL,                                  /* merge server configuration */
+  
+!     ngx_http_limit_req_create_conf,        /* create location configration */
+!     ngx_http_limit_req_merge_conf          /* merge location configration */
+  };
+  
+  
+--- 112,119 ----
+      NULL,                                  /* create server configuration */
+      NULL,                                  /* merge server configuration */
+  
+!     ngx_http_limit_req_create_conf,        /* create location configuration */
+!     ngx_http_limit_req_merge_conf          /* merge location configuration */
+  };
+  
+  
+*************** ngx_http_limit_req_lookup(ngx_http_limit
+*** 372,418 ****
+  
+          /* hash == node->key */
+  
+!         do {
+!             lr = (ngx_http_limit_req_node_t *) &node->color;
+! 
+!             rc = ngx_memn2cmp(data, lr->data, len, (size_t) lr->len);
+  
+!             if (rc == 0) {
+!                 ngx_queue_remove(&lr->queue);
+!                 ngx_queue_insert_head(&ctx->sh->queue, &lr->queue);
+  
+!                 tp = ngx_timeofday();
+  
+!                 now = (ngx_msec_t) (tp->sec * 1000 + tp->msec);
+!                 ms = (ngx_msec_int_t) (now - lr->last);
+  
+!                 excess = lr->excess - ctx->rate * ngx_abs(ms) / 1000 + 1000;
+  
+!                 if (excess < 0) {
+!                     excess = 0;
+!                 }
+  
+!                 *ep = excess;
+  
+!                 if ((ngx_uint_t) excess > lrcf->burst) {
+!                     return NGX_BUSY;
+!                 }
+  
+!                 lr->excess = excess;
+!                 lr->last = now;
+  
+!                 if (excess) {
+!                     return NGX_AGAIN;
+!                 }
+  
+!                 return NGX_OK;
+              }
+  
+!             node = (rc < 0) ? node->left : node->right;
+! 
+!         } while (node != sentinel && hash == node->key);
+  
+!         break;
+      }
+  
+      *ep = 0;
+--- 372,413 ----
+  
+          /* hash == node->key */
+  
+!         lr = (ngx_http_limit_req_node_t *) &node->color;
+  
+!         rc = ngx_memn2cmp(data, lr->data, len, (size_t) lr->len);
+  
+!         if (rc == 0) {
+!             ngx_queue_remove(&lr->queue);
+!             ngx_queue_insert_head(&ctx->sh->queue, &lr->queue);
+  
+!             tp = ngx_timeofday();
+  
+!             now = (ngx_msec_t) (tp->sec * 1000 + tp->msec);
+!             ms = (ngx_msec_int_t) (now - lr->last);
+  
+!             excess = lr->excess - ctx->rate * ngx_abs(ms) / 1000 + 1000;
+  
+!             if (excess < 0) {
+!                 excess = 0;
+!             }
+  
+!             *ep = excess;
+  
+!             if ((ngx_uint_t) excess > lrcf->burst) {
+!                 return NGX_BUSY;
+!             }
+  
+!             lr->excess = excess;
+!             lr->last = now;
+  
+!             if (excess) {
+!                 return NGX_AGAIN;
+              }
+  
+!             return NGX_OK;
+!         }
+  
+!         node = (rc < 0) ? node->left : node->right;
+      }
+  
+      *ep = 0;
+diff -p -N --text -r /tmp/patch.inc.get1.u7cTTE/src/http/modules/ngx_http_limit_zone_module.c /tmp/patch.inc.get2.HYDnUQ/src/http/modules/ngx_http_limit_zone_module.c
+*** /tmp/patch.inc.get1.u7cTTE/src/http/modules/ngx_http_limit_zone_module.c	2013-04-30 11:28:29.087231667 +0200
+--- /tmp/patch.inc.get2.HYDnUQ/src/http/modules/ngx_http_limit_zone_module.c	2013-04-30 11:28:32.367247922 +0200
+*************** static ngx_http_module_t  ngx_http_limit
+*** 96,103 ****
+      NULL,                                  /* create server configuration */
+      NULL,                                  /* merge server configuration */
+  
+!     ngx_http_limit_zone_create_conf,       /* create location configration */
+!     ngx_http_limit_zone_merge_conf         /* merge location configration */
+  };
+  
+  
+--- 96,103 ----
+      NULL,                                  /* create server configuration */
+      NULL,                                  /* merge server configuration */
+  
+!     ngx_http_limit_zone_create_conf,       /* create location configuration */
+!     ngx_http_limit_zone_merge_conf         /* merge location configuration */
+  };
+  
+  
+*************** ngx_http_limit_zone_handler(ngx_http_req
+*** 194,224 ****
+  
+          /* hash == node->key */
+  
+!         do {
+!             lz = (ngx_http_limit_zone_node_t *) &node->color;
+  
+!             rc = ngx_memn2cmp(vv->data, lz->data, len, (size_t) lz->len);
+  
+!             if (rc == 0) {
+!                 if ((ngx_uint_t) lz->conn < lzcf->conn) {
+!                     lz->conn++;
+!                     goto done;
+!                 }
+! 
+!                 ngx_shmtx_unlock(&shpool->mutex);
+! 
+!                 ngx_log_error(lzcf->log_level, r->connection->log, 0,
+!                               "limiting connections by zone \"%V\"",
+!                               &lzcf->shm_zone->shm.name);
+! 
+!                 return NGX_HTTP_SERVICE_UNAVAILABLE;
+              }
+  
+!             node = (rc < 0) ? node->left : node->right;
+  
+!         } while (node != sentinel && hash == node->key);
+  
+!         break;
+      }
+  
+      n = offsetof(ngx_rbtree_node_t, color)
+--- 194,219 ----
+  
+          /* hash == node->key */
+  
+!         lz = (ngx_http_limit_zone_node_t *) &node->color;
+  
+!         rc = ngx_memn2cmp(vv->data, lz->data, len, (size_t) lz->len);
+  
+!         if (rc == 0) {
+!             if ((ngx_uint_t) lz->conn < lzcf->conn) {
+!                 lz->conn++;
+!                 goto done;
+              }
+  
+!             ngx_shmtx_unlock(&shpool->mutex);
+  
+!             ngx_log_error(lzcf->log_level, r->connection->log, 0,
+!                           "limiting connections by zone \"%V\"",
+!                           &lzcf->shm_zone->shm.name);
+! 
+!             return NGX_HTTP_SERVICE_UNAVAILABLE;
+!         }
+  
+!         node = (rc < 0) ? node->left : node->right;
+      }
+  
+      n = offsetof(ngx_rbtree_node_t, color)
+diff -p -N --text -r /tmp/patch.inc.get1.u7cTTE/src/http/modules/ngx_http_log_module.c /tmp/patch.inc.get2.HYDnUQ/src/http/modules/ngx_http_log_module.c
+*** /tmp/patch.inc.get1.u7cTTE/src/http/modules/ngx_http_log_module.c	2013-04-30 11:28:29.087231667 +0200
+--- /tmp/patch.inc.get2.HYDnUQ/src/http/modules/ngx_http_log_module.c	2013-04-30 11:28:32.371247939 +0200
+*************** static ngx_http_module_t  ngx_http_log_m
+*** 161,168 ****
+      NULL,                                  /* create server configuration */
+      NULL,                                  /* merge server configuration */
+  
+!     ngx_http_log_create_loc_conf,          /* create location configration */
+!     ngx_http_log_merge_loc_conf            /* merge location configration */
+  };
+  
+  
+--- 161,168 ----
+      NULL,                                  /* create server configuration */
+      NULL,                                  /* merge server configuration */
+  
+!     ngx_http_log_create_loc_conf,          /* create location configuration */
+!     ngx_http_log_merge_loc_conf            /* merge location configuration */
+  };
+  
+  
+*************** ngx_http_log_script_write(ngx_http_reque
+*** 375,384 ****
+  
+      if (!r->root_tested) {
+  
+!         /* test root directory existance */
+  
+          if (ngx_http_map_uri_to_path(r, &path, &root, 0) == NULL) {
+!             /* simulate successfull logging */
+              return len;
+          }
+  
+--- 375,384 ----
+  
+      if (!r->root_tested) {
+  
+!         /* test root directory existence */
+  
+          if (ngx_http_map_uri_to_path(r, &path, &root, 0) == NULL) {
+!             /* simulate successful logging */
+              return len;
+          }
+  
+*************** ngx_http_log_script_write(ngx_http_reque
+*** 399,412 ****
+              != NGX_OK)
+          {
+              if (of.err == 0) {
+!                 /* simulate successfull logging */
+                  return len;
+              }
+  
+              ngx_log_error(NGX_LOG_ERR, r->connection->log, of.err,
+                            "testing \"%s\" existence failed", path.data);
+  
+!             /* simulate successfull logging */
+              return len;
+          }
+  
+--- 399,412 ----
+              != NGX_OK)
+          {
+              if (of.err == 0) {
+!                 /* simulate successful logging */
+                  return len;
+              }
+  
+              ngx_log_error(NGX_LOG_ERR, r->connection->log, of.err,
+                            "testing \"%s\" existence failed", path.data);
+  
+!             /* simulate successful logging */
+              return len;
+          }
+  
+*************** ngx_http_log_script_write(ngx_http_reque
+*** 414,420 ****
+              ngx_log_error(NGX_LOG_ERR, r->connection->log, NGX_ENOTDIR,
+                            "testing \"%s\" existence failed", path.data);
+  
+!             /* simulate successfull logging */
+              return len;
+          }
+      }
+--- 414,420 ----
+              ngx_log_error(NGX_LOG_ERR, r->connection->log, NGX_ENOTDIR,
+                            "testing \"%s\" existence failed", path.data);
+  
+!             /* simulate successful logging */
+              return len;
+          }
+      }
+*************** ngx_http_log_script_write(ngx_http_reque
+*** 423,429 ****
+                              script->values->elts)
+          == NULL)
+      {
+!         /* simulate successfull logging */
+          return len;
+      }
+  
+--- 423,429 ----
+                              script->values->elts)
+          == NULL)
+      {
+!         /* simulate successful logging */
+          return len;
+      }
+  
+*************** ngx_http_log_script_write(ngx_http_reque
+*** 447,453 ****
+      {
+          ngx_log_error(NGX_LOG_CRIT, r->connection->log, ngx_errno,
+                        "%s \"%s\" failed", of.failed, log.data);
+!         /* simulate successfull logging */
+          return len;
+      }
+  
+--- 447,453 ----
+      {
+          ngx_log_error(NGX_LOG_CRIT, r->connection->log, ngx_errno,
+                        "%s \"%s\" failed", of.failed, log.data);
+!         /* simulate successful logging */
+          return len;
+      }
+  
+diff -p -N --text -r /tmp/patch.inc.get1.u7cTTE/src/http/modules/ngx_http_memcached_module.c /tmp/patch.inc.get2.HYDnUQ/src/http/modules/ngx_http_memcached_module.c
+*** /tmp/patch.inc.get1.u7cTTE/src/http/modules/ngx_http_memcached_module.c	2013-04-30 11:28:29.087231667 +0200
+--- /tmp/patch.inc.get2.HYDnUQ/src/http/modules/ngx_http_memcached_module.c	2013-04-30 11:28:32.367247922 +0200
+*************** static ngx_http_module_t  ngx_http_memca
+*** 115,122 ****
+      NULL,                                  /* create server configuration */
+      NULL,                                  /* merge server configuration */
+  
+!     ngx_http_memcached_create_loc_conf,    /* create location configration */
+!     ngx_http_memcached_merge_loc_conf      /* merge location configration */
+  };
+  
+  
+--- 115,122 ----
+      NULL,                                  /* create server configuration */
+      NULL,                                  /* merge server configuration */
+  
+!     ngx_http_memcached_create_loc_conf,    /* create location configuration */
+!     ngx_http_memcached_merge_loc_conf      /* merge location configuration */
+  };
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.u7cTTE/src/http/modules/ngx_http_proxy_module.c /tmp/patch.inc.get2.HYDnUQ/src/http/modules/ngx_http_proxy_module.c
+*** /tmp/patch.inc.get1.u7cTTE/src/http/modules/ngx_http_proxy_module.c	2013-04-30 11:28:29.083231639 +0200
+--- /tmp/patch.inc.get2.HYDnUQ/src/http/modules/ngx_http_proxy_module.c	2013-04-30 11:28:32.367247922 +0200
+*************** static ngx_http_module_t  ngx_http_proxy
+*** 458,465 ****
+      NULL,                                  /* create server configuration */
+      NULL,                                  /* merge server configuration */
+  
+!     ngx_http_proxy_create_loc_conf,        /* create location configration */
+!     ngx_http_proxy_merge_loc_conf          /* merge location configration */
+  };
+  
+  
+--- 458,465 ----
+      NULL,                                  /* create server configuration */
+      NULL,                                  /* merge server configuration */
+  
+!     ngx_http_proxy_create_loc_conf,        /* create location configuration */
+!     ngx_http_proxy_merge_loc_conf          /* merge location configuration */
+  };
+  
+  
+*************** ngx_http_proxy_redirect(ngx_conf_t *cf,
+*** 2496,2501 ****
+--- 2496,2503 ----
+          return NGX_CONF_OK;
+      }
+  
++     plcf->redirect = 1;
++ 
+      value = cf->args->elts;
+  
+      if (cf->args->nelts == 2) {
+diff -p -N --text -r /tmp/patch.inc.get1.u7cTTE/src/http/modules/ngx_http_random_index_module.c /tmp/patch.inc.get2.HYDnUQ/src/http/modules/ngx_http_random_index_module.c
+*** /tmp/patch.inc.get1.u7cTTE/src/http/modules/ngx_http_random_index_module.c	2013-04-30 11:28:29.087231667 +0200
+--- /tmp/patch.inc.get2.HYDnUQ/src/http/modules/ngx_http_random_index_module.c	2013-04-30 11:28:32.371247939 +0200
+*************** static ngx_http_module_t  ngx_http_rando
+*** 49,56 ****
+      NULL,                                  /* create server configuration */
+      NULL,                                  /* merge server configuration */
+  
+!     ngx_http_random_index_create_loc_conf, /* create location configration */
+!     ngx_http_random_index_merge_loc_conf   /* merge location configration */
+  };
+  
+  
+--- 49,56 ----
+      NULL,                                  /* create server configuration */
+      NULL,                                  /* merge server configuration */
+  
+!     ngx_http_random_index_create_loc_conf, /* create location configuration */
+!     ngx_http_random_index_merge_loc_conf   /* merge location configuration */
+  };
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.u7cTTE/src/http/modules/ngx_http_range_filter_module.c /tmp/patch.inc.get2.HYDnUQ/src/http/modules/ngx_http_range_filter_module.c
+*** /tmp/patch.inc.get1.u7cTTE/src/http/modules/ngx_http_range_filter_module.c	2013-04-30 11:28:29.083231639 +0200
+--- /tmp/patch.inc.get2.HYDnUQ/src/http/modules/ngx_http_range_filter_module.c	2013-04-30 11:28:32.363247914 +0200
+*************** ngx_http_range_test_overlapped(ngx_http_
+*** 595,609 ****
+      buf = in->buf;
+  
+      if (!buf->last_buf) {
+! 
+!         if (buf->in_file) {
+!             start = buf->file_pos + ctx->offset;
+!             last = buf->file_last + ctx->offset;
+! 
+!         } else {
+!             start = buf->pos - buf->start + ctx->offset;
+!             last = buf->last - buf->start + ctx->offset;
+!         }
+  
+          range = ctx->ranges.elts;
+          for (i = 0; i < ctx->ranges.nelts; i++) {
+--- 595,602 ----
+      buf = in->buf;
+  
+      if (!buf->last_buf) {
+!         start = ctx->offset;
+!         last = ctx->offset + ngx_buf_size(buf);
+  
+          range = ctx->ranges.elts;
+          for (i = 0; i < ctx->ranges.nelts; i++) {
+*************** static ngx_int_t
+*** 716,722 ****
+  ngx_http_range_multipart_body(ngx_http_request_t *r,
+      ngx_http_range_filter_ctx_t *ctx, ngx_chain_t *in)
+  {
+-     off_t              body_start;
+      ngx_buf_t         *b, *buf;
+      ngx_uint_t         i;
+      ngx_chain_t       *out, *hcl, *rcl, *dcl, **ll;
+--- 709,714 ----
+*************** ngx_http_range_multipart_body(ngx_http_r
+*** 726,737 ****
+      buf = in->buf;
+      range = ctx->ranges.elts;
+  
+- #if (NGX_HTTP_CACHE)
+-     body_start = r->cached ? r->cache->body_start : 0;
+- #else
+-     body_start = 0;
+- #endif
+- 
+      for (i = 0; i < ctx->ranges.nelts; i++) {
+  
+          /*
+--- 718,723 ----
+*************** ngx_http_range_multipart_body(ngx_http_r
+*** 792,804 ****
+          b->file = buf->file;
+  
+          if (buf->in_file) {
+!             b->file_pos = body_start + range[i].start;
+!             b->file_last = body_start + range[i].end;
+          }
+  
+          if (ngx_buf_in_memory(buf)) {
+!             b->pos = buf->start + (size_t) range[i].start;
+!             b->last = buf->start + (size_t) range[i].end;
+          }
+  
+          dcl = ngx_alloc_chain_link(r->pool);
+--- 778,790 ----
+          b->file = buf->file;
+  
+          if (buf->in_file) {
+!             b->file_pos = buf->file_pos + range[i].start;
+!             b->file_last = buf->file_pos + range[i].end;
+          }
+  
+          if (ngx_buf_in_memory(buf)) {
+!             b->pos = buf->pos + (size_t) range[i].start;
+!             b->last = buf->pos + (size_t) range[i].end;
+          }
+  
+          dcl = ngx_alloc_chain_link(r->pool);
+diff -p -N --text -r /tmp/patch.inc.get1.u7cTTE/src/http/modules/ngx_http_rewrite_module.c /tmp/patch.inc.get2.HYDnUQ/src/http/modules/ngx_http_rewrite_module.c
+*** /tmp/patch.inc.get1.u7cTTE/src/http/modules/ngx_http_rewrite_module.c	2013-04-30 11:28:29.083231639 +0200
+--- /tmp/patch.inc.get2.HYDnUQ/src/http/modules/ngx_http_rewrite_module.c	2013-04-30 11:28:32.363247914 +0200
+*************** static ngx_http_module_t  ngx_http_rewri
+*** 112,119 ****
+      NULL,                                  /* create server configuration */
+      NULL,                                  /* merge server configuration */
+  
+!     ngx_http_rewrite_create_loc_conf,      /* create location configration */
+!     ngx_http_rewrite_merge_loc_conf        /* merge location configration */
+  };
+  
+  
+--- 112,119 ----
+      NULL,                                  /* create server configuration */
+      NULL,                                  /* merge server configuration */
+  
+!     ngx_http_rewrite_create_loc_conf,      /* create location configuration */
+!     ngx_http_rewrite_merge_loc_conf        /* merge location configuration */
+  };
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.u7cTTE/src/http/modules/ngx_http_userid_filter_module.c /tmp/patch.inc.get2.HYDnUQ/src/http/modules/ngx_http_userid_filter_module.c
+*** /tmp/patch.inc.get1.u7cTTE/src/http/modules/ngx_http_userid_filter_module.c	2013-04-30 11:28:29.087231667 +0200
+--- /tmp/patch.inc.get2.HYDnUQ/src/http/modules/ngx_http_userid_filter_module.c	2013-04-30 11:28:32.367247922 +0200
+*************** static ngx_http_module_t  ngx_http_useri
+*** 166,173 ****
+      NULL,                                  /* create server configuration */
+      NULL,                                  /* merge server configuration */
+  
+!     ngx_http_userid_create_conf,           /* create location configration */
+!     ngx_http_userid_merge_conf             /* merge location configration */
+  };
+  
+  
+--- 166,173 ----
+      NULL,                                  /* create server configuration */
+      NULL,                                  /* merge server configuration */
+  
+!     ngx_http_userid_create_conf,           /* create location configuration */
+!     ngx_http_userid_merge_conf             /* merge location configuration */
+  };
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.u7cTTE/src/http/ngx_http_core_module.c /tmp/patch.inc.get2.HYDnUQ/src/http/ngx_http_core_module.c
+*** /tmp/patch.inc.get1.u7cTTE/src/http/ngx_http_core_module.c	2013-04-30 11:28:29.087231667 +0200
+--- /tmp/patch.inc.get2.HYDnUQ/src/http/ngx_http_core_module.c	2013-04-30 11:28:32.371247939 +0200
+*************** ngx_http_send_response(ngx_http_request_
+*** 1798,1805 ****
+          return NGX_HTTP_INTERNAL_SERVER_ERROR;
+      }
+  
+!     if (status >= NGX_HTTP_MOVED_PERMANENTLY && status <= NGX_HTTP_SEE_OTHER) {
+! 
+          ngx_http_clear_location(r);
+  
+          r->headers_out.location = ngx_list_push(&r->headers_out.headers);
+--- 1798,1808 ----
+          return NGX_HTTP_INTERNAL_SERVER_ERROR;
+      }
+  
+!     if (status == NGX_HTTP_MOVED_PERMANENTLY
+!         || status == NGX_HTTP_MOVED_TEMPORARILY
+!         || status == NGX_HTTP_SEE_OTHER
+!         || status == NGX_HTTP_TEMPORARY_REDIRECT)
+!     {
+          ngx_http_clear_location(r);
+  
+          r->headers_out.location = ngx_list_push(&r->headers_out.headers);
+*************** ngx_http_named_location(ngx_http_request
+*** 2524,2529 ****
+--- 2527,2542 ----
+      ngx_http_core_main_conf_t   *cmcf;
+  
+      r->main->count++;
++     r->uri_changes--;
++ 
++     if (r->uri_changes == 0) {
++         ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
++                       "rewrite or internal redirection cycle "
++                       "while redirect to named location \"%V\"", name);
++ 
++         ngx_http_finalize_request(r, NGX_HTTP_INTERNAL_SERVER_ERROR);
++         return NGX_DONE;
++     }
+  
+      cscf = ngx_http_get_module_srv_conf(r, ngx_http_core_module);
+  
+diff -p -N --text -r /tmp/patch.inc.get1.u7cTTE/src/http/ngx_http_file_cache.c /tmp/patch.inc.get2.HYDnUQ/src/http/ngx_http_file_cache.c
+*** /tmp/patch.inc.get1.u7cTTE/src/http/ngx_http_file_cache.c	2013-04-30 11:28:29.083231639 +0200
+--- /tmp/patch.inc.get2.HYDnUQ/src/http/ngx_http_file_cache.c	2013-04-30 11:28:32.363247914 +0200
+*************** ngx_http_file_cache_lookup(ngx_http_file
+*** 673,693 ****
+  
+          /* node_key == node->key */
+  
+!         do {
+!             fcn = (ngx_http_file_cache_node_t *) node;
+  
+!             rc = ngx_memcmp(&key[sizeof(ngx_rbtree_key_t)], fcn->key,
+!                             NGX_HTTP_CACHE_KEY_LEN - sizeof(ngx_rbtree_key_t));
+  
+!             if (rc == 0) {
+!                 return fcn;
+!             }
+  
+!             node = (rc < 0) ? node->left : node->right;
+! 
+!         } while (node != sentinel && node_key == node->key);
+! 
+!         break;
+      }
+  
+      /* not found */
+--- 673,688 ----
+  
+          /* node_key == node->key */
+  
+!         fcn = (ngx_http_file_cache_node_t *) node;
+  
+!         rc = ngx_memcmp(&key[sizeof(ngx_rbtree_key_t)], fcn->key,
+!                         NGX_HTTP_CACHE_KEY_LEN - sizeof(ngx_rbtree_key_t));
+  
+!         if (rc == 0) {
+!             return fcn;
+!         }
+  
+!         node = (rc < 0) ? node->left : node->right;
+      }
+  
+      /* not found */
+diff -p -N --text -r /tmp/patch.inc.get1.u7cTTE/src/http/ngx_http_header_filter_module.c /tmp/patch.inc.get2.HYDnUQ/src/http/ngx_http_header_filter_module.c
+*** /tmp/patch.inc.get1.u7cTTE/src/http/ngx_http_header_filter_module.c	2013-04-30 11:28:29.083231639 +0200
+--- /tmp/patch.inc.get2.HYDnUQ/src/http/ngx_http_header_filter_module.c	2013-04-30 11:28:32.363247914 +0200
+*************** static ngx_str_t ngx_http_status_lines[]
+*** 71,82 ****
+      ngx_string("302 Moved Temporarily"),
+      ngx_string("303 See Other"),
+      ngx_string("304 Not Modified"),
+  
+!     /* ngx_null_string, */  /* "305 Use Proxy" */
+!     /* ngx_null_string, */  /* "306 unused" */
+!     /* ngx_null_string, */  /* "307 Temporary Redirect" */
+! 
+! #define NGX_HTTP_LAST_3XX  305
+  #define NGX_HTTP_OFF_4XX   (NGX_HTTP_LAST_3XX - 301 + NGX_HTTP_OFF_3XX)
+  
+      ngx_string("400 Bad Request"),
+--- 71,81 ----
+      ngx_string("302 Moved Temporarily"),
+      ngx_string("303 See Other"),
+      ngx_string("304 Not Modified"),
++     ngx_null_string,  /* "305 Use Proxy" */
++     ngx_null_string,  /* "306 unused" */
++     ngx_string("307 Temporary Redirect"),
+  
+! #define NGX_HTTP_LAST_3XX  308
+  #define NGX_HTTP_OFF_4XX   (NGX_HTTP_LAST_3XX - 301 + NGX_HTTP_OFF_3XX)
+  
+      ngx_string("400 Bad Request"),
+diff -p -N --text -r /tmp/patch.inc.get1.u7cTTE/src/http/ngx_http_parse_time.c /tmp/patch.inc.get2.HYDnUQ/src/http/ngx_http_parse_time.c
+*** /tmp/patch.inc.get1.u7cTTE/src/http/ngx_http_parse_time.c	2013-04-30 11:28:29.083231639 +0200
+--- /tmp/patch.inc.get2.HYDnUQ/src/http/ngx_http_parse_time.c	2013-04-30 11:28:32.363247914 +0200
+*************** ngx_http_parse_time(u_char *value, size_
+*** 242,248 ****
+          year -= 1;
+      }
+  
+!     /* Gauss' formula for Grigorian days since March 1, 1 BC */
+  
+      time = (uint64_t) (
+              /* days in years including leap years since March 1, 1 BC */
+--- 242,248 ----
+          year -= 1;
+      }
+  
+!     /* Gauss' formula for Gregorian days since March 1, 1 BC */
+  
+      time = (uint64_t) (
+              /* days in years including leap years since March 1, 1 BC */
+diff -p -N --text -r /tmp/patch.inc.get1.u7cTTE/src/http/ngx_http_request.c /tmp/patch.inc.get2.HYDnUQ/src/http/ngx_http_request.c
+*** /tmp/patch.inc.get1.u7cTTE/src/http/ngx_http_request.c	2013-04-30 11:28:29.087231667 +0200
+--- /tmp/patch.inc.get2.HYDnUQ/src/http/ngx_http_request.c	2013-04-30 11:28:32.371247939 +0200
+*************** ngx_http_post_action(ngx_http_request_t
+*** 2898,2903 ****
+--- 2898,2907 ----
+          return NGX_DECLINED;
+      }
+  
++     if (r->post_action && r->uri_changes == 0) {
++         return NGX_DECLINED;
++     }
++ 
+      ngx_log_debug1(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
+                     "post action: \"%V\"", &clcf->post_action);
+  
+diff -p -N --text -r /tmp/patch.inc.get1.u7cTTE/src/http/ngx_http_request.h /tmp/patch.inc.get2.HYDnUQ/src/http/ngx_http_request.h
+*** /tmp/patch.inc.get1.u7cTTE/src/http/ngx_http_request.h	2013-04-30 11:28:29.083231639 +0200
+--- /tmp/patch.inc.get2.HYDnUQ/src/http/ngx_http_request.h	2013-04-30 11:28:32.363247914 +0200
+***************
+*** 75,80 ****
+--- 75,81 ----
+  #define NGX_HTTP_MOVED_TEMPORARILY         302
+  #define NGX_HTTP_SEE_OTHER                 303
+  #define NGX_HTTP_NOT_MODIFIED              304
++ #define NGX_HTTP_TEMPORARY_REDIRECT        307
+  
+  #define NGX_HTTP_BAD_REQUEST               400
+  #define NGX_HTTP_UNAUTHORIZED              401
+diff -p -N --text -r /tmp/patch.inc.get1.u7cTTE/src/http/ngx_http_special_response.c /tmp/patch.inc.get2.HYDnUQ/src/http/ngx_http_special_response.c
+*** /tmp/patch.inc.get1.u7cTTE/src/http/ngx_http_special_response.c	2013-04-30 11:28:29.083231639 +0200
+--- /tmp/patch.inc.get2.HYDnUQ/src/http/ngx_http_special_response.c	2013-04-30 11:28:32.363247914 +0200
+*************** static char ngx_http_error_303_page[] =
+*** 74,79 ****
+--- 74,87 ----
+  ;
+  
+  
++ static char ngx_http_error_307_page[] =
++ "<html>" CRLF
++ "<head><title>307 Temporary Redirect</title></head>" CRLF
++ "<body bgcolor=\"white\">" CRLF
++ "<center><h1>307 Temporary Redirect</h1></center>" CRLF
++ ;
++ 
++ 
+  static char ngx_http_error_400_page[] =
+  "<html>" CRLF
+  "<head><title>400 Bad Request</title></head>" CRLF
+*************** static ngx_str_t ngx_http_error_pages[]
+*** 294,309 ****
+  
+      ngx_null_string,                     /* 201, 204 */
+  
+! #define NGX_HTTP_LAST_LEVEL_200  202
+! #define NGX_HTTP_LEVEL_200       (NGX_HTTP_LAST_LEVEL_200 - 201)
+  
+      /* ngx_null_string, */               /* 300 */
+      ngx_string(ngx_http_error_301_page),
+      ngx_string(ngx_http_error_302_page),
+      ngx_string(ngx_http_error_303_page),
+  
+! #define NGX_HTTP_LAST_LEVEL_300  304
+! #define NGX_HTTP_LEVEL_300       (NGX_HTTP_LAST_LEVEL_300 - 301)
+  
+      ngx_string(ngx_http_error_400_page),
+      ngx_string(ngx_http_error_401_page),
+--- 302,321 ----
+  
+      ngx_null_string,                     /* 201, 204 */
+  
+! #define NGX_HTTP_LAST_2XX  202
+! #define NGX_HTTP_OFF_3XX   (NGX_HTTP_LAST_2XX - 201)
+  
+      /* ngx_null_string, */               /* 300 */
+      ngx_string(ngx_http_error_301_page),
+      ngx_string(ngx_http_error_302_page),
+      ngx_string(ngx_http_error_303_page),
++     ngx_null_string,                     /* 304 */
++     ngx_null_string,                     /* 305 */
++     ngx_null_string,                     /* 306 */
++     ngx_string(ngx_http_error_307_page),
+  
+! #define NGX_HTTP_LAST_3XX  308
+! #define NGX_HTTP_OFF_4XX   (NGX_HTTP_LAST_3XX - 301 + NGX_HTTP_OFF_3XX)
+  
+      ngx_string(ngx_http_error_400_page),
+      ngx_string(ngx_http_error_401_page),
+*************** static ngx_str_t ngx_http_error_pages[]
+*** 323,330 ****
+      ngx_string(ngx_http_error_415_page),
+      ngx_string(ngx_http_error_416_page),
+  
+! #define NGX_HTTP_LAST_LEVEL_400  417
+! #define NGX_HTTP_LEVEL_400       (NGX_HTTP_LAST_LEVEL_400 - 400)
+  
+      ngx_string(ngx_http_error_494_page), /* 494, request header too large */
+      ngx_string(ngx_http_error_495_page), /* 495, https certificate error */
+--- 335,342 ----
+      ngx_string(ngx_http_error_415_page),
+      ngx_string(ngx_http_error_416_page),
+  
+! #define NGX_HTTP_LAST_4XX  417
+! #define NGX_HTTP_OFF_5XX   (NGX_HTTP_LAST_4XX - 400 + NGX_HTTP_OFF_4XX)
+  
+      ngx_string(ngx_http_error_494_page), /* 494, request header too large */
+      ngx_string(ngx_http_error_495_page), /* 495, https certificate error */
+*************** static ngx_str_t ngx_http_error_pages[]
+*** 342,348 ****
+      ngx_null_string,                     /* 506 */
+      ngx_string(ngx_http_error_507_page)
+  
+! #define NGX_HTTP_LAST_LEVEL_500  508
+  
+  };
+  
+--- 354,360 ----
+      ngx_null_string,                     /* 506 */
+      ngx_string(ngx_http_error_507_page)
+  
+! #define NGX_HTTP_LAST_5XX  508
+  
+  };
+  
+*************** ngx_http_special_response_handler(ngx_ht
+*** 428,452 ****
+          err = 0;
+  
+      } else if (error >= NGX_HTTP_MOVED_PERMANENTLY
+!                && error < NGX_HTTP_LAST_LEVEL_300)
+      {
+          /* 3XX */
+!         err = error - NGX_HTTP_MOVED_PERMANENTLY + NGX_HTTP_LEVEL_200;
+  
+      } else if (error >= NGX_HTTP_BAD_REQUEST
+!                && error < NGX_HTTP_LAST_LEVEL_400)
+      {
+          /* 4XX */
+!         err = error - NGX_HTTP_BAD_REQUEST + NGX_HTTP_LEVEL_200
+!                                            + NGX_HTTP_LEVEL_300;
+  
+      } else if (error >= NGX_HTTP_NGINX_CODES
+!                && error < NGX_HTTP_LAST_LEVEL_500)
+      {
+          /* 49X, 5XX */
+!         err = error - NGX_HTTP_NGINX_CODES + NGX_HTTP_LEVEL_200
+!                                            + NGX_HTTP_LEVEL_300
+!                                            + NGX_HTTP_LEVEL_400;
+          switch (error) {
+              case NGX_HTTP_TO_HTTPS:
+              case NGX_HTTPS_CERT_ERROR:
+--- 440,461 ----
+          err = 0;
+  
+      } else if (error >= NGX_HTTP_MOVED_PERMANENTLY
+!                && error < NGX_HTTP_LAST_3XX)
+      {
+          /* 3XX */
+!         err = error - NGX_HTTP_MOVED_PERMANENTLY + NGX_HTTP_OFF_3XX;
+  
+      } else if (error >= NGX_HTTP_BAD_REQUEST
+!                && error < NGX_HTTP_LAST_4XX)
+      {
+          /* 4XX */
+!         err = error - NGX_HTTP_BAD_REQUEST + NGX_HTTP_OFF_4XX;
+  
+      } else if (error >= NGX_HTTP_NGINX_CODES
+!                && error < NGX_HTTP_LAST_5XX)
+      {
+          /* 49X, 5XX */
+!         err = error - NGX_HTTP_NGINX_CODES + NGX_HTTP_OFF_5XX;
+          switch (error) {
+              case NGX_HTTP_TO_HTTPS:
+              case NGX_HTTPS_CERT_ERROR:
+*************** ngx_http_send_error_page(ngx_http_reques
+*** 570,581 ****
+          return NGX_ERROR;
+      }
+  
+!     if (overwrite >= NGX_HTTP_MOVED_PERMANENTLY
+!         && overwrite <= NGX_HTTP_SEE_OTHER)
+      {
+-         r->err_status = overwrite;
+- 
+-     } else {
+          r->err_status = NGX_HTTP_MOVED_TEMPORARILY;
+      }
+  
+--- 579,589 ----
+          return NGX_ERROR;
+      }
+  
+!     if (overwrite != NGX_HTTP_MOVED_PERMANENTLY
+!         && overwrite != NGX_HTTP_MOVED_TEMPORARILY
+!         && overwrite != NGX_HTTP_SEE_OTHER
+!         && overwrite != NGX_HTTP_TEMPORARY_REDIRECT)
+      {
+          r->err_status = NGX_HTTP_MOVED_TEMPORARILY;
+      }
+  
+*************** ngx_http_send_error_page(ngx_http_reques
+*** 595,601 ****
+  
+      return ngx_http_send_special_response(r, clcf, r->err_status
+                                                     - NGX_HTTP_MOVED_PERMANENTLY
+!                                                    + NGX_HTTP_LEVEL_200);
+  }
+  
+  
+--- 603,609 ----
+  
+      return ngx_http_send_special_response(r, clcf, r->err_status
+                                                     - NGX_HTTP_MOVED_PERMANENTLY
+!                                                    + NGX_HTTP_OFF_3XX);
+  }
+  
+  
+*************** ngx_http_send_special_response(ngx_http_
+*** 626,632 ****
+          if (clcf->msie_padding
+              && (r->headers_in.msie || r->headers_in.chrome)
+              && r->http_version >= NGX_HTTP_VERSION_10
+!             && err >= NGX_HTTP_LEVEL_300)
+          {
+              r->headers_out.content_length_n +=
+                                           sizeof(ngx_http_msie_padding) - 1;
+--- 634,640 ----
+          if (clcf->msie_padding
+              && (r->headers_in.msie || r->headers_in.chrome)
+              && r->http_version >= NGX_HTTP_VERSION_10
+!             && err >= NGX_HTTP_OFF_4XX)
+          {
+              r->headers_out.content_length_n +=
+                                           sizeof(ngx_http_msie_padding) - 1;
+diff -p -N --text -r /tmp/patch.inc.get1.u7cTTE/src/http/ngx_http_upstream.c /tmp/patch.inc.get2.HYDnUQ/src/http/ngx_http_upstream.c
+*** /tmp/patch.inc.get1.u7cTTE/src/http/ngx_http_upstream.c	2013-04-30 11:28:29.083231639 +0200
+--- /tmp/patch.inc.get2.HYDnUQ/src/http/ngx_http_upstream.c	2013-04-30 11:28:32.363247914 +0200
+*************** ngx_http_upstream_process_header(ngx_htt
+*** 1561,1567 ****
+  
+          if (rc == NGX_AGAIN) {
+  
+!             if (u->buffer.pos == u->buffer.end) {
+                  ngx_log_error(NGX_LOG_ERR, c->log, 0,
+                                "upstream sent too big header");
+  
+--- 1561,1567 ----
+  
+          if (rc == NGX_AGAIN) {
+  
+!             if (u->buffer.last == u->buffer.end) {
+                  ngx_log_error(NGX_LOG_ERR, c->log, 0,
+                                "upstream sent too big header");
+  
+*************** ngx_http_upstream_send_response(ngx_http
+*** 2263,2269 ****
+      }
+  
+      if (ngx_event_flags & NGX_USE_AIO_EVENT) {
+!         /* the posted aio operation may currupt a shadow buffer */
+          p->single_buf = 1;
+      }
+  
+--- 2263,2269 ----
+      }
+  
+      if (ngx_event_flags & NGX_USE_AIO_EVENT) {
+!         /* the posted aio operation may corrupt a shadow buffer */
+          p->single_buf = 1;
+      }
+  
+*************** ngx_http_upstream_process_upstream(ngx_h
+*** 2616,2622 ****
+  static void
+  ngx_http_upstream_process_request(ngx_http_request_t *r)
+  {
+-     ngx_uint_t            del;
+      ngx_temp_file_t      *tf;
+      ngx_event_pipe_t     *p;
+      ngx_http_upstream_t  *u;
+--- 2616,2621 ----
+*************** ngx_http_upstream_process_request(ngx_ht
+*** 2628,2657 ****
+  
+          if (u->store) {
+  
+-             del = p->upstream_error;
+- 
+-             tf = u->pipe->temp_file;
+- 
+              if (p->upstream_eof || p->upstream_done) {
+  
+                  if (u->headers_in.status_n == NGX_HTTP_OK
+                      && (u->headers_in.content_length_n == -1
+                          || (u->headers_in.content_length_n == tf->offset)))
+                  {
+                      ngx_http_upstream_store(r, u);
+! 
+!                 } else {
+!                     del = 1;
+!                 }
+!             }
+! 
+!             if (del && tf->file.fd != NGX_INVALID_FILE) {
+! 
+!                 if (ngx_delete_file(tf->file.name.data) == NGX_FILE_ERROR) {
+! 
+!                     ngx_log_error(NGX_LOG_CRIT, r->connection->log, ngx_errno,
+!                                   ngx_delete_file_n " \"%s\" failed",
+!                                   u->pipe->temp_file->file.name.data);
+                  }
+              }
+          }
+--- 2627,2642 ----
+  
+          if (u->store) {
+  
+              if (p->upstream_eof || p->upstream_done) {
+  
++                 tf = u->pipe->temp_file;
++ 
+                  if (u->headers_in.status_n == NGX_HTTP_OK
+                      && (u->headers_in.content_length_n == -1
+                          || (u->headers_in.content_length_n == tf->offset)))
+                  {
+                      ngx_http_upstream_store(r, u);
+!                     u->store = 0;
+                  }
+              }
+          }
+*************** ngx_http_upstream_finalize_request(ngx_h
+*** 2994,2999 ****
+--- 2979,2996 ----
+                         u->pipe->temp_file->file.fd);
+      }
+  
++     if (u->store && u->pipe && u->pipe->temp_file
++         && u->pipe->temp_file->file.fd != NGX_INVALID_FILE)
++     {
++         if (ngx_delete_file(u->pipe->temp_file->file.name.data)
++             == NGX_FILE_ERROR)
++         {
++             ngx_log_error(NGX_LOG_CRIT, r->connection->log, ngx_errno,
++                           ngx_delete_file_n " \"%s\" failed",
++                           u->pipe->temp_file->file.name.data);
++         }
++     }
++ 
+  #if (NGX_HTTP_CACHE)
+  
+      if (r->cache) {
+diff -p -N --text -r /tmp/patch.inc.get1.u7cTTE/src/http/ngx_http_variables.c /tmp/patch.inc.get2.HYDnUQ/src/http/ngx_http_variables.c
+*** /tmp/patch.inc.get1.u7cTTE/src/http/ngx_http_variables.c	2013-04-30 11:28:29.087231667 +0200
+--- /tmp/patch.inc.get2.HYDnUQ/src/http/ngx_http_variables.c	2013-04-30 11:28:32.371247939 +0200
+*************** ngx_http_get_flushed_variable(ngx_http_r
+*** 428,434 ****
+  
+      v = &r->variables[index];
+  
+!     if (v->valid) {
+          if (!v->no_cacheable) {
+              return v;
+          }
+--- 428,434 ----
+  
+      v = &r->variables[index];
+  
+!     if (v->valid || v->not_found) {
+          if (!v->no_cacheable) {
+              return v;
+          }
+diff -p -N --text -r /tmp/patch.inc.get1.u7cTTE/src/mail/ngx_mail_pop3_handler.c /tmp/patch.inc.get2.HYDnUQ/src/mail/ngx_mail_pop3_handler.c
+*** /tmp/patch.inc.get1.u7cTTE/src/mail/ngx_mail_pop3_handler.c	2013-04-30 11:28:29.087231667 +0200
+--- /tmp/patch.inc.get2.HYDnUQ/src/mail/ngx_mail_pop3_handler.c	2013-04-30 11:28:32.371247939 +0200
+*************** ngx_mail_pop3_auth_state(ngx_event_t *re
+*** 218,224 ****
+  
+              break;
+  
+!         /* suppress warinings */
+          case ngx_pop3_passwd:
+              break;
+  
+--- 218,224 ----
+  
+              break;
+  
+!         /* suppress warnings */
+          case ngx_pop3_passwd:
+              break;
+  
+diff -p -N --text -r /tmp/patch.inc.get1.u7cTTE/src/os/unix/ngx_darwin_sendfile_chain.c /tmp/patch.inc.get2.HYDnUQ/src/os/unix/ngx_darwin_sendfile_chain.c
+*** /tmp/patch.inc.get1.u7cTTE/src/os/unix/ngx_darwin_sendfile_chain.c	2013-04-30 11:28:29.091231682 +0200
+--- /tmp/patch.inc.get2.HYDnUQ/src/os/unix/ngx_darwin_sendfile_chain.c	2013-04-30 11:28:32.375247961 +0200
+*************** ngx_darwin_sendfile_chain(ngx_connection
+*** 173,179 ****
+  
+          if (file && header.nelts == 0) {
+  
+!             /* create the tailer iovec and coalesce the neighbouring bufs */
+  
+              prev = NULL;
+              iov = NULL;
+--- 173,179 ----
+  
+          if (file && header.nelts == 0) {
+  
+!             /* create the trailer iovec and coalesce the neighbouring bufs */
+  
+              prev = NULL;
+              iov = NULL;
+diff -p -N --text -r /tmp/patch.inc.get1.u7cTTE/src/os/unix/ngx_files.h /tmp/patch.inc.get2.HYDnUQ/src/os/unix/ngx_files.h
+*** /tmp/patch.inc.get1.u7cTTE/src/os/unix/ngx_files.h	2013-04-30 11:28:29.091231682 +0200
+--- /tmp/patch.inc.get2.HYDnUQ/src/os/unix/ngx_files.h	2013-04-30 11:28:32.375247961 +0200
+*************** ngx_int_t ngx_set_file_time(u_char *name
+*** 159,165 ****
+  #define ngx_is_exec(sb)          (((sb)->st_mode & S_IXUSR) == S_IXUSR)
+  #define ngx_file_access(sb)      ((sb)->st_mode & 0777)
+  #define ngx_file_size(sb)        (sb)->st_size
+! #define ngx_file_fs_size(sb)     ((sb)->st_blocks * 512)
+  #define ngx_file_mtime(sb)       (sb)->st_mtime
+  #define ngx_file_uniq(sb)        (sb)->st_ino
+  
+--- 159,165 ----
+  #define ngx_is_exec(sb)          (((sb)->st_mode & S_IXUSR) == S_IXUSR)
+  #define ngx_file_access(sb)      ((sb)->st_mode & 0777)
+  #define ngx_file_size(sb)        (sb)->st_size
+! #define ngx_file_fs_size(sb)     ngx_max((sb)->st_size, (sb)->st_blocks * 512)
+  #define ngx_file_mtime(sb)       (sb)->st_mtime
+  #define ngx_file_uniq(sb)        (sb)->st_ino
+  
+*************** ngx_de_info(u_char *name, ngx_dir_t *dir
+*** 255,261 ****
+  
+  #define ngx_de_access(dir)       (((dir)->info.st_mode) & 0777)
+  #define ngx_de_size(dir)         (dir)->info.st_size
+! #define ngx_de_fs_size(dir)      ((dir)->info.st_blocks * 512)
+  #define ngx_de_mtime(dir)        (dir)->info.st_mtime
+  
+  
+--- 255,262 ----
+  
+  #define ngx_de_access(dir)       (((dir)->info.st_mode) & 0777)
+  #define ngx_de_size(dir)         (dir)->info.st_size
+! #define ngx_de_fs_size(dir)                                                  \
+!     ngx_max((dir)->info.st_size, (dir)->info.st_blocks * 512)
+  #define ngx_de_mtime(dir)        (dir)->info.st_mtime
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.u7cTTE/src/os/unix/ngx_freebsd_sendfile_chain.c /tmp/patch.inc.get2.HYDnUQ/src/os/unix/ngx_freebsd_sendfile_chain.c
+*** /tmp/patch.inc.get1.u7cTTE/src/os/unix/ngx_freebsd_sendfile_chain.c	2013-04-30 11:28:29.091231682 +0200
+--- /tmp/patch.inc.get2.HYDnUQ/src/os/unix/ngx_freebsd_sendfile_chain.c	2013-04-30 11:28:32.375247961 +0200
+*************** ngx_freebsd_sendfile_chain(ngx_connectio
+*** 178,184 ****
+  
+          if (file) {
+  
+!             /* create the tailer iovec and coalesce the neighbouring bufs */
+  
+              prev = NULL;
+              iov = NULL;
+--- 178,184 ----
+  
+          if (file) {
+  
+!             /* create the trailer iovec and coalesce the neighbouring bufs */
+  
+              prev = NULL;
+              iov = NULL;
+diff -p -N --text -r /tmp/patch.inc.get1.u7cTTE/src/os/unix/ngx_posix_init.c /tmp/patch.inc.get2.HYDnUQ/src/os/unix/ngx_posix_init.c
+*** /tmp/patch.inc.get1.u7cTTE/src/os/unix/ngx_posix_init.c	2013-04-30 11:28:29.091231682 +0200
+--- /tmp/patch.inc.get2.HYDnUQ/src/os/unix/ngx_posix_init.c	2013-04-30 11:28:32.375247961 +0200
+*************** ngx_os_init(ngx_log_t *log)
+*** 47,53 ****
+--- 47,59 ----
+  
+      for (n = ngx_pagesize; n >>= 1; ngx_pagesize_shift++) { /* void */ }
+  
++ #if (NGX_HAVE_SC_NPROCESSORS_ONLN)
+      if (ngx_ncpu == 0) {
++         ngx_ncpu = sysconf(_SC_NPROCESSORS_ONLN);
++     }
++ #endif
++ 
++     if (ngx_ncpu < 1) {
+          ngx_ncpu = 1;
+      }
+  
+diff -p -N --text -r /tmp/patch.inc.get1.u7cTTE/src/os/unix/ngx_user.c /tmp/patch.inc.get2.HYDnUQ/src/os/unix/ngx_user.c
+*** /tmp/patch.inc.get1.u7cTTE/src/os/unix/ngx_user.c	2013-04-30 11:28:29.091231682 +0200
+--- /tmp/patch.inc.get2.HYDnUQ/src/os/unix/ngx_user.c	2013-04-30 11:28:32.375247961 +0200
+*************** ngx_libc_crypt(ngx_pool_t *pool, u_char
+*** 67,73 ****
+  
+  #if (NGX_THREADS && NGX_NONREENTRANT_CRYPT)
+  
+!     /* crypt() is a time consuming funtion, so we only try to lock */
+  
+      if (ngx_mutex_trylock(ngx_crypt_mutex) != NGX_OK) {
+          return NGX_AGAIN;
+--- 67,73 ----
+  
+  #if (NGX_THREADS && NGX_NONREENTRANT_CRYPT)
+  
+!     /* crypt() is a time consuming function, so we only try to lock */
+  
+      if (ngx_mutex_trylock(ngx_crypt_mutex) != NGX_OK) {
+          return NGX_AGAIN;

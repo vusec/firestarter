@@ -1,0 +1,15 @@
+#!/bin/bash
+
+MYPWD=`pwd`
+ROOT=${LLVMAPPS_ROOT-../..}
+
+. ${ROOT}/apps/scripts/include/build.llvm.inc
+
+PROG=postgres
+INPUT=src/backend/${PROG}
+OUTPUT=install/bin/${PROG}
+LIBS="-lcrypt -lm"
+LINKER="$LLVMGOLD_CC"
+
+build_llvm "$@"
+

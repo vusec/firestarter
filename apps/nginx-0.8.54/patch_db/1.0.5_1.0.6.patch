@@ -1,0 +1,1421 @@
+diff -p -N --text -r /tmp/patch.inc.get1.CcjVhz/src/core/nginx.h /tmp/patch.inc.get2.nmFoOG/src/core/nginx.h
+*** /tmp/patch.inc.get1.CcjVhz/src/core/nginx.h	2013-04-30 02:39:05.197723040 +0200
+--- /tmp/patch.inc.get2.nmFoOG/src/core/nginx.h	2013-04-30 02:39:08.497739394 +0200
+***************
+*** 8,15 ****
+  #define _NGINX_H_INCLUDED_
+  
+  
+! #define nginx_version      1000005
+! #define NGINX_VERSION      "1.0.5"
+  #define NGINX_VER          "nginx/" NGINX_VERSION
+  
+  #define NGINX_VAR          "NGINX"
+--- 8,15 ----
+  #define _NGINX_H_INCLUDED_
+  
+  
+! #define nginx_version      1000006
+! #define NGINX_VERSION      "1.0.6"
+  #define NGINX_VER          "nginx/" NGINX_VERSION
+  
+  #define NGINX_VAR          "NGINX"
+diff -p -N --text -r /tmp/patch.inc.get1.CcjVhz/src/core/ngx_config.h /tmp/patch.inc.get2.nmFoOG/src/core/ngx_config.h
+*** /tmp/patch.inc.get1.CcjVhz/src/core/ngx_config.h	2013-04-30 02:39:05.197723040 +0200
+--- /tmp/patch.inc.get2.nmFoOG/src/core/ngx_config.h	2013-04-30 02:39:08.497739394 +0200
+*************** typedef intptr_t        ngx_flag_t;
+*** 127,131 ****
+--- 127,133 ----
+  #define NGX_MAX_UINT32_VALUE  (uint32_t) 0xffffffff
+  #endif
+  
++ #define NGX_MAX_INT32_VALUE   (uint32_t) 0x7fffffff
++ 
+  
+  #endif /* _NGX_CONFIG_H_INCLUDED_ */
+diff -p -N --text -r /tmp/patch.inc.get1.CcjVhz/src/core/ngx_file.c /tmp/patch.inc.get2.nmFoOG/src/core/ngx_file.c
+*** /tmp/patch.inc.get1.CcjVhz/src/core/ngx_file.c	2013-04-30 02:39:05.197723040 +0200
+--- /tmp/patch.inc.get2.nmFoOG/src/core/ngx_file.c	2013-04-30 02:39:08.497739394 +0200
+*************** ngx_walk_tree(ngx_tree_ctx_t *ctx, ngx_s
+*** 926,931 ****
+--- 926,932 ----
+                             "tree file \"%s\"", file.data);
+  
+              ctx->size = ngx_de_size(&dir);
++             ctx->fs_size = ngx_de_fs_size(&dir);
+              ctx->access = ngx_de_access(&dir);
+              ctx->mtime = ngx_de_mtime(&dir);
+  
+diff -p -N --text -r /tmp/patch.inc.get1.CcjVhz/src/core/ngx_file.h /tmp/patch.inc.get2.nmFoOG/src/core/ngx_file.h
+*** /tmp/patch.inc.get1.CcjVhz/src/core/ngx_file.h	2013-04-30 02:39:05.197723040 +0200
+--- /tmp/patch.inc.get2.nmFoOG/src/core/ngx_file.h	2013-04-30 02:39:08.497739394 +0200
+*************** typedef ngx_int_t (*ngx_tree_handler_pt)
+*** 104,109 ****
+--- 104,110 ----
+  
+  struct ngx_tree_ctx_s {
+      off_t                      size;
++     off_t                      fs_size;
+      ngx_uint_t                 access;
+      time_t                     mtime;
+  
+diff -p -N --text -r /tmp/patch.inc.get1.CcjVhz/src/event/ngx_event_openssl.c /tmp/patch.inc.get2.nmFoOG/src/event/ngx_event_openssl.c
+*** /tmp/patch.inc.get1.CcjVhz/src/event/ngx_event_openssl.c	2013-04-30 02:39:05.197723040 +0200
+--- /tmp/patch.inc.get2.nmFoOG/src/event/ngx_event_openssl.c	2013-04-30 02:39:08.493739384 +0200
+*************** ngx_ssl_info_callback(const ngx_ssl_conn
+*** 371,398 ****
+  }
+  
+  
+! ngx_int_t
+! ngx_ssl_generate_rsa512_key(ngx_ssl_t *ssl)
+  {
+!     RSA  *key;
+! 
+!     if (SSL_CTX_need_tmp_RSA(ssl->ctx) == 0) {
+!         return NGX_OK;
+!     }
+! 
+!     key = RSA_generate_key(512, RSA_F4, NULL, NULL);
+! 
+!     if (key) {
+!         SSL_CTX_set_tmp_rsa(ssl->ctx, key);
+  
+!         RSA_free(key);
+! 
+!         return NGX_OK;
+      }
+  
+!     ngx_ssl_error(NGX_LOG_EMERG, ssl->log, 0, "RSA_generate_key(512) failed");
+! 
+!     return NGX_ERROR;
+  }
+  
+  
+--- 371,388 ----
+  }
+  
+  
+! RSA *
+! ngx_ssl_rsa512_key_callback(SSL *ssl, int is_export, int key_length)
+  {
+!     static RSA  *key;
+  
+!     if (key_length == 512) {
+!         if (key == NULL) {
+!             key = RSA_generate_key(512, RSA_F4, NULL, NULL);
+!         }
+      }
+  
+!     return key;
+  }
+  
+  
+*************** ngx_ssl_dhparam(ngx_conf_t *cf, ngx_ssl_
+*** 478,483 ****
+--- 468,512 ----
+      return NGX_OK;
+  }
+  
++ ngx_int_t
++ ngx_ssl_ecdh_curve(ngx_conf_t *cf, ngx_ssl_t *ssl, ngx_str_t *name)
++ {
++ #if OPENSSL_VERSION_NUMBER >= 0x0090800fL
++ #ifndef OPENSSL_NO_ECDH
++     int      nid;
++     EC_KEY  *ecdh;
++ 
++     /*
++      * Elliptic-Curve Diffie-Hellman parameters are either "named curves"
++      * from RFC 4492 section 5.1.1, or explicitely described curves over
++      * binary fields. OpenSSL only supports the "named curves", which provide
++      * maximum interoperability.
++      */
++ 
++     nid = OBJ_sn2nid((const char *) name->data);
++     if (nid == 0) {
++         ngx_ssl_error(NGX_LOG_EMERG, ssl->log, 0,
++                       "Unknown curve name \"%s\"", name->data);
++         return NGX_ERROR;
++     }
++ 
++     ecdh = EC_KEY_new_by_curve_name(nid);
++     if (ecdh == NULL) {
++         ngx_ssl_error(NGX_LOG_EMERG, ssl->log, 0,
++                       "Unable to create curve \"%s\"", name->data);
++         return NGX_ERROR;
++     }
++ 
++     SSL_CTX_set_tmp_ecdh(ssl->ctx, ecdh);
++ 
++     SSL_CTX_set_options(ssl->ctx, SSL_OP_SINGLE_ECDH_USE);
++ 
++     EC_KEY_free(ecdh);
++ #endif
++ #endif
++ 
++     return NGX_OK;
++ }
+  
+  ngx_int_t
+  ngx_ssl_create_connection(ngx_ssl_t *ssl, ngx_connection_t *c, ngx_uint_t flags)
+*************** ngx_ssl_send_chain(ngx_connection_t *c,
+*** 957,966 ****
+      }
+  
+  
+!     /* the maximum limit size is the maximum uint32_t value - the page size */
+  
+!     if (limit == 0 || limit > (off_t) (NGX_MAX_UINT32_VALUE - ngx_pagesize)) {
+!         limit = NGX_MAX_UINT32_VALUE - ngx_pagesize;
+      }
+  
+      buf = c->ssl->buf;
+--- 986,995 ----
+      }
+  
+  
+!     /* the maximum limit size is the maximum int32_t value - the page size */
+  
+!     if (limit == 0 || limit > (off_t) (NGX_MAX_INT32_VALUE - ngx_pagesize)) {
+!         limit = NGX_MAX_INT32_VALUE - ngx_pagesize;
+      }
+  
+      buf = c->ssl->buf;
+*************** ngx_ssl_get_cached_session(ngx_ssl_conn_
+*** 1687,1706 ****
+      ngx_int_t                 rc;
+      ngx_shm_zone_t           *shm_zone;
+      ngx_slab_pool_t          *shpool;
+-     ngx_connection_t         *c;
+      ngx_rbtree_node_t        *node, *sentinel;
+      ngx_ssl_session_t        *sess;
+      ngx_ssl_sess_id_t        *sess_id;
+      ngx_ssl_session_cache_t  *cache;
+      u_char                    buf[NGX_SSL_MAX_SESSION_SIZE];
+! 
+!     c = ngx_ssl_get_connection(ssl_conn);
+  
+      hash = ngx_crc32_short(id, (size_t) len);
+      *copy = 0;
+  
+      ngx_log_debug2(NGX_LOG_DEBUG_EVENT, c->log, 0,
+                     "ssl get session: %08XD:%d", hash, len);
+  
+      shm_zone = SSL_CTX_get_ex_data(SSL_get_SSL_CTX(ssl_conn),
+                                     ngx_ssl_session_cache_index);
+--- 1716,1739 ----
+      ngx_int_t                 rc;
+      ngx_shm_zone_t           *shm_zone;
+      ngx_slab_pool_t          *shpool;
+      ngx_rbtree_node_t        *node, *sentinel;
+      ngx_ssl_session_t        *sess;
+      ngx_ssl_sess_id_t        *sess_id;
+      ngx_ssl_session_cache_t  *cache;
+      u_char                    buf[NGX_SSL_MAX_SESSION_SIZE];
+! #if (NGX_DEBUG)
+!     ngx_connection_t         *c;
+! #endif
+  
+      hash = ngx_crc32_short(id, (size_t) len);
+      *copy = 0;
+  
++ #if (NGX_DEBUG)
++     c = ngx_ssl_get_connection(ssl_conn);
++ 
+      ngx_log_debug2(NGX_LOG_DEBUG_EVENT, c->log, 0,
+                     "ssl get session: %08XD:%d", hash, len);
++ #endif
+  
+      shm_zone = SSL_CTX_get_ex_data(SSL_get_SSL_CTX(ssl_conn),
+                                     ngx_ssl_session_cache_index);
+diff -p -N --text -r /tmp/patch.inc.get1.CcjVhz/src/event/ngx_event_openssl.h /tmp/patch.inc.get2.nmFoOG/src/event/ngx_event_openssl.h
+*** /tmp/patch.inc.get1.CcjVhz/src/event/ngx_event_openssl.h	2013-04-30 02:39:05.197723040 +0200
+--- /tmp/patch.inc.get2.nmFoOG/src/event/ngx_event_openssl.h	2013-04-30 02:39:08.493739384 +0200
+*************** ngx_int_t ngx_ssl_certificate(ngx_conf_t
+*** 99,106 ****
+  ngx_int_t ngx_ssl_client_certificate(ngx_conf_t *cf, ngx_ssl_t *ssl,
+      ngx_str_t *cert, ngx_int_t depth);
+  ngx_int_t ngx_ssl_crl(ngx_conf_t *cf, ngx_ssl_t *ssl, ngx_str_t *crl);
+! ngx_int_t ngx_ssl_generate_rsa512_key(ngx_ssl_t *ssl);
+  ngx_int_t ngx_ssl_dhparam(ngx_conf_t *cf, ngx_ssl_t *ssl, ngx_str_t *file);
+  ngx_int_t ngx_ssl_session_cache(ngx_ssl_t *ssl, ngx_str_t *sess_ctx,
+      ssize_t builtin_session_cache, ngx_shm_zone_t *shm_zone, time_t timeout);
+  ngx_int_t ngx_ssl_create_connection(ngx_ssl_t *ssl, ngx_connection_t *c,
+--- 99,107 ----
+  ngx_int_t ngx_ssl_client_certificate(ngx_conf_t *cf, ngx_ssl_t *ssl,
+      ngx_str_t *cert, ngx_int_t depth);
+  ngx_int_t ngx_ssl_crl(ngx_conf_t *cf, ngx_ssl_t *ssl, ngx_str_t *crl);
+! RSA *ngx_ssl_rsa512_key_callback(SSL *ssl, int is_export, int key_length);
+  ngx_int_t ngx_ssl_dhparam(ngx_conf_t *cf, ngx_ssl_t *ssl, ngx_str_t *file);
++ ngx_int_t ngx_ssl_ecdh_curve(ngx_conf_t *cf, ngx_ssl_t *ssl, ngx_str_t *name);
+  ngx_int_t ngx_ssl_session_cache(ngx_ssl_t *ssl, ngx_str_t *sess_ctx,
+      ssize_t builtin_session_cache, ngx_shm_zone_t *shm_zone, time_t timeout);
+  ngx_int_t ngx_ssl_create_connection(ngx_ssl_t *ssl, ngx_connection_t *c,
+diff -p -N --text -r /tmp/patch.inc.get1.CcjVhz/src/http/modules/ngx_http_fastcgi_module.c /tmp/patch.inc.get2.nmFoOG/src/http/modules/ngx_http_fastcgi_module.c
+*** /tmp/patch.inc.get1.CcjVhz/src/http/modules/ngx_http_fastcgi_module.c	2013-04-30 02:39:05.193723014 +0200
+--- /tmp/patch.inc.get2.nmFoOG/src/http/modules/ngx_http_fastcgi_module.c	2013-04-30 02:39:08.493739384 +0200
+*************** ngx_http_fastcgi_create_request(ngx_http
+*** 737,743 ****
+          lowcase_key = NULL;
+  
+          if (flcf->header_params) {
+!             ignored = ngx_palloc(r->pool, flcf->header_params * sizeof(void *));
+              if (ignored == NULL) {
+                  return NGX_ERROR;
+              }
+--- 737,751 ----
+          lowcase_key = NULL;
+  
+          if (flcf->header_params) {
+!             n = 0;
+!             part = &r->headers_in.headers.part;
+! 
+!             while (part) {
+!                 n += part->nelts;
+!                 part = part->next;
+!             }
+! 
+!             ignored = ngx_palloc(r->pool, n * sizeof(void *));
+              if (ignored == NULL) {
+                  return NGX_ERROR;
+              }
+*************** ngx_http_fastcgi_create_loc_conf(ngx_con
+*** 2003,2008 ****
+--- 2011,2018 ----
+  
+      conf->catch_stderr = NGX_CONF_UNSET_PTR;
+  
++     ngx_str_set(&conf->upstream.module, "fastcgi");
++ 
+      return conf;
+  }
+  
+diff -p -N --text -r /tmp/patch.inc.get1.CcjVhz/src/http/modules/ngx_http_proxy_module.c /tmp/patch.inc.get2.nmFoOG/src/http/modules/ngx_http_proxy_module.c
+*** /tmp/patch.inc.get1.CcjVhz/src/http/modules/ngx_http_proxy_module.c	2013-04-30 02:39:05.193723014 +0200
+--- /tmp/patch.inc.get2.nmFoOG/src/http/modules/ngx_http_proxy_module.c	2013-04-30 02:39:08.493739384 +0200
+*************** ngx_http_proxy_eval(ngx_http_request_t *
+*** 642,656 ****
+          return NGX_ERROR;
+      }
+  
+!     if (ngx_strncasecmp(proxy.data, (u_char *) "http://", 7) == 0) {
+! 
+          add = 7;
+          port = 80;
+  
+  #if (NGX_HTTP_SSL)
+  
+!     } else if (ngx_strncasecmp(proxy.data, (u_char *) "https://", 8) == 0) {
+! 
+          add = 8;
+          port = 443;
+          r->upstream->ssl = 1;
+--- 642,658 ----
+          return NGX_ERROR;
+      }
+  
+!     if (proxy.len > 7
+!         && ngx_strncasecmp(proxy.data, (u_char *) "http://", 7) == 0)
+!     {
+          add = 7;
+          port = 80;
+  
+  #if (NGX_HTTP_SSL)
+  
+!     } else if (proxy.len > 8
+!                && ngx_strncasecmp(proxy.data, (u_char *) "https://", 8) == 0)
+!     {
+          add = 8;
+          port = 443;
+          r->upstream->ssl = 1;
+*************** ngx_http_proxy_create_loc_conf(ngx_conf_
+*** 1707,1712 ****
+--- 1709,1716 ----
+      conf->headers_hash_max_size = NGX_CONF_UNSET_UINT;
+      conf->headers_hash_bucket_size = NGX_CONF_UNSET_UINT;
+  
++     ngx_str_set(&conf->upstream.module, "proxy");
++ 
+      return conf;
+  }
+  
+diff -p -N --text -r /tmp/patch.inc.get1.CcjVhz/src/http/modules/ngx_http_scgi_module.c /tmp/patch.inc.get2.nmFoOG/src/http/modules/ngx_http_scgi_module.c
+*** /tmp/patch.inc.get1.CcjVhz/src/http/modules/ngx_http_scgi_module.c	2013-04-30 02:39:05.193723014 +0200
+--- /tmp/patch.inc.get2.nmFoOG/src/http/modules/ngx_http_scgi_module.c	2013-04-30 02:39:08.493739384 +0200
+*************** ngx_http_scgi_create_request(ngx_http_re
+*** 561,567 ****
+          lowcase_key = NULL;
+  
+          if (scf->header_params) {
+!             ignored = ngx_palloc(r->pool, scf->header_params * sizeof(void *));
+              if (ignored == NULL) {
+                  return NGX_ERROR;
+              }
+--- 561,575 ----
+          lowcase_key = NULL;
+  
+          if (scf->header_params) {
+!             n = 0;
+!             part = &r->headers_in.headers.part;
+! 
+!             while (part) {
+!                 n += part->nelts;
+!                 part = part->next;
+!             }
+! 
+!             ignored = ngx_palloc(r->pool, n * sizeof(void *));
+              if (ignored == NULL) {
+                  return NGX_ERROR;
+              }
+*************** ngx_http_scgi_create_loc_conf(ngx_conf_t
+*** 1030,1035 ****
+--- 1038,1045 ----
+      /* "scgi_cyclic_temp_file" is disabled */
+      conf->upstream.cyclic_temp_file = 0;
+  
++     ngx_str_set(&conf->upstream.module, "scgi");
++ 
+      return conf;
+  }
+  
+diff -p -N --text -r /tmp/patch.inc.get1.CcjVhz/src/http/modules/ngx_http_ssl_module.c /tmp/patch.inc.get2.nmFoOG/src/http/modules/ngx_http_ssl_module.c
+*** /tmp/patch.inc.get1.CcjVhz/src/http/modules/ngx_http_ssl_module.c	2013-04-30 02:39:05.193723014 +0200
+--- /tmp/patch.inc.get2.nmFoOG/src/http/modules/ngx_http_ssl_module.c	2013-04-30 02:39:08.493739384 +0200
+*************** typedef ngx_int_t (*ngx_ssl_variable_han
+*** 13,19 ****
+      ngx_pool_t *pool, ngx_str_t *s);
+  
+  
+! #define NGX_DEFAULT_CIPHERS  "HIGH:!aNULL:!MD5"
+  
+  
+  static ngx_int_t ngx_http_ssl_static_variable(ngx_http_request_t *r,
+--- 13,20 ----
+      ngx_pool_t *pool, ngx_str_t *s);
+  
+  
+! #define NGX_DEFAULT_CIPHERS     "HIGH:!aNULL:!MD5"
+! #define NGX_DEFAULT_ECDH_CURVE  "prime256v1"
+  
+  
+  static ngx_int_t ngx_http_ssl_static_variable(ngx_http_request_t *r,
+*************** static ngx_command_t  ngx_http_ssl_comma
+*** 78,83 ****
+--- 79,91 ----
+        offsetof(ngx_http_ssl_srv_conf_t, dhparam),
+        NULL },
+  
++     { ngx_string("ssl_ecdh_curve"),
++       NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_CONF_TAKE1,
++       ngx_conf_set_str_slot,
++       NGX_HTTP_SRV_CONF_OFFSET,
++       offsetof(ngx_http_ssl_srv_conf_t, ecdh_curve),
++       NULL },
++ 
+      { ngx_string("ssl_protocols"),
+        NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_CONF_1MORE,
+        ngx_conf_set_bitmask_slot,
+*************** ngx_http_ssl_create_srv_conf(ngx_conf_t
+*** 312,317 ****
+--- 320,326 ----
+       *     sscf->certificate = { 0, NULL };
+       *     sscf->certificate_key = { 0, NULL };
+       *     sscf->dhparam = { 0, NULL };
++      *     sscf->ecdh_curve = { 0, NULL };
+       *     sscf->client_certificate = { 0, NULL };
+       *     sscf->crl = { 0, NULL };
+       *     sscf->ciphers = { 0, NULL };
+*************** ngx_http_ssl_merge_srv_conf(ngx_conf_t *
+*** 360,365 ****
+--- 369,377 ----
+                           "");
+      ngx_conf_merge_str_value(conf->crl, prev->crl, "");
+  
++     ngx_conf_merge_str_value(conf->ecdh_curve, prev->ecdh_curve,
++                          NGX_DEFAULT_ECDH_CURVE);
++ 
+      ngx_conf_merge_str_value(conf->ciphers, prev->ciphers, NGX_DEFAULT_CIPHERS);
+  
+  
+*************** ngx_http_ssl_merge_srv_conf(ngx_conf_t *
+*** 465,475 ****
+      }
+  
+      /* a temporary 512-bit RSA key is required for export versions of MSIE */
+!     if (ngx_ssl_generate_rsa512_key(&conf->ssl) != NGX_OK) {
+          return NGX_CONF_ERROR;
+      }
+  
+!     if (ngx_ssl_dhparam(cf, &conf->ssl, &conf->dhparam) != NGX_OK) {
+          return NGX_CONF_ERROR;
+      }
+  
+--- 477,489 ----
+      }
+  
+      /* a temporary 512-bit RSA key is required for export versions of MSIE */
+!     SSL_CTX_set_tmp_rsa_callback(conf->ssl.ctx, ngx_ssl_rsa512_key_callback);
+! 
+!     if (ngx_ssl_dhparam(cf, &conf->ssl, &conf->dhparam) != NGX_OK) {
+          return NGX_CONF_ERROR;
+      }
+  
+!     if (ngx_ssl_ecdh_curve(cf, &conf->ssl, &conf->ecdh_curve) != NGX_OK) {
+          return NGX_CONF_ERROR;
+      }
+  
+diff -p -N --text -r /tmp/patch.inc.get1.CcjVhz/src/http/modules/ngx_http_ssl_module.h /tmp/patch.inc.get2.nmFoOG/src/http/modules/ngx_http_ssl_module.h
+*** /tmp/patch.inc.get1.CcjVhz/src/http/modules/ngx_http_ssl_module.h	2013-04-30 02:39:05.193723014 +0200
+--- /tmp/patch.inc.get2.nmFoOG/src/http/modules/ngx_http_ssl_module.h	2013-04-30 02:39:08.493739384 +0200
+*************** typedef struct {
+*** 32,37 ****
+--- 32,38 ----
+      ngx_str_t                       certificate;
+      ngx_str_t                       certificate_key;
+      ngx_str_t                       dhparam;
++     ngx_str_t                       ecdh_curve;
+      ngx_str_t                       client_certificate;
+      ngx_str_t                       crl;
+  
+diff -p -N --text -r /tmp/patch.inc.get1.CcjVhz/src/http/modules/ngx_http_uwsgi_module.c /tmp/patch.inc.get2.nmFoOG/src/http/modules/ngx_http_uwsgi_module.c
+*** /tmp/patch.inc.get1.CcjVhz/src/http/modules/ngx_http_uwsgi_module.c	2013-04-30 02:39:05.193723014 +0200
+--- /tmp/patch.inc.get2.nmFoOG/src/http/modules/ngx_http_uwsgi_module.c	2013-04-30 02:39:08.493739384 +0200
+*************** ngx_http_uwsgi_create_request(ngx_http_r
+*** 589,595 ****
+          lowcase_key = NULL;
+  
+          if (uwcf->header_params) {
+!             ignored = ngx_palloc(r->pool, uwcf->header_params * sizeof(void *));
+              if (ignored == NULL) {
+                  return NGX_ERROR;
+              }
+--- 589,603 ----
+          lowcase_key = NULL;
+  
+          if (uwcf->header_params) {
+!             n = 0;
+!             part = &r->headers_in.headers.part;
+! 
+!             while (part) {
+!                 n += part->nelts;
+!                 part = part->next;
+!             }
+! 
+!             ignored = ngx_palloc(r->pool, n * sizeof(void *));
+              if (ignored == NULL) {
+                  return NGX_ERROR;
+              }
+*************** ngx_http_uwsgi_create_loc_conf(ngx_conf_
+*** 1083,1088 ****
+--- 1091,1098 ----
+      /* "uwsgi_cyclic_temp_file" is disabled */
+      conf->upstream.cyclic_temp_file = 0;
+  
++     ngx_str_set(&conf->upstream.module, "uwsgi");
++ 
+      return conf;
+  }
+  
+diff -p -N --text -r /tmp/patch.inc.get1.CcjVhz/src/http/ngx_http_core_module.c /tmp/patch.inc.get2.nmFoOG/src/http/ngx_http_core_module.c
+*** /tmp/patch.inc.get1.CcjVhz/src/http/ngx_http_core_module.c	2013-04-30 02:39:05.197723040 +0200
+--- /tmp/patch.inc.get2.nmFoOG/src/http/ngx_http_core_module.c	2013-04-30 02:39:08.493739384 +0200
+*************** static char *ngx_http_core_internal(ngx_
+*** 70,75 ****
+--- 70,77 ----
+  static char *ngx_http_core_resolver(ngx_conf_t *cf, ngx_command_t *cmd,
+      void *conf);
+  #if (NGX_HTTP_GZIP)
++ static ngx_int_t ngx_http_gzip_accept_encoding(ngx_str_t *ae);
++ static ngx_uint_t ngx_http_gzip_quantity(u_char *p, u_char *last);
+  static char *ngx_http_gzip_disable(ngx_conf_t *cf, ngx_command_t *cmd,
+      void *conf);
+  #endif
+*************** static ngx_conf_enum_t  ngx_http_core_sa
+*** 125,130 ****
+--- 127,140 ----
+  };
+  
+  
++ static ngx_conf_enum_t  ngx_http_core_lingering_close[] = {
++     { ngx_string("off"), NGX_HTTP_LINGERING_OFF },
++     { ngx_string("on"), NGX_HTTP_LINGERING_ON },
++     { ngx_string("always"), NGX_HTTP_LINGERING_ALWAYS },
++     { ngx_null_string, 0 }
++ };
++ 
++ 
+  static ngx_conf_enum_t  ngx_http_core_if_modified_since[] = {
+      { ngx_string("off"), NGX_HTTP_IMS_OFF },
+      { ngx_string("exact"), NGX_HTTP_IMS_EXACT },
+*************** static ngx_command_t  ngx_http_core_comm
+*** 530,535 ****
+--- 540,552 ----
+        0,
+        NULL },
+  
++     { ngx_string("lingering_close"),
++       NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
++       ngx_conf_set_enum_slot,
++       NGX_HTTP_LOC_CONF_OFFSET,
++       offsetof(ngx_http_core_loc_conf_t, lingering_close),
++       &ngx_http_core_lingering_close },
++ 
+      { ngx_string("lingering_time"),
+        NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
+        ngx_conf_set_msec_slot,
+*************** ngx_http_gzip_ok(ngx_http_request_t *r)
+*** 2016,2039 ****
+      time_t                     date, expires;
+      ngx_uint_t                 p;
+      ngx_array_t               *cc;
+!     ngx_table_elt_t           *e, *d;
+      ngx_http_core_loc_conf_t  *clcf;
+  
+      r->gzip_tested = 1;
+  
+!     if (r != r->main
+!         || r->headers_in.accept_encoding == NULL
+!         || ngx_strcasestrn(r->headers_in.accept_encoding->value.data,
+!                            "gzip", 4 - 1)
+!            == NULL
+  
+!         /*
+!          * if the URL (without the "http://" prefix) is longer than 253 bytes,
+!          * then MSIE 4.x can not handle the compressed stream - it waits
+!          * too long, hangs up or crashes
+!          */
+  
+!         || (r->headers_in.msie4 && r->unparsed_uri.len > 200))
+      {
+          return NGX_DECLINED;
+      }
+--- 2033,2067 ----
+      time_t                     date, expires;
+      ngx_uint_t                 p;
+      ngx_array_t               *cc;
+!     ngx_table_elt_t           *e, *d, *ae;
+      ngx_http_core_loc_conf_t  *clcf;
+  
+      r->gzip_tested = 1;
+  
+!     if (r != r->main) {
+!         return NGX_DECLINED;
+!     }
+  
+!     ae = r->headers_in.accept_encoding;
+!     if (ae == NULL) {
+!         return NGX_DECLINED;
+!     }
+! 
+!     if (ae->value.len < sizeof("gzip") - 1) {
+!         return NGX_DECLINED;
+!     }
+  
+!     /*
+!      * test first for the most common case "gzip,...":
+!      *   MSIE:    "gzip, deflate"
+!      *   Firefox: "gzip,deflate"
+!      *   Chrome:  "gzip,deflate,sdch"
+!      *   Safari:  "gzip, deflate"
+!      *   Opera:   "gzip, deflate"
+!      */
+! 
+!     if (ngx_memcmp(ae->value.data, "gzip,", 5) != 0
+!         && ngx_http_gzip_accept_encoding(&ae->value) != NGX_OK)
+      {
+          return NGX_DECLINED;
+      }
+*************** ok:
+*** 2159,2164 ****
+--- 2187,2321 ----
+      return NGX_OK;
+  }
+  
++ 
++ /*
++  * gzip is enabled for the following quantities:
++  *     "gzip; q=0.001" ... "gzip; q=1.000"
++  * gzip is disabled for the following quantities:
++  *     "gzip; q=0" ... "gzip; q=0.000", and for any invalid cases
++  */
++ 
++ static ngx_int_t
++ ngx_http_gzip_accept_encoding(ngx_str_t *ae)
++ {
++     u_char  *p, *start, *last;
++ 
++     start = ae->data;
++     last = start + ae->len;
++ 
++     for ( ;; ) {
++         p = ngx_strcasestrn(start, "gzip", 4 - 1);
++         if (p == NULL) {
++             return NGX_DECLINED;
++         }
++ 
++         if (p == start || (*(p - 1) == ',' || *(p - 1) == ' ')) {
++             break;
++         }
++ 
++         start = p + 4;
++     }
++ 
++     p += 4;
++ 
++     while (p < last) {
++         switch(*p++) {
++         case ',':
++             return NGX_OK;
++         case ';':
++             goto quantity;
++         case ' ':
++             continue;
++         default:
++             return NGX_DECLINED;
++         }
++     }
++ 
++     return NGX_OK;
++ 
++ quantity:
++ 
++     while (p < last) {
++         switch(*p++) {
++         case 'q':
++         case 'Q':
++             goto equal;
++         case ' ':
++             continue;
++         default:
++             return NGX_DECLINED;
++         }
++     }
++ 
++     return NGX_OK;
++ 
++ equal:
++ 
++     if (p + 2 > last || *p++ != '=') {
++         return NGX_DECLINED;
++     }
++ 
++     if (ngx_http_gzip_quantity(p, last) == 0) {
++         return NGX_DECLINED;
++     }
++ 
++     return NGX_OK;
++ }
++ 
++ 
++ ngx_uint_t
++ ngx_http_gzip_quantity(u_char *p, u_char *last)
++ {
++     u_char      c;
++     ngx_uint_t  n, q;
++ 
++     c = *p++;
++ 
++     if (c != '0' && c != '1') {
++         return 0;
++     }
++ 
++     q = (c - '0') * 100;
++ 
++     if (p == last) {
++         return q;
++     }
++ 
++     c = *p++;
++ 
++     if (c == ',' || c == ' ') {
++         return q;
++     }
++ 
++     if (c != '.') {
++         return 0;
++     }
++ 
++     n = 0;
++ 
++     while (p < last) {
++         c = *p++;
++ 
++         if (c == ',' || c == ' ') {
++             break;
++         }
++ 
++         if (c >= '0' && c <= '9') {
++             q += c - '0';
++             n++;
++             continue;
++         }
++ 
++         return 0;
++     }
++ 
++     if (q > 100 || n > 3) {
++         return 0;
++     }
++ 
++     return q;
++ }
++ 
+  #endif
+  
+  
+*************** ngx_http_core_create_loc_conf(ngx_conf_t
+*** 3117,3122 ****
+--- 3274,3280 ----
+      clcf->keepalive_timeout = NGX_CONF_UNSET_MSEC;
+      clcf->keepalive_header = NGX_CONF_UNSET;
+      clcf->keepalive_requests = NGX_CONF_UNSET_UINT;
++     clcf->lingering_close = NGX_CONF_UNSET_UINT;
+      clcf->lingering_time = NGX_CONF_UNSET_MSEC;
+      clcf->lingering_timeout = NGX_CONF_UNSET_MSEC;
+      clcf->resolver_timeout = NGX_CONF_UNSET_MSEC;
+*************** ngx_http_core_merge_loc_conf(ngx_conf_t
+*** 3333,3338 ****
+--- 3491,3498 ----
+                                prev->keepalive_header, 0);
+      ngx_conf_merge_uint_value(conf->keepalive_requests,
+                                prev->keepalive_requests, 100);
++     ngx_conf_merge_uint_value(conf->lingering_close,
++                               prev->lingering_close, NGX_HTTP_LINGERING_ON);
+      ngx_conf_merge_msec_value(conf->lingering_time,
+                                prev->lingering_time, 30000);
+      ngx_conf_merge_msec_value(conf->lingering_timeout,
+diff -p -N --text -r /tmp/patch.inc.get1.CcjVhz/src/http/ngx_http_core_module.h /tmp/patch.inc.get2.nmFoOG/src/http/ngx_http_core_module.h
+*** /tmp/patch.inc.get1.CcjVhz/src/http/ngx_http_core_module.h	2013-04-30 02:39:05.193723014 +0200
+--- /tmp/patch.inc.get2.nmFoOG/src/http/ngx_http_core_module.h	2013-04-30 02:39:08.489739358 +0200
+***************
+*** 33,38 ****
+--- 33,43 ----
+  #define NGX_HTTP_SATISFY_ANY            1
+  
+  
++ #define NGX_HTTP_LINGERING_OFF          0
++ #define NGX_HTTP_LINGERING_ON           1
++ #define NGX_HTTP_LINGERING_ALWAYS       2
++ 
++ 
+  #define NGX_HTTP_IMS_OFF                0
+  #define NGX_HTTP_IMS_EXACT              1
+  #define NGX_HTTP_IMS_BEFORE             2
+*************** struct ngx_http_core_loc_conf_s {
+*** 356,361 ****
+--- 361,367 ----
+      ngx_uint_t    keepalive_requests;      /* keepalive_requests */
+      ngx_uint_t    keepalive_disable;       /* keepalive_disable */
+      ngx_uint_t    satisfy;                 /* satisfy */
++     ngx_uint_t    lingering_close;         /* lingering_close */
+      ngx_uint_t    if_modified_since;       /* if_modified_since */
+      ngx_uint_t    client_body_in_file_only; /* client_body_in_file_only */
+  
+diff -p -N --text -r /tmp/patch.inc.get1.CcjVhz/src/http/ngx_http_file_cache.c /tmp/patch.inc.get2.nmFoOG/src/http/ngx_http_file_cache.c
+*** /tmp/patch.inc.get1.CcjVhz/src/http/ngx_http_file_cache.c	2013-04-30 02:39:05.193723014 +0200
+--- /tmp/patch.inc.get2.nmFoOG/src/http/ngx_http_file_cache.c	2013-04-30 02:39:08.489739358 +0200
+*************** static time_t ngx_http_file_cache_expire
+*** 31,37 ****
+  static void ngx_http_file_cache_delete(ngx_http_file_cache_t *cache,
+      ngx_queue_t *q, u_char *name);
+  static ngx_int_t
+!     ngx_http_file_cache_manager_sleep(ngx_http_file_cache_t *cache);
+  static ngx_int_t ngx_http_file_cache_noop(ngx_tree_ctx_t *ctx,
+      ngx_str_t *path);
+  static ngx_int_t ngx_http_file_cache_manage_file(ngx_tree_ctx_t *ctx,
+--- 31,37 ----
+  static void ngx_http_file_cache_delete(ngx_http_file_cache_t *cache,
+      ngx_queue_t *q, u_char *name);
+  static ngx_int_t
+!     ngx_http_file_cache_loader_sleep(ngx_http_file_cache_t *cache);
+  static ngx_int_t ngx_http_file_cache_noop(ngx_tree_ctx_t *ctx,
+      ngx_str_t *path);
+  static ngx_int_t ngx_http_file_cache_manage_file(ngx_tree_ctx_t *ctx,
+*************** ngx_http_file_cache_read(ngx_http_reques
+*** 376,382 ****
+      if ((size_t) n < c->header_start) {
+          ngx_log_error(NGX_LOG_CRIT, r->connection->log, 0,
+                        "cache file \"%s\" is too small", c->file.name.data);
+!         return NGX_ERROR;
+      }
+  
+      h = (ngx_http_file_cache_header_t *) c->buf->pos;
+--- 376,382 ----
+      if ((size_t) n < c->header_start) {
+          ngx_log_error(NGX_LOG_CRIT, r->connection->log, 0,
+                        "cache file \"%s\" is too small", c->file.name.data);
+!         return NGX_DECLINED;
+      }
+  
+      h = (ngx_http_file_cache_header_t *) c->buf->pos;
+*************** ngx_http_file_cache_read(ngx_http_reques
+*** 409,414 ****
+--- 409,415 ----
+              c->node->body_start = c->body_start;
+              c->node->exists = 1;
+              c->node->uniq = c->uniq;
++             c->node->fs_size = c->fs_size;
+  
+              cache->sh->size += c->fs_size;
+          }
+*************** ngx_http_file_cache_exists(ngx_http_file
+*** 530,555 ****
+              goto done;
+          }
+  
+!         if (fcn->exists) {
+  
+              c->exists = fcn->exists;
+!             c->body_start = fcn->body_start;
+  
+              rc = NGX_OK;
+  
+              goto done;
+          }
+  
+!         if (fcn->uses >= c->min_uses) {
+! 
+!             c->exists = fcn->exists;
+!             c->body_start = fcn->body_start;
+! 
+!             rc = NGX_OK;
+! 
+!         } else {
+!             rc = NGX_AGAIN;
+!         }
+  
+          goto done;
+      }
+--- 531,549 ----
+              goto done;
+          }
+  
+!         if (fcn->exists || fcn->uses >= c->min_uses) {
+  
+              c->exists = fcn->exists;
+!             if (fcn->body_start) {
+!                 c->body_start = fcn->body_start;
+!             }
+  
+              rc = NGX_OK;
+  
+              goto done;
+          }
+  
+!         rc = NGX_AGAIN;
+  
+          goto done;
+      }
+*************** ngx_http_cache_send(ngx_http_request_t *
+*** 858,864 ****
+      c = r->cache;
+  
+      ngx_log_debug1(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
+!                   "http file cache send: %s", c->file.name.data);
+  
+      /* we need to allocate all before the header would be sent */
+  
+--- 852,858 ----
+      c = r->cache;
+  
+      ngx_log_debug1(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
+!                    "http file cache send: %s", c->file.name.data);
+  
+      /* we need to allocate all before the header would be sent */
+  
+*************** ngx_http_file_cache_manager(void *data)
+*** 1214,1220 ****
+              return wait;
+          }
+  
+!         if (ngx_http_file_cache_manager_sleep(cache) != NGX_OK) {
+              return next;
+          }
+      }
+--- 1208,1214 ----
+              return wait;
+          }
+  
+!         if (ngx_quit || ngx_terminate) {
+              return next;
+          }
+      }
+*************** ngx_http_file_cache_loader(void *data)
+*** 1268,1274 ****
+  
+  
+  static ngx_int_t
+! ngx_http_file_cache_manager_sleep(ngx_http_file_cache_t *cache)
+  {
+      ngx_msec_t  elapsed;
+  
+--- 1262,1268 ----
+  
+  
+  static ngx_int_t
+! ngx_http_file_cache_loader_sleep(ngx_http_file_cache_t *cache)
+  {
+      ngx_msec_t  elapsed;
+  
+*************** ngx_http_file_cache_manage_file(ngx_tree
+*** 1320,1394 ****
+          (void) ngx_http_file_cache_delete_file(ctx, path);
+      }
+  
+!     return ngx_http_file_cache_manager_sleep(cache);
+  }
+  
+  
+  static ngx_int_t
+  ngx_http_file_cache_add_file(ngx_tree_ctx_t *ctx, ngx_str_t *name)
+  {
+!     u_char                        *p;
+!     ngx_fd_t                       fd;
+!     ngx_int_t                      n;
+!     ngx_uint_t                     i;
+!     ngx_file_info_t                fi;
+!     ngx_http_cache_t               c;
+!     ngx_http_file_cache_t         *cache;
+!     ngx_http_file_cache_header_t   h;
+  
+      if (name->len < 2 * NGX_HTTP_CACHE_KEY_LEN) {
+          return NGX_ERROR;
+      }
+  
+!     ngx_memzero(&c, sizeof(ngx_http_cache_t));
+! 
+!     fd = ngx_open_file(name->data, NGX_FILE_RDONLY, NGX_FILE_OPEN, 0);
+! 
+!     if (fd == NGX_INVALID_FILE) {
+!         ngx_log_error(NGX_LOG_CRIT, ctx->log, ngx_errno,
+!                       ngx_open_file_n " \"%s\" failed", name->data);
+!         return NGX_ERROR;
+!     }
+! 
+!     c.file.fd = fd;
+!     c.file.name = *name;
+!     c.file.log = ctx->log;
+! 
+!     n = ngx_read_file(&c.file, (u_char *) &h,
+!                       sizeof(ngx_http_file_cache_header_t), 0);
+!     if (n == NGX_ERROR) {
+!         return NGX_ERROR;
+!     }
+! 
+!     if ((size_t) n < sizeof(ngx_http_file_cache_header_t)) {
+          ngx_log_error(NGX_LOG_CRIT, ctx->log, 0,
+                        "cache file \"%s\" is too small", name->data);
+          return NGX_ERROR;
+      }
+  
+      cache = ctx->data;
+  
+!     if (ngx_fd_info(fd, &fi) == NGX_FILE_ERROR) {
+!         ngx_log_error(NGX_LOG_CRIT, ctx->log, ngx_errno,
+!                       ngx_fd_info_n " \"%s\" failed", name->data);
+! 
+!     } else {
+!         c.uniq = ngx_file_uniq(&fi);
+!         c.valid_sec = h.valid_sec;
+!         c.valid_msec = h.valid_msec;
+!         c.body_start = h.body_start;
+!         c.length = ngx_file_size(&fi);
+!         c.fs_size = (ngx_file_fs_size(&fi) + cache->bsize - 1) / cache->bsize;
+!     }
+! 
+!     if (ngx_close_file(fd) == NGX_FILE_ERROR) {
+!         ngx_log_error(NGX_LOG_ALERT, ctx->log, ngx_errno,
+!                       ngx_close_file_n " \"%s\" failed", name->data);
+!     }
+! 
+!     if (c.body_start == 0) {
+!         return NGX_ERROR;
+!     }
+  
+      p = &name->data[name->len - 2 * NGX_HTTP_CACHE_KEY_LEN];
+  
+--- 1314,1347 ----
+          (void) ngx_http_file_cache_delete_file(ctx, path);
+      }
+  
+!     return ngx_http_file_cache_loader_sleep(cache);
+  }
+  
+  
+  static ngx_int_t
+  ngx_http_file_cache_add_file(ngx_tree_ctx_t *ctx, ngx_str_t *name)
+  {
+!     u_char                 *p;
+!     ngx_int_t               n;
+!     ngx_uint_t              i;
+!     ngx_http_cache_t        c;
+!     ngx_http_file_cache_t  *cache;
+  
+      if (name->len < 2 * NGX_HTTP_CACHE_KEY_LEN) {
+          return NGX_ERROR;
+      }
+  
+!     if (ctx->size < (off_t) sizeof(ngx_http_file_cache_header_t)) {
+          ngx_log_error(NGX_LOG_CRIT, ctx->log, 0,
+                        "cache file \"%s\" is too small", name->data);
+          return NGX_ERROR;
+      }
+  
++     ngx_memzero(&c, sizeof(ngx_http_cache_t));
+      cache = ctx->data;
+  
+!     c.length = ctx->size;
+!     c.fs_size = (ctx->fs_size + cache->bsize - 1) / cache->bsize;
+  
+      p = &name->data[name->len - 2 * NGX_HTTP_CACHE_KEY_LEN];
+  
+*************** ngx_http_file_cache_add(ngx_http_file_ca
+*** 1435,1448 ****
+  
+          fcn->uses = 1;
+          fcn->count = 0;
+!         fcn->valid_msec = c->valid_msec;
+          fcn->error = 0;
+          fcn->exists = 1;
+          fcn->updating = 0;
+          fcn->deleting = 0;
+!         fcn->uniq = c->uniq;
+!         fcn->valid_sec = c->valid_sec;
+!         fcn->body_start = c->body_start;
+          fcn->fs_size = c->fs_size;
+  
+          cache->sh->size += c->fs_size;
+--- 1388,1401 ----
+  
+          fcn->uses = 1;
+          fcn->count = 0;
+!         fcn->valid_msec = 0;
+          fcn->error = 0;
+          fcn->exists = 1;
+          fcn->updating = 0;
+          fcn->deleting = 0;
+!         fcn->uniq = 0;
+!         fcn->valid_sec = 0;
+!         fcn->body_start = 0;
+          fcn->fs_size = c->fs_size;
+  
+          cache->sh->size += c->fs_size;
+*************** ngx_http_file_cache_set_slot(ngx_conf_t
+*** 1652,1657 ****
+--- 1605,1612 ----
+      cache->path->manager = ngx_http_file_cache_manager;
+      cache->path->loader = ngx_http_file_cache_loader;
+      cache->path->data = cache;
++     cache->path->conf_file = cf->conf_file->file.name.data;
++     cache->path->line = cf->conf_file->line;
+  
+      if (ngx_add_path(cf, &cache->path) != NGX_OK) {
+          return NGX_CONF_ERROR;
+diff -p -N --text -r /tmp/patch.inc.get1.CcjVhz/src/http/ngx_http_request.c /tmp/patch.inc.get2.nmFoOG/src/http/ngx_http_request.c
+*** /tmp/patch.inc.get1.CcjVhz/src/http/ngx_http_request.c	2013-04-30 02:39:05.197723040 +0200
+--- /tmp/patch.inc.get2.nmFoOG/src/http/ngx_http_request.c	2013-04-30 02:39:08.493739384 +0200
+*************** ngx_http_process_user_agent(ngx_http_req
+*** 1439,1446 ****
+  
+              switch (msie[5]) {
+              case '4':
+-                 r->headers_in.msie4 = 1;
+-                 /* fall through */
+              case '5':
+                  r->headers_in.msie6 = 1;
+                  break;
+--- 1439,1444 ----
+*************** ngx_http_process_user_agent(ngx_http_req
+*** 1463,1469 ****
+      if (ngx_strstrn(user_agent, "Opera", 5 - 1)) {
+          r->headers_in.opera = 1;
+          r->headers_in.msie = 0;
+-         r->headers_in.msie4 = 0;
+          r->headers_in.msie6 = 0;
+      }
+  
+--- 1461,1466 ----
+*************** ngx_http_finalize_connection(ngx_http_re
+*** 2145,2152 ****
+      {
+          ngx_http_set_keepalive(r);
+          return;
+  
+!     } else if (r->lingering_close && clcf->lingering_timeout > 0) {
+          ngx_http_set_lingering_close(r);
+          return;
+      }
+--- 2142,2155 ----
+      {
+          ngx_http_set_keepalive(r);
+          return;
++     }
+  
+!     if (clcf->lingering_close == NGX_HTTP_LINGERING_ALWAYS
+!         || (clcf->lingering_close == NGX_HTTP_LINGERING_ON
+!             && (r->lingering_close
+!                 || r->header_in->pos < r->header_in->last
+!                 || r->connection->read->ready)))
+!     {
+          ngx_http_set_lingering_close(r);
+          return;
+      }
+*************** ngx_http_lingering_close_handler(ngx_eve
+*** 2772,2778 ****
+                     "http lingering close handler");
+  
+      if (rev->timedout) {
+-         c->timedout = 1;
+          ngx_http_close_request(r, 0);
+          return;
+      }
+--- 2775,2780 ----
+diff -p -N --text -r /tmp/patch.inc.get1.CcjVhz/src/http/ngx_http_request.h /tmp/patch.inc.get2.nmFoOG/src/http/ngx_http_request.h
+*** /tmp/patch.inc.get1.CcjVhz/src/http/ngx_http_request.h	2013-04-30 02:39:05.193723014 +0200
+--- /tmp/patch.inc.get2.nmFoOG/src/http/ngx_http_request.h	2013-04-30 02:39:08.489739358 +0200
+*************** typedef struct {
+*** 221,227 ****
+  
+      unsigned                          connection_type:2;
+      unsigned                          msie:1;
+-     unsigned                          msie4:1;
+      unsigned                          msie6:1;
+      unsigned                          opera:1;
+      unsigned                          gecko:1;
+--- 221,226 ----
+diff -p -N --text -r /tmp/patch.inc.get1.CcjVhz/src/http/ngx_http_upstream.c /tmp/patch.inc.get2.nmFoOG/src/http/ngx_http_upstream.c
+*** /tmp/patch.inc.get1.CcjVhz/src/http/ngx_http_upstream.c	2013-04-30 02:39:05.193723014 +0200
+--- /tmp/patch.inc.get2.nmFoOG/src/http/ngx_http_upstream.c	2013-04-30 02:39:08.489739358 +0200
+*************** ngx_http_upstream_cache(ngx_http_request
+*** 661,670 ****
+  
+          ngx_http_file_cache_create_key(r);
+  
+!         if (r->cache->header_start >= u->conf->buffer_size) {
+              ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
+!                 "cache key too large, increase upstream buffer size %uz",
+!                 u->conf->buffer_size);
+  
+              r->cache = NULL;
+              return NGX_DECLINED;
+--- 661,672 ----
+  
+          ngx_http_file_cache_create_key(r);
+  
+!         if (r->cache->header_start + 256 >= u->conf->buffer_size) {
+              ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
+!                           "%V_buffer_size %uz is not enough for cache key, "
+!                           "it should increased at least to %uz",
+!                           &u->conf->module, u->conf->buffer_size,
+!                           ngx_align(r->cache->header_start + 256, 1024));
+  
+              r->cache = NULL;
+              return NGX_DECLINED;
+*************** ngx_http_upstream_process_non_buffered_d
+*** 2317,2323 ****
+      if (wev->timedout) {
+          c->timedout = 1;
+          ngx_connection_error(c, NGX_ETIMEDOUT, "client timed out");
+!         ngx_http_upstream_finalize_request(r, u, 0);
+          return;
+      }
+  
+--- 2319,2325 ----
+      if (wev->timedout) {
+          c->timedout = 1;
+          ngx_connection_error(c, NGX_ETIMEDOUT, "client timed out");
+!         ngx_http_upstream_finalize_request(r, u, NGX_HTTP_REQUEST_TIME_OUT);
+          return;
+      }
+  
+*************** ngx_http_upstream_finalize_request(ngx_h
+*** 3013,3018 ****
+--- 3015,3021 ----
+  #endif
+  
+      if (u->header_sent
++         && rc != NGX_HTTP_REQUEST_TIME_OUT
+          && (rc == NGX_ERROR || rc >= NGX_HTTP_SPECIAL_RESPONSE))
+      {
+          rc = 0;
+diff -p -N --text -r /tmp/patch.inc.get1.CcjVhz/src/http/ngx_http_upstream.h /tmp/patch.inc.get2.nmFoOG/src/http/ngx_http_upstream.h
+*** /tmp/patch.inc.get1.CcjVhz/src/http/ngx_http_upstream.h	2013-04-30 02:39:05.193723014 +0200
+--- /tmp/patch.inc.get2.nmFoOG/src/http/ngx_http_upstream.h	2013-04-30 02:39:08.489739358 +0200
+*************** typedef struct {
+*** 179,184 ****
+--- 179,185 ----
+      ngx_flag_t                       ssl_session_reuse;
+  #endif
+  
++     ngx_str_t                        module;
+  } ngx_http_upstream_conf_t;
+  
+  
+diff -p -N --text -r /tmp/patch.inc.get1.CcjVhz/src/http/ngx_http_upstream_round_robin.c /tmp/patch.inc.get2.nmFoOG/src/http/ngx_http_upstream_round_robin.c
+*** /tmp/patch.inc.get1.CcjVhz/src/http/ngx_http_upstream_round_robin.c	2013-04-30 02:39:05.193723014 +0200
+--- /tmp/patch.inc.get2.nmFoOG/src/http/ngx_http_upstream_round_robin.c	2013-04-30 02:39:08.489739358 +0200
+*************** static ngx_int_t ngx_http_upstream_cmp_s
+*** 14,19 ****
+--- 14,28 ----
+  static ngx_uint_t
+  ngx_http_upstream_get_peer(ngx_http_upstream_rr_peers_t *peers);
+  
++ #if (NGX_HTTP_SSL)
++ 
++ static ngx_int_t ngx_http_upstream_empty_set_session(ngx_peer_connection_t *pc,
++     void *data);
++ static void ngx_http_upstream_empty_save_session(ngx_peer_connection_t *pc,
++     void *data);
++ 
++ #endif
++ 
+  
+  ngx_int_t
+  ngx_http_upstream_init_round_robin(ngx_conf_t *cf,
+*************** ngx_http_upstream_create_round_robin_pee
+*** 343,352 ****
+      r->upstream->peer.free = ngx_http_upstream_free_round_robin_peer;
+      r->upstream->peer.tries = rrp->peers->number;
+  #if (NGX_HTTP_SSL)
+!     r->upstream->peer.set_session =
+!                                ngx_http_upstream_set_round_robin_peer_session;
+!     r->upstream->peer.save_session =
+!                                ngx_http_upstream_save_round_robin_peer_session;
+  #endif
+  
+      return NGX_OK;
+--- 352,359 ----
+      r->upstream->peer.free = ngx_http_upstream_free_round_robin_peer;
+      r->upstream->peer.tries = rrp->peers->number;
+  #if (NGX_HTTP_SSL)
+!     r->upstream->peer.set_session = ngx_http_upstream_empty_set_session;
+!     r->upstream->peer.save_session = ngx_http_upstream_empty_save_session;
+  #endif
+  
+      return NGX_OK;
+*************** ngx_http_upstream_save_round_robin_peer_
+*** 757,760 ****
+--- 764,781 ----
+      }
+  }
+  
++ 
++ static ngx_int_t
++ ngx_http_upstream_empty_set_session(ngx_peer_connection_t *pc, void *data)
++ {
++     return NGX_OK;
++ }
++ 
++ 
++ static void
++ ngx_http_upstream_empty_save_session(ngx_peer_connection_t *pc, void *data)
++ {
++     return;
++ }
++ 
+  #endif
+diff -p -N --text -r /tmp/patch.inc.get1.CcjVhz/src/mail/ngx_mail_ssl_module.c /tmp/patch.inc.get2.nmFoOG/src/mail/ngx_mail_ssl_module.c
+*** /tmp/patch.inc.get1.CcjVhz/src/mail/ngx_mail_ssl_module.c	2013-04-30 02:39:05.197723040 +0200
+--- /tmp/patch.inc.get2.nmFoOG/src/mail/ngx_mail_ssl_module.c	2013-04-30 02:39:08.493739384 +0200
+***************
+*** 9,15 ****
+  #include <ngx_mail.h>
+  
+  
+! #define NGX_DEFAULT_CIPHERS  "HIGH:!aNULL:!MD5"
+  
+  
+  static void *ngx_mail_ssl_create_conf(ngx_conf_t *cf);
+--- 9,16 ----
+  #include <ngx_mail.h>
+  
+  
+! #define NGX_DEFAULT_CIPHERS     "HIGH:!aNULL:!MD5"
+! #define NGX_DEFAULT_ECDH_CURVE  "prime256v1"
+  
+  
+  static void *ngx_mail_ssl_create_conf(ngx_conf_t *cf);
+*************** static ngx_command_t  ngx_mail_ssl_comma
+*** 77,82 ****
+--- 78,90 ----
+        offsetof(ngx_mail_ssl_conf_t, dhparam),
+        NULL },
+  
++     { ngx_string("ssl_ecdh_curve"),
++       NGX_MAIL_MAIN_CONF|NGX_MAIL_SRV_CONF|NGX_CONF_TAKE1,
++       ngx_conf_set_str_slot,
++       NGX_MAIL_SRV_CONF_OFFSET,
++       offsetof(ngx_mail_ssl_conf_t, ecdh_curve),
++       NULL },
++ 
+      { ngx_string("ssl_protocols"),
+        NGX_MAIL_MAIN_CONF|NGX_MAIL_SRV_CONF|NGX_CONF_1MORE,
+        ngx_conf_set_bitmask_slot,
+*************** ngx_mail_ssl_create_conf(ngx_conf_t *cf)
+*** 163,168 ****
+--- 171,177 ----
+       *     scf->certificate = { 0, NULL };
+       *     scf->certificate_key = { 0, NULL };
+       *     scf->dhparam = { 0, NULL };
++      *     scf->ecdh_curve = { 0, NULL };
+       *     scf->ciphers = { 0, NULL };
+       *     scf->shm_zone = NULL;
+       */
+*************** ngx_mail_ssl_merge_conf(ngx_conf_t *cf,
+*** 204,209 ****
+--- 213,221 ----
+  
+      ngx_conf_merge_str_value(conf->dhparam, prev->dhparam, "");
+  
++     ngx_conf_merge_str_value(conf->ecdh_curve, prev->ecdh_curve,
++                          NGX_DEFAULT_ECDH_CURVE);
++ 
+      ngx_conf_merge_str_value(conf->ciphers, prev->ciphers, NGX_DEFAULT_CIPHERS);
+  
+  
+*************** ngx_mail_ssl_merge_conf(ngx_conf_t *cf,
+*** 286,294 ****
+          SSL_CTX_set_options(conf->ssl.ctx, SSL_OP_CIPHER_SERVER_PREFERENCE);
+      }
+  
+!     if (ngx_ssl_generate_rsa512_key(&conf->ssl) != NGX_OK) {
+!         return NGX_CONF_ERROR;
+!     }
+  
+      if (ngx_ssl_dhparam(cf, &conf->ssl, &conf->dhparam) != NGX_OK) {
+          return NGX_CONF_ERROR;
+--- 298,304 ----
+          SSL_CTX_set_options(conf->ssl.ctx, SSL_OP_CIPHER_SERVER_PREFERENCE);
+      }
+  
+!     SSL_CTX_set_tmp_rsa_callback(conf->ssl.ctx, ngx_ssl_rsa512_key_callback);
+  
+      if (ngx_ssl_dhparam(cf, &conf->ssl, &conf->dhparam) != NGX_OK) {
+          return NGX_CONF_ERROR;
+diff -p -N --text -r /tmp/patch.inc.get1.CcjVhz/src/mail/ngx_mail_ssl_module.h /tmp/patch.inc.get2.nmFoOG/src/mail/ngx_mail_ssl_module.h
+*** /tmp/patch.inc.get1.CcjVhz/src/mail/ngx_mail_ssl_module.h	2013-04-30 02:39:05.197723040 +0200
+--- /tmp/patch.inc.get2.nmFoOG/src/mail/ngx_mail_ssl_module.h	2013-04-30 02:39:08.493739384 +0200
+*************** typedef struct {
+*** 34,39 ****
+--- 34,40 ----
+      ngx_str_t        certificate;
+      ngx_str_t        certificate_key;
+      ngx_str_t        dhparam;
++     ngx_str_t        ecdh_curve;
+  
+      ngx_str_t        ciphers;
+  
+diff -p -N --text -r /tmp/patch.inc.get1.CcjVhz/src/os/unix/ngx_files.h /tmp/patch.inc.get2.nmFoOG/src/os/unix/ngx_files.h
+*** /tmp/patch.inc.get1.CcjVhz/src/os/unix/ngx_files.h	2013-04-30 02:39:05.201723050 +0200
+--- /tmp/patch.inc.get2.nmFoOG/src/os/unix/ngx_files.h	2013-04-30 02:39:08.497739394 +0200
+*************** ngx_de_info(u_char *name, ngx_dir_t *dir
+*** 253,258 ****
+--- 253,259 ----
+  
+  #define ngx_de_access(dir)       (((dir)->info.st_mode) & 0777)
+  #define ngx_de_size(dir)         (dir)->info.st_size
++ #define ngx_de_fs_size(dir)      ((dir)->info.st_blocks * 512)
+  #define ngx_de_mtime(dir)        (dir)->info.st_mtime
+  
+  

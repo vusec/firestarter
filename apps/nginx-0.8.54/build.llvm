@@ -1,0 +1,32 @@
+#!/bin/bash
+
+MYPWD=`pwd`
+ROOT=${LLVMAPPS_ROOT-../..}
+
+. ${ROOT}/apps/scripts/include/build.llvm.inc
+
+PROG=nginx
+INPUT=objs/nginx
+OUTPUT=install/sbin/${PROG}
+LIBS=$( build_llvm_ldlibs_from_file -lcrypt objs/Makefile )
+LINKER="$LLVMGOLD_CC"
+
+if echo "$@" | grep -w -q "magic" && [ ! "$LLVM_NOMEMPOOL " == "1 " ]; then
+    LLVMGOLD_OPTFLAGS="$LLVMGOLD_OPTFLAGS -magic-mm-poolfunc ngx_palloc/1/2;ngx_pnalloc/1/2;ngx_pcalloc/1/2;ngx_pmemalign/1/2:ngx_create_pool/0:ngx_destroy_pool/1:ngx_palloc_large/1;ngx_palloc_block/1:ngx_reset_pool/1"
+fi
+
+build_llvm "$@"
+
+if [ "$TRACE_PROCESS" = 1 ]; then
+	echo "
+		allow recurse read: ${MYPWD}/install
+		allow recurse all: ${MYPWD}/install/client_body_temp
+		allow recurse all: ${MYPWD}/install/fastcgi_temp
+		allow recurse all: ${MYPWD}/install/logs
+		allow recurse all: ${MYPWD}/install/proxy_temp
+		allow recurse all: ${MYPWD}/install/scgi_temp
+		allow recurse all: ${MYPWD}/install/uwsgi_temp
+		allow recurse all: ${MYPWD}/.tmp
+	" > "`readlink -f "$OUTPUT"`.rules"
+fi
+
